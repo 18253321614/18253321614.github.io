@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>sun-server-access | 王伟强的个人博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="首先连接vpn，然后登录堡垒机，通过堡垒机连接Windows远程桌面，最终访问到服务器 项目wiki地址：仪表-WIKI (jiliangqiju.cn)  :::info注意：首先在电脑安装jdk1.6，安装即可无需配置环境变量 svn下载路径：https:&#x2F;&#x2F;192.168.99.233&#x2F;svn&#x2F;SoftwareConfigurationManagement&#x2F;10-工业互联网仪表平台项目&amp;#">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sun-server-access">
+<meta property="og:url" content="http://example.com/2024/11/29/sun-server-access/index.html">
+<meta property="og:site_name" content="王伟强的个人博客">
+<meta property="og:description" content="首先连接vpn，然后登录堡垒机，通过堡垒机连接Windows远程桌面，最终访问到服务器 项目wiki地址：仪表-WIKI (jiliangqiju.cn)  :::info注意：首先在电脑安装jdk1.6，安装即可无需配置环境变量 svn下载路径：https:&#x2F;&#x2F;192.168.99.233&#x2F;svn&#x2F;SoftwareConfigurationManagement&#x2F;10-工业互联网仪表平台项目&amp;#">
+<meta property="og:locale">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725612920944-4cc264d0-3f48-4b87-b5b5-90b80cbc8030.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725614090654-f177fa6d-1504-44fa-bc6b-8c59e67fb198.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613387575-af7f18fd-bd4e-472e-b5f2-473b7d89840b.png">
+<meta property="og:image" content="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613583978-d02d4315-8b0e-40e6-82d1-cd1c3cc962b4.png">
+<meta property="article:published_time" content="2024-11-29T01:14:09.000Z">
+<meta property="article:modified_time" content="2024-11-29T01:15:02.719Z">
+<meta property="article:author" content="wangweiqiang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725612920944-4cc264d0-3f48-4b87-b5b5-90b80cbc8030.png">
+  
+    <link rel="alternate" href="/atom.xml" title="王伟强的个人博客" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">王伟强的个人博客</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">唯有门前镜湖水，春风不改旧时波</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"><span class="fa fa-bars"></span></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+        
+          <a class="nav-icon" href="/atom.xml" title="RSS"><span class="fa fa-rss"></span></a>
+        
+        <a class="nav-icon nav-search-btn" title="Buscar"><span class="fa fa-search"></span></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-sun-server-access" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/29/sun-server-access/" class="article-date">
+  <time class="dt-published" datetime="2024-11-29T01:14:09.000Z" itemprop="datePublished">2024-11-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      sun-server-access
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>首先连接vpn，然后登录堡垒机，通过堡垒机连接Windows远程桌面，最终访问到服务器</p>
+<p>项目wiki地址：<a target="_blank" rel="noopener" href="https://doc.jiliangqiju.cn/read/doc/1/8385d03860a69ac482278b6c3ee4dd1e">仪表-WIKI (jiliangqiju.cn)</a></p>
+</blockquote>
+<p>:::info<br><strong>注意：</strong>首先在电脑安装jdk1.6，安装即可无需配置环境变量</p>
+<p>svn下载路径：<a target="_blank" rel="noopener" href="https://192.168.99.233/svn/SoftwareConfigurationManagement/10-">https://192.168.99.233/svn/SoftwareConfigurationManagement/10-</a>工业互联网仪表平台项目&#x2F;01-2021太阳纸业&#x2F;02-管理库&#x2F;06-李龙交接  </p>
+<p>:::</p>
+<h1 id="连接vpn"><a href="#连接vpn" class="headerlink" title="连接vpn"></a>连接vpn</h1><blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);"><a target="_blank" rel="noopener" href="https://221.2.43.67/">https://221.2.43.67</a></font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">账号：dongguangpeng、26965</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">密码：</font><font style="color:#DF2A3F;background-color:rgb(251, 251, 251);">Sun12345、Sun123456</font></p>
+</blockquote>
+<p>访问地址，首次会提示下载easy connect，下载安装完成后，再次访问<code>&lt;font style=&quot;color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);&quot;&gt;https://221.2.43.67&lt;/font&gt;</code><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">，输入账号密码即可进入下方页面：</font></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725612920944-4cc264d0-3f48-4b87-b5b5-90b80cbc8030.png"></p>
+<p><strong>注意：登录之前先将原来的easyconnect退出</strong></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725614090654-f177fa6d-1504-44fa-bc6b-8c59e67fb198.png"></p>
+<h1 id="登录堡垒机"><a href="#登录堡垒机" class="headerlink" title="登录堡垒机"></a>登录堡垒机</h1><blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">堡垒机地址：<a target="_blank" rel="noopener" href="https://192.168.185.201/cgi-bh/login.cgi">https://192.168.185.201/cgi-bh/login.cgi</a> （IE浏览器登录）</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">账号：dongguangpeng</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">密码：Sun12345</font></p>
+</blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">访问堡垒机需要使用ie浏览器或者edge浏览器的ie模式进行访问</font><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613387575-af7f18fd-bd4e-472e-b5f2-473b7d89840b.png"></p>
+<p>注意：若edge没有改设置项，可访问<code>**&lt;font style=&quot;color:rgb(30, 30, 30);&quot;&gt;edge://settings/defaultbrowser&lt;/font&gt;**</code><strong><font style="color:rgb(30, 30, 30);">，</font></strong><font style="color:rgb(30, 30, 30);">修改对应设置，重启浏览器就会出现该设置项</font></p>
+<p><font style="color:rgb(30, 30, 30);"></font></p>
+<h1 id="服务器访问"><a href="#服务器访问" class="headerlink" title="服务器访问"></a><font style="color:rgb(30, 30, 30);">服务器访问</font></h1><p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613583978-d02d4315-8b0e-40e6-82d1-cd1c3cc962b4.png"></p>
+<blockquote>
+<p>服务器中相关服务路径</p>
+</blockquote>
+<ul>
+<li>nginx：D:\TOOLS\Server\Nginx</li>
+<li>jar：D:\TOOLS\Server\Undertow</li>
+<li>日志：d盘data目录下</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/11/29/sun-server-access/" data-id="cm421xri60000jst05xkycl3y" data-title="sun-server-access" class="article-share-link"><span class="fa fa-share">Compartir</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2024/09/05/hexo+github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Viejo</strong>
+      <div class="article-nav-title">hexo+github搭建个人博客</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archivos</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Posts recientes</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2024/11/29/sun-server-access/">sun-server-access</a>
+          </li>
+        
+          <li>
+            <a href="/2024/09/05/hexo+github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">hexo+github搭建个人博客</a>
+          </li>
+        
+          <li>
+            <a href="/2024/09/05/hello-world/">Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2024 wangweiqiang<br>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.6.4.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

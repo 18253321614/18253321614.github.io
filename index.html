@@ -61,12 +61,12 @@
       <nav id="sub-nav">
         
         
-          <a class="nav-icon" href="/atom.xml" title="RSS Feed"><span class="fa fa-rss"></span></a>
+          <a class="nav-icon" href="/atom.xml" title="RSS"><span class="fa fa-rss"></span></a>
         
-        <a class="nav-icon nav-search-btn" title="Suche"><span class="fa fa-search"></span></a>
+        <a class="nav-icon nav-search-btn" title="Buscar"><span class="fa fa-search"></span></a>
       </nav>
       <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Buscar"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
       </div>
     </div>
   </div>
@@ -74,6 +74,73 @@
 
       <div class="outer">
         <section id="main">
+  
+    <article id="post-sun-server-access" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2024/11/29/sun-server-access/" class="article-date">
+  <time class="dt-published" datetime="2024-11-29T01:14:09.000Z" itemprop="datePublished">2024-11-29</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2024/11/29/sun-server-access/">sun-server-access</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <blockquote>
+<p>首先连接vpn，然后登录堡垒机，通过堡垒机连接Windows远程桌面，最终访问到服务器</p>
+<p>项目wiki地址：<a target="_blank" rel="noopener" href="https://doc.jiliangqiju.cn/read/doc/1/8385d03860a69ac482278b6c3ee4dd1e">仪表-WIKI (jiliangqiju.cn)</a></p>
+</blockquote>
+<p>:::info<br><strong>注意：</strong>首先在电脑安装jdk1.6，安装即可无需配置环境变量</p>
+<p>svn下载路径：<a target="_blank" rel="noopener" href="https://192.168.99.233/svn/SoftwareConfigurationManagement/10-">https://192.168.99.233/svn/SoftwareConfigurationManagement/10-</a>工业互联网仪表平台项目&#x2F;01-2021太阳纸业&#x2F;02-管理库&#x2F;06-李龙交接  </p>
+<p>:::</p>
+<h1 id="连接vpn"><a href="#连接vpn" class="headerlink" title="连接vpn"></a>连接vpn</h1><blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);"><a target="_blank" rel="noopener" href="https://221.2.43.67/">https://221.2.43.67</a></font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">账号：dongguangpeng、26965</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">密码：</font><font style="color:#DF2A3F;background-color:rgb(251, 251, 251);">Sun12345、Sun123456</font></p>
+</blockquote>
+<p>访问地址，首次会提示下载easy connect，下载安装完成后，再次访问<code>&lt;font style=&quot;color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);&quot;&gt;https://221.2.43.67&lt;/font&gt;</code><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">，输入账号密码即可进入下方页面：</font></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725612920944-4cc264d0-3f48-4b87-b5b5-90b80cbc8030.png"></p>
+<p><strong>注意：登录之前先将原来的easyconnect退出</strong></p>
+<p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725614090654-f177fa6d-1504-44fa-bc6b-8c59e67fb198.png"></p>
+<h1 id="登录堡垒机"><a href="#登录堡垒机" class="headerlink" title="登录堡垒机"></a>登录堡垒机</h1><blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">堡垒机地址：<a target="_blank" rel="noopener" href="https://192.168.185.201/cgi-bh/login.cgi">https://192.168.185.201/cgi-bh/login.cgi</a> （IE浏览器登录）</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">账号：dongguangpeng</font><br><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">密码：Sun12345</font></p>
+</blockquote>
+<p><font style="color:rgb(36, 41, 46);background-color:rgb(251, 251, 251);">访问堡垒机需要使用ie浏览器或者edge浏览器的ie模式进行访问</font><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613387575-af7f18fd-bd4e-472e-b5f2-473b7d89840b.png"></p>
+<p>注意：若edge没有改设置项，可访问<code>**&lt;font style=&quot;color:rgb(30, 30, 30);&quot;&gt;edge://settings/defaultbrowser&lt;/font&gt;**</code><strong><font style="color:rgb(30, 30, 30);">，</font></strong><font style="color:rgb(30, 30, 30);">修改对应设置，重启浏览器就会出现该设置项</font></p>
+<p><font style="color:rgb(30, 30, 30);"></font></p>
+<h1 id="服务器访问"><a href="#服务器访问" class="headerlink" title="服务器访问"></a><font style="color:rgb(30, 30, 30);">服务器访问</font></h1><p><img src="https://cdn.nlark.com/yuque/0/2024/png/1664066/1725613583978-d02d4315-8b0e-40e6-82d1-cd1c3cc962b4.png"></p>
+<blockquote>
+<p>服务器中相关服务路径</p>
+</blockquote>
+<ul>
+<li>nginx：D:\TOOLS\Server\Nginx</li>
+<li>jar：D:\TOOLS\Server\Undertow</li>
+<li>日志：d盘data目录下</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2024/11/29/sun-server-access/" data-id="cm421xri60000jst05xkycl3y" data-title="sun-server-access" class="article-share-link"><span class="fa fa-share">Compartir</span></a>
+      
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
   
     <article id="post-hexo+github搭建个人博客" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
@@ -99,11 +166,25 @@
       
         <p>一番桃李花开尽，惟有青青草色齐。</p>
 <p>当我们把正常的消极情绪都丢到不能看见的角落里，去抓住那些所谓的正确的积极向上的情绪的时候，我们就失去了和真实世界接触的能力，这就是所谓的过一段正确但是冷漠的人生所带来的痛苦。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/image-20240909101546275.png" alt="image-20240909101546275"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span></span><br><span class="line">    id,</span><br><span class="line">    organization_code,</span><br><span class="line">    identification_code,</span><br><span class="line">    meter_name,</span><br><span class="line">    meter_model,</span><br><span class="line">    domainCode,</span><br><span class="line">    category_code,</span><br><span class="line">    category_name,</span><br><span class="line">    meter_produce_date,</span><br><span class="line">    meter_factory_code,</span><br><span class="line">    meter_measuring_range,</span><br><span class="line">    meter_accuracy_level,</span><br><span class="line">    meter_purpose,</span><br><span class="line">    meter_abc_code,</span><br><span class="line">    meter_use_scene,</span><br><span class="line">    manufacturer_name,</span><br><span class="line">    manufacturer_credit_code,</span><br><span class="line">    remark,</span><br><span class="line">    create_user_id,</span><br><span class="line">    yibiao_result,</span><br><span class="line">    send_yibiao,</span><br><span class="line">    create_time,</span><br><span class="line">    update_time,</span><br><span class="line">    is_deleted <span class="keyword">AS</span> deleted </span><br><span class="line"><span class="keyword">FROM</span></span><br><span class="line">    meter </span><br><span class="line"><span class="keyword">WHERE</span></span><br><span class="line">    is_deleted<span class="operator">=</span><span class="number">0</span> </span><br><span class="line">    <span class="keyword">AND</span> organization_code <span class="keyword">IN</span> (</span><br><span class="line">        <span class="string">&#x27;013303&#x27;</span></span><br><span class="line">    ) </span><br><span class="line">    <span class="keyword">AND</span> id <span class="keyword">IN</span> (</span><br><span class="line">        <span class="string">&#x27;013e048025f20ff60b7f49ea166cdc3c&#x27;</span>,<span class="string">&#x27;015539f79a9875b331b32933027fcfe2&#x27;</span>,<span class="string">&#x27;050a42f8689a460382b5173cb77a72ca&#x27;</span>,<span class="string">&#x27;0855e63343ff4995a6392683877d3283&#x27;</span>,<span class="string">&#x27;092c238c631b4288b5ee816ae3cc0800&#x27;</span>,<span class="string">&#x27;0b88cb423ee64e61b92e88b03d9d765b&#x27;</span>,<span class="string">&#x27;0c627df5fe8b4c89b8c7937403b4dcd7&#x27;</span>,<span class="string">&#x27;0de6f23d4183499b85f675ae987cf9f8&#x27;</span>,<span class="string">&#x27;0e6ac91ac0ee42fdb5505fe7e0322f5a&#x27;</span>,<span class="string">&#x27;13095b6d5f664c669a3fe916c22cf9c6&#x27;</span>,<span class="string">&#x27;156a55801b164d6a937d248cda76a386&#x27;</span>,<span class="string">&#x27;17c82392248b4ca4a3779da20086dc07&#x27;</span>,<span class="string">&#x27;1a2d3e0a2fb64cf7ae84dab34b372994&#x27;</span>,<span class="string">&#x27;1c7b951efa4c4514b1aee6e3e39c632e&#x27;</span>,<span class="string">&#x27;1f06af93a89d4a2c9bac947630a9b8f9&#x27;</span>,<span class="string">&#x27;210ac8f07102e5ddcc520eada930b092&#x27;</span>,<span class="string">&#x27;22a1812383a6428a8de592eae030e478&#x27;</span>,<span class="string">&#x27;239181b2f79046918bb0a52081278ad3&#x27;</span>,<span class="string">&#x27;23ee052bccf741c3aa31151f80d91530&#x27;</span>,<span class="string">&#x27;269262befd80486eb7daee9bc2ff6af9&#x27;</span>,<span class="string">&#x27;29fbb21f95a54539b4b4f1fba0414528&#x27;</span>,<span class="string">&#x27;2a591c34d6fb414ca5c49d623e4d1c82&#x27;</span>,<span class="string">&#x27;2c822dde70774a5a9a6c4eb7b74f71e3&#x27;</span>,<span class="string">&#x27;2ef03db27acd4b27acb7fa9673d500a3&#x27;</span>,<span class="string">&#x27;2f171cbb716e4eecbb2089fbd73456c2&#x27;</span>,<span class="string">&#x27;2feb8c72d96e4c3292b9ec3eeabb361f&#x27;</span>,<span class="string">&#x27;328d96b8ec4049aeb2e70c88268a8861&#x27;</span>,<span class="string">&#x27;332fcb8ab60442f7abc91a0b8d767100&#x27;</span>,<span class="string">&#x27;3959b32fedc14ed98296b4fe66f716c1&#x27;</span>,<span class="string">&#x27;39b647cae3a54946a7d29d7798a102b9&#x27;</span>,<span class="string">&#x27;39d42e7baec4454bbda15e4de85ecdf3&#x27;</span>,<span class="string">&#x27;409f41b5d2fa4a7bb8440fa1db7d2125&#x27;</span>,<span class="string">&#x27;4232a301ebc440c0b6ab819b7dd0e93f&#x27;</span>,<span class="string">&#x27;476fcf40989d4d00ba001d6f82bce217&#x27;</span>,<span class="string">&#x27;4ad05b455407476caed773ef178aec26&#x27;</span>,<span class="string">&#x27;4b299815560f4c1aa3f1ffaa4a3ff6b2&#x27;</span>,<span class="string">&#x27;5074d905c80245aca2f006e668ac211a&#x27;</span>,<span class="string">&#x27;50b9e7fc8f86430890a9f68b32dc4b51&#x27;</span>,<span class="string">&#x27;50c215e7f6f4476e981d35855d25fa42&#x27;</span>,<span class="string">&#x27;54b8244709a4a4a01313b5672f53e383&#x27;</span>,<span class="string">&#x27;59a7d7d2e4134992a605caeb64c060ae&#x27;</span>,<span class="string">&#x27;5b54650837e146109127081d1e4a4d58&#x27;</span>,<span class="string">&#x27;5c18e4b1488f479ca44a6a1fe9742212&#x27;</span>,<span class="string">&#x27;5d247b1b363741169aa08efc697585ce&#x27;</span>,<span class="string">&#x27;5fde888a01e241398f2662aff957ed02&#x27;</span>,<span class="string">&#x27;602bf5f14b994b78a897904d013bb4ec&#x27;</span>,<span class="string">&#x27;60a9f8e0356a4e9f9da753d947541bd5&#x27;</span>,<span class="string">&#x27;665be02fd50e4c4192a2fc923d79d3da&#x27;</span>,<span class="string">&#x27;66dc002e2fb6439594ab3944ce51956c&#x27;</span>,<span class="string">&#x27;69643d8b6f1f4fb09b8fe05a38435246&#x27;</span>,<span class="string">&#x27;6ccb8a1226ee4040b07e268909e0d27d&#x27;</span>,<span class="string">&#x27;6e6391b821efbed7930514e82ab66f6a&#x27;</span>,<span class="string">&#x27;6fd8f2c8ce9948ecbb8c896aeb77d8ad&#x27;</span>,<span class="string">&#x27;72260d94410846b8869c6f1f42a9dd32&#x27;</span>,<span class="string">&#x27;72bf764ae46c42a9a05e216dc4bbd2c3&#x27;</span>,<span class="string">&#x27;756a207e73b84d3a8a34320bce76dcc2&#x27;</span>,<span class="string">&#x27;796303107e444b32969c6d5e9998c51f&#x27;</span>,<span class="string">&#x27;7d21ac9b203de493ab68035178596177&#x27;</span>,<span class="string">&#x27;7db499e395c54071a7030c48690c1e19&#x27;</span>,<span class="string">&#x27;7e0edfaaa9024a6a85d53d5b64175b76&#x27;</span>,<span class="string">&#x27;8424291970a54e1e91626c481133c648&#x27;</span>,<span class="string">&#x27;8830c86fbe1d448eaafd1a8c4d47e5ca&#x27;</span>,<span class="string">&#x27;8b844828c996445c87105e417b94ff8d&#x27;</span>,<span class="string">&#x27;8d9f6bb9d08f4110b768807efbe0d92b&#x27;</span>,<span class="string">&#x27;8f382d5dac99404ba4123ccbdb4dc670&#x27;</span>,<span class="string">&#x27;90875eb87c74428baca99262a1cf0455&#x27;</span>,<span class="string">&#x27;934cdb7e51914cdfb0b3aae392222844&#x27;</span>,<span class="string">&#x27;93ac1b87f6a94a6f9c43696db60a46dc&#x27;</span>,<span class="string">&#x27;96ae9376f24641396b7f4611f145cc4a&#x27;</span>,<span class="string">&#x27;96c019cde68340faadfd29473fd09fc0&#x27;</span>,<span class="string">&#x27;97fb94c00e5b4617b458deb95105fd4e&#x27;</span>,<span class="string">&#x27;986c030345b340eebff00c671d60af43&#x27;</span>,<span class="string">&#x27;98f9dd1c759041aa813f107d97c2974c&#x27;</span>,<span class="string">&#x27;9acbaef9a5024bd0a8e911f03bafbdb8&#x27;</span>,<span class="string">&#x27;9c8de95904aa48ec9b152a0f3fb6f137&#x27;</span>,<span class="string">&#x27;9cfb192e5008479fbb78be4987f09b20&#x27;</span>,<span class="string">&#x27;a03d4c5ce2ac409193a3871d39e9cecf&#x27;</span>,<span class="string">&#x27;a0f6fc3f81d434515e3ba507a88af479&#x27;</span>,<span class="string">&#x27;a2a58cbe41db4bd3b271ed671c50bf7e&#x27;</span>,<span class="string">&#x27;a98f79e47bf14ce080ba1c753e0abd1c&#x27;</span>,<span class="string">&#x27;a9911e76d01e43d39fff3fadd6049140&#x27;</span>,<span class="string">&#x27;aaca9bdb98b14132b4e460638e67973a&#x27;</span>,<span class="string">&#x27;abda60c17d44427e9cf0df91ab5cd410&#x27;</span>,<span class="string">&#x27;aedf5c1afd0f98140905b7745cdb78cd&#x27;</span>,<span class="string">&#x27;b403c929885b4f07b1a30bd3d9de2998&#x27;</span>,<span class="string">&#x27;b57abe46fe8c4777b46542bc67c66bf6&#x27;</span>,<span class="string">&#x27;b5b7eb8cff6d4826b098c9e0e53f9e70&#x27;</span>,<span class="string">&#x27;b5bdad0c4f324e5f9332224457f739f0&#x27;</span>,<span class="string">&#x27;b7799fc70e8e4a2db2fdd347bf387bcc&#x27;</span>,<span class="string">&#x27;bc2a033f909de506a7f2c379b6c9d488&#x27;</span>,<span class="string">&#x27;c2bf2694280843b783a3200bb93d3b1f&#x27;</span>,<span class="string">&#x27;c4c213c00a42402491792107561f4d86&#x27;</span>,<span class="string">&#x27;c5136d348aba4a4993269e9f2d5d500e&#x27;</span>,<span class="string">&#x27;c92369746a71c71f94c92d4029cc4588&#x27;</span>,<span class="string">&#x27;cb5f74cd7e384ed4a813e1e5a080e797&#x27;</span>,<span class="string">&#x27;cd0ab60dcceb43ba9ba22d5273587483&#x27;</span>,<span class="string">&#x27;ced48d3b4e6b4ae4af9fc50e29217fe7&#x27;</span>,<span class="string">&#x27;cf156f0a5df80a566f9281d664fc28c1&#x27;</span>,<span class="string">&#x27;cf5d7bc13ba1408c96ad06f220dba427&#x27;</span>,<span class="string">&#x27;cfe1b3e14f95492487cc2d241e96993a&#x27;</span>,<span class="string">&#x27;d5a6c4f4eb22493e91a314dbe125a5e4&#x27;</span>,<span class="string">&#x27;d625995b5c5a415191d4068a07b08737&#x27;</span>,<span class="string">&#x27;d7412f66ff254c099f33d23fe279db61&#x27;</span>,<span class="string">&#x27;d850f2b90b354ace91b854905a8cf363&#x27;</span>,<span class="string">&#x27;debcceaf26584a39a0e81bab3a53988b&#x27;</span>,<span class="string">&#x27;e13bed5b4ce149fdbe9b63735384fcd7&#x27;</span>,<span class="string">&#x27;e1d30556166d4820a9025867915e1c4f&#x27;</span>,<span class="string">&#x27;e2dffbdcb0544e169333a4f61a1e1271&#x27;</span>,<span class="string">&#x27;e94c23f5ef594c07b96e4bce4e7283cc&#x27;</span>,<span class="string">&#x27;f1edc37be6b496b5c38de2f7a13661e8&#x27;</span>,<span class="string">&#x27;f203119e494944509046095be862c1a0&#x27;</span>,<span class="string">&#x27;f3d239d0bbb84d54a8ba7afe1161b0de&#x27;</span>,<span class="string">&#x27;f7df2d5b4e5e4509be8fabde73d6bfdf&#x27;</span>,<span class="string">&#x27;fd93356c5c95436e9159aec4430ab79b&#x27;</span></span><br><span class="line">    ) </span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span></span><br><span class="line">    meter_name <span class="keyword">DESC</span> LIMIT <span class="number">0</span>,</span><br><span class="line">    <span class="number">10</span></span><br></pre></td></tr></table></figure>
+
+<p>数据库—服务器—-浏览器</p>
+<ul>
+<li><p>数据库查询慢？—-不慢</p>
+</li>
+<li><p>数据库、服务器传输数据慢？</p>
+</li>
+<li><p>服务器处理数据慢？</p>
+</li>
+<li><p>服务器、浏览器传输数据慢？ —同一台</p>
+</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/09/05/hexo+github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" data-id="cm0oxy5350001igt00rvf02m9" data-title="hexo+github搭建个人博客" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2024/09/05/hexo+github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/" data-id="cm0oxy5350001igt00rvf02m9" data-title="hexo+github搭建个人博客" class="article-share-link"><span class="fa fa-share">Compartir</span></a>
       
       
       
@@ -154,7 +235,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2024/09/05/hello-world/" data-id="cm0oxy53a0004igt0f12vbyjb" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Teilen</span></a>
+      <a data-url="http://example.com/2024/09/05/hello-world/" data-id="cm0oxy53a0004igt0f12vbyjb" data-title="Hello World" class="article-share-link"><span class="fa fa-share">Compartir</span></a>
       
       
       
@@ -182,9 +263,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archiv</h3>
+    <h3 class="widget-title">Archivos</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">November 2024</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">September 2024</a></li></ul>
     </div>
   </div>
 
@@ -192,9 +273,13 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">letzter Beitrag</h3>
+    <h3 class="widget-title">Posts recientes</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2024/11/29/sun-server-access/">sun-server-access</a>
+          </li>
         
           <li>
             <a href="/2024/09/05/hexo+github%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2/">hexo+github搭建个人博客</a>
@@ -218,7 +303,7 @@
     <div id="footer-info" class="inner">
       
       &copy; 2024 wangweiqiang<br>
-      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+      Construido por <a href="https://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
 </footer>
