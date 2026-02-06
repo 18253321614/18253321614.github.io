@@ -20,32 +20,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="结论先行，以上统下每段话有且只有一个中心思想，要表达的东西。其他的都是为中心思想的论据。 论据可能会包含其他的论据，这时候一级论据就变成了论点。 中心思想或者结论，先讲出来：   例如：我不会减肥，有两个原因： （1）健身房都是焦虑营销 （2）每个人都有自己的个性">
+    <meta name="description" content="rfid（Radio Frequency Identification，射频识别）本质上是一种无线通信方式，可以以非接触的方式与特定器械进行数据交换。一个rfid系统至少需要3个方面组成：  rfid标签：标签内部可以存储数据。 读写器：读写器可以向标签中读取或写入数据。 软件系统：软件从读写器中获取从标标签中获取的数据进行处理。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="金字塔原理">
-<meta property="og:url" content="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:title" content="RFID工作原理浅析">
+<meta property="og:url" content="https://18253321614.github.io/2023/12/06/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/index.html">
 <meta property="og:site_name" content="风和树里">
-<meta property="og:description" content="结论先行，以上统下每段话有且只有一个中心思想，要表达的东西。其他的都是为中心思想的论据。 论据可能会包含其他的论据，这时候一级论据就变成了论点。 中心思想或者结论，先讲出来：   例如：我不会减肥，有两个原因： （1）健身房都是焦虑营销 （2）每个人都有自己的个性">
+<meta property="og:description" content="rfid（Radio Frequency Identification，射频识别）本质上是一种无线通信方式，可以以非接触的方式与特定器械进行数据交换。一个rfid系统至少需要3个方面组成：  rfid标签：标签内部可以存储数据。 读写器：读写器可以向标签中读取或写入数据。 软件系统：软件从读写器中获取从标标签中获取的数据进行处理。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/pyramid.png">
-<meta property="og:image" content="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/headache.png">
-<meta property="og:image" content="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/profit.png">
-<meta property="article:published_time" content="2023-07-24T09:10:35.000Z">
-<meta property="article:modified_time" content="2026-02-06T14:56:01.067Z">
+<meta property="article:published_time" content="2023-12-06T06:30:14.000Z">
+<meta property="article:modified_time" content="2026-02-06T14:59:32.214Z">
 <meta property="article:author" content="wangweiqiang">
-<meta property="article:tag" content="知识">
-<meta property="article:tag" content="思维">
+<meta property="article:tag" content="RFID">
+<meta property="article:tag" content="原理">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/pyramid.png">
 
 
-<link rel="canonical" href="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/">
+<link rel="canonical" href="https://18253321614.github.io/2023/12/06/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/","path":"2023/07/24/金字塔原理/","title":"金字塔原理"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2023/12/06/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/","path":"2023/12/06/RFID工作原理浅析/","title":"RFID工作原理浅析"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>金字塔原理 | 风和树里</title>
+<title>RFID工作原理浅析 | 风和树里</title>
   
 
 
@@ -135,7 +131,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA%E5%85%88%E8%A1%8C%EF%BC%8C%E4%BB%A5%E4%B8%8A%E7%BB%9F%E4%B8%8B"><span class="nav-number">1.</span> <span class="nav-text">结论先行，以上统下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%92%E7%BA%B3%E5%88%86%E7%BB%84"><span class="nav-number">2.</span> <span class="nav-text">归纳分组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E7%BB%9F%E4%B8%80"><span class="nav-number">3.</span> <span class="nav-text">逻辑统一</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E8%A1%8C%E6%9B%B4%E9%AB%98%E4%B8%80%E5%B1%82%E7%9A%84%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">进行更高一层的总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E6%8B%86%E8%A7%A3%E5%A4%8D%E6%9D%82%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">结构化拆解复杂问题</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0%E3%80%81%E5%90%8D%E8%AF%8D%E8%A7%A3%E9%87%8A"><span class="nav-number">1.</span> <span class="nav-text">0、名词解释</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E7%A3%81%E8%80%A6%E5%90%88"><span class="nav-number">1.1.</span> <span class="nav-text">电磁耦合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81rfid%E6%A0%87%E7%AD%BE%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">1、rfid标签简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%9E%84%E6%88%90"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%86%E7%B1%BB"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%95%B0%E6%8D%AE%E5%AD%98%E5%82%A8%E5%BD%A2%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 数据存储形式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">2、通信过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E6%95%B0%E6%8D%AE%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">3、数据传输方式</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -196,7 +192,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/12/06/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -209,12 +205,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="金字塔原理 | 风和树里">
+      <meta itemprop="name" content="RFID工作原理浅析 | 风和树里">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          金字塔原理
+          RFID工作原理浅析
         </h1>
 
         <div class="post-meta-container">
@@ -225,7 +221,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-07-24 17:10:35" itemprop="dateCreated datePublished" datetime="2023-07-24T17:10:35+08:00">2023-07-24</time>
+      <time title="创建时间：2023-12-06 14:30:14" itemprop="dateCreated datePublished" datetime="2023-12-06T14:30:14+08:00">2023-12-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -233,7 +229,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A4%E7%9F%A5%E6%8F%90%E5%8D%87/" itemprop="url" rel="index"><span itemprop="name">认知提升</span></a>
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
         </span>
     </span>
 
@@ -244,14 +240,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.6k</span>
+      <span>1.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -261,94 +257,48 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="结论先行，以上统下"><a href="#结论先行，以上统下" class="headerlink" title="结论先行，以上统下"></a>结论先行，以上统下</h2><p>每段话有且只有一个中心思想，要表达的东西。其他的都是为中心思想的论据。</p>
-<p>论据可能会包含其他的论据，这时候一级论据就变成了论点。</p>
-<p>中心思想或者结论，先讲出来：</p>
-<blockquote>
-<p> 例如：我不会减肥，有两个原因：</p>
-<p>（1）健身房都是焦虑营销</p>
-<p>（2）每个人都有自己的个性</p>
-</blockquote>
+    <div class="post-body" itemprop="articleBody"><p>rfid（Radio Frequency Identification，射频识别）本质上是一种无线通信方式，可以以非接触的方式与特定器械进行数据交换。一个rfid系统至少需要3个方面组成：</p>
+<ul>
+<li>rfid标签：标签内部可以存储数据。</li>
+<li>读写器：读写器可以向标签中读取或写入数据。</li>
+<li>软件系统：软件从读写器中获取从标标签中获取的数据进行处理。</li>
+</ul>
 <span id="more"></span>
 
-<p>这样做的好处：</p>
+<p>例如：高铁检票口的闸机，身份证是rfid标签，闸机是读写器，还有就是对应的软件。身份证放到指定区域后，读写器读取个人信息，软件根据个人信息查询行程信息，行程无误，闸机开放通道。</p>
+<p>既然是无线通信方式，以当前人类科技来说，本质上必然使用电磁波进行数据传输，因此rfid的底层通信原理仍然是电磁耦合。想象手机信号的传输方式：电子信号从发射器到达天线，然后天线将信号作为一系列电磁波发射到空气中。信号通过空气传播，通过基站定向转发，直到它到达指定目标位置为止。在目标位置，另一个天线接收信号，一个接收器将它转换回电流。</p>
+<p>rfid的如今的使用已经非常广泛，最常见一个就是手机的nfc，nfc本质就是一种rfid技术。本文主要介绍rfid标签的组成、rfid标签和读写器通信过程、通信原理等。</p>
+<h2 id="0、名词解释"><a href="#0、名词解释" class="headerlink" title="0、名词解释"></a>0、名词解释</h2><h3 id="电磁耦合"><a href="#电磁耦合" class="headerlink" title="电磁耦合"></a>电磁耦合</h3><p>电磁耦合就是指电磁场中两个或多个电路元件之间相互影响的现象，同时是一种通过电磁场相互作用来传递信息的技术，其中电路元件之间通过电磁场的相互作用来便可以传递能量或信息。</p>
+<h2 id="1、rfid标签简介"><a href="#1、rfid标签简介" class="headerlink" title="1、rfid标签简介"></a>1、rfid标签简介</h2><h3 id="1-1-构成"><a href="#1-1-构成" class="headerlink" title="1.1 构成"></a>1.1 构成</h3><p>rfid标签主要由两部分构成：耦合原件和微芯片。</p>
+<p>（1）耦合元件</p>
+<p>耦合元件本质上就是<strong>天线或线圈</strong>，作用就是建立电磁耦合，去完成在RFID标签和读写器之间传递能量和数据。</p>
+<p>简单说耦合元件负责和读写器传递能量和数据。</p>
+<p>（2）微芯片</p>
+<p>微芯片通常包含一个微处理器和存储器，负责存储和简单的处理数据。此外还有一个转换器（调制解调器）负责对读写器和rfid标签间传递的数据进行转换。</p>
+<h3 id="1-2-分类"><a href="#1-2-分类" class="headerlink" title="1.2 分类"></a>1.2 分类</h3><p>根据不同的标准可将rfid标签分为多类，其中常见的是通过标签的能量源和通信信道频率进行划分：</p>
+<p>（1）根据标签的能量源</p>
 <ul>
-<li><p>引发疑问，提供回答，将对方拉入自己的语境</p>
-</li>
-<li><p>不容易被误解，论据当结论。加入先说：健身房都是焦虑营销。这可能会让对方误解，需要对方去猜，猜的过程浪费了认知能力，这就是听有的人讲话特别累的原因。</p>
-</li>
-<li><p>聚焦更需要解释的事情上面。上述两个原因，其中一个可能对方很清楚，就不需要解释了。</p>
-</li>
+<li>有源rfid标签：自身有电池，可主动发出信息。例如：高速公路ECT收费系统。</li>
+<li>无源rfid标签：自身没有能量来源，必须配合其他设备来使用。例如：身份证、银行卡、门禁卡。</li>
+<li>半有源&#x2F;半无源rfid标签：既可以主动发出信息，也可以像无源rfid标签一样，配合其他设备被动的发出标签中存储的信息。</li>
 </ul>
-<p>人的认知习惯于先听一个大的思想，再去了解下面支持这个大的思想的小的思想。得出结论的过程是正向，有1、2、3得处结论4。</p>
-<p>但是表达的时候时逆向，先说结论4，在说明1、2、3。</p>
-<p>上一层总结归纳 下层解释，形成下面这样的金字塔。</p>
-<p><img src="/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/pyramid.png" alt="金字塔结构"></p>
-<h2 id="归纳分组"><a href="#归纳分组" class="headerlink" title="归纳分组"></a>归纳分组</h2><p>大脑记忆特点，一次比较容易记住1-3个东西，超过3个就不容易记忆。</p>
-<p>所以不能仅仅罗列，要分组，注意的是一个分组之中的一定是相似的，至少的同一层级的。</p>
-<blockquote>
-<p> 例：一个问题有8个点，不能将8个点一一罗列，要向上提炼，找出多个要素的关键点，尽量提炼成2-3类。</p>
-</blockquote>
-<p>这样做的好处是：</p>
-<p>（1）不会给人一种信息爆炸的感觉；</p>
-<p>（2）证明对问题进行了思考，体现了你思考和表达的更高一层；</p>
-<p>（3）老板可能不注重细节</p>
-<h2 id="逻辑统一"><a href="#逻辑统一" class="headerlink" title="逻辑统一"></a>逻辑统一</h2><p>这一条是第二条的延伸，归纳分组要有逻辑性，一个分组之中的元素应该相似或者同一层级，逻辑性有两种：</p>
-<ul>
-<li><p>线性逻辑：递进</p>
-</li>
-<li><p>平行逻辑：元素调换位置，没有影响</p>
-</li>
-</ul>
-<p>这里的逻辑性可以是一个分组内部，也可以是多个分组之间。对于听众，平行比较容易理解，站在听众角度，平行的结构更好。</p>
-<blockquote>
-<p> 例：开会定好了时间，突然客户说没时间，这时候就要重新约时间，打电话给老板秘书问一下老板的安排，看一下会议室安排，在根据客户时间确定最终的会议时间。</p>
-<p>上面3件事：</p>
-<ol>
-<li><p>确定客户时间</p>
-</li>
-<li><p>确定老板安排</p>
-</li>
-<li><p>会议室安排</p>
-</li>
-<li><p>最终确定会议时间</p>
-</li>
-</ol>
-</blockquote>
-<blockquote>
-<p>这是做事情或者说思考的顺序，其实就是递进的关系。根据1、2条我们知道，要先说结论，然后解释，解释的时候3个点，平行或者递进？平行更好！</p>
-</blockquote>
-<blockquote>
-<p> 汇报：老板，我建议在这一天开会，有三个原因，第一王总有时间，第二会议室空闲，第三尽早不尽晚。</p>
-</blockquote>
-<p>表达和分析顺序是不一样的，往往是相反的</p>
-<h2 id="进行更高一层的总结"><a href="#进行更高一层的总结" class="headerlink" title="进行更高一层的总结"></a>进行更高一层的总结</h2><p>对于多条信息，提炼一层（金字塔），提炼的时候</p>
-<p>例如：</p>
-<blockquote>
-<p> 大明采访玲玲的原因，首先大明和玲玲都是辩手，其次俩人是好朋友，最后俩人有相同的生活经历。</p>
-</blockquote>
-<p>这个表达看起没问题，先说结论，然后是三个平行的的论据。但这样还是不够好，可以继续提炼三个元素的共性</p>
-<blockquote>
-<p>大明去采访玲玲，【因为他们很相似，更加能相互理解】，第一两人都是辩手，第二两人有相似的生活经历，第三两人是好朋友。</p>
-</blockquote>
-<p>所以不能满足于表面的元素，要更深层的考虑其中的共性，或者其所表现出的深层的一些东西。这样得处深层的一些东西后，就可以在去用于推理其他的因素。</p>
-<blockquote>
-<p>例如：跟老板汇报，不用供应商A，第一个原因：发给我们的货少了，第二：承诺的赠品没有给。</p>
-</blockquote>
-<p>看起来表达清晰没什么问题，但是我们思考，少发货+承诺——诚信问题？</p>
-<blockquote>
-<p> 不用供应商A，因为我认为有诚信问题，其一……，其二……。这样思维就有了深度。</p>
-</blockquote>
-<p>基于诚信问题：可以继续推理其他问题。这样也就加深了思维的宽度。推着自己不断的向上提炼和归纳，这就是我们思考的过程。</p>
-<p>所以针对已分组后的元素，寻找他们之间的共享，努力提炼更高一层的思想或者洞见，提炼总结的过程其实就是思维提升的过程</p>
-<h2 id="结构化拆解复杂问题"><a href="#结构化拆解复杂问题" class="headerlink" title="结构化拆解复杂问题"></a>结构化拆解复杂问题</h2><p>将一个事情或者问题，平行的分成几个互不相关的部分，这几个互不相关的东西却可以完整描述问题，这是一种思维习惯。</p>
-<blockquote>
-<p><strong>头疼的原因</strong><br><img src="/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/headache.png" alt="头疼原因"></p>
-</blockquote>
-<blockquote>
-<p><strong>产品利润低的原因</strong><br><img src="/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/profit.png" alt="利润原因"></p>
-</blockquote>
-<p>拆分要注意系统化、结构化的拆分，这点和个人的认知能力、知识水平有关系，例如产品利润的问题需要对企业财务有一定的了解，所以提高个人认知水平是关键。</p>
+<p>（2）根据频率</p>
+<p>低频、高频、超高频和微波电子标签</p>
+<h3 id="1-3-数据存储形式"><a href="#1-3-数据存储形式" class="headerlink" title="1.3 数据存储形式"></a>1.3 数据存储形式</h3><p>rfid标签存储器中存储的数据和普通存储器没有区别，一般都是二进制的形式。</p>
+<h2 id="2、通信过程"><a href="#2、通信过程" class="headerlink" title="2、通信过程"></a>2、通信过程</h2><p>以无源rfid标签与读写器的通信过程为例：</p>
+<p>（1）激活标签</p>
+<p>读写器靠近rfid标签后通过天线发送一个射频信号，形成一个高频电磁场。rfid标签的耦合原件在电磁场中通过电磁感应原理产生电流，为标签中的微芯片提供能量，从而激活标签。</p>
+<p>（2）数据传输</p>
+<p>标签被激活以后，内部的微芯片便可以工作。收到读写器的读取命令后，经过微芯片内部的信号解调器，将数据转换为模拟信号或者数字信号，这里的信号本质上就是电流（也没有其他东西了），电流经过<strong>耦合原件（天线或线圈）</strong>后就会产生特定频率的电磁场，电磁场通过空气等介质传播就产生电磁波。这样信号就通过耦合原件发射出去了。</p>
+<p>至于电磁波如何承载信息，有兴趣的读者可自行深入研究。</p>
+<p>（3）信号解析</p>
+<p>接收器上的耦合原件会感知到标签产生的电磁波，然后将其转为电信号，解析后得到可用的数据。</p>
+<p>通过了解无源rfid标签与读写器的通信过程，对于rfid标签与读写器的通信过程应该可以略窥一二。</p>
+<h2 id="3、数据传输方式"><a href="#3、数据传输方式" class="headerlink" title="3、数据传输方式"></a>3、数据传输方式</h2><p>数据传输是通过<strong>电磁耦合</strong>来完成，RFID系统中常见的两种电磁耦合方式是感应偶合（Inductive Coupling）和后向散射偶合（Backscatter Coupling）。</p>
+<p>（1）感应偶合（Inductive Coupling）</p>
+<p>在感应偶合中，电磁感应是通过相邻的线圈或天线之间的磁场耦合实现的。当RFID标签的天线靠近读写器的天线时，两者之间的磁场感应导致能量传输和数据传递。</p>
+<p>（2）后向散射偶合（Backscatter Coupling）</p>
+<p>后向散射偶合是一种被动的无源通信方式。RFID标签通过调制自身的阻抗，使得接收到的射频信号发生相位或振幅的变化，然后反射回读写器。这种方式中，标签不直接产生射频信号，而是利用读写器的射频信号进行通信，就像雷达一样。</p>
 <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
 <link rel="stylesheet" href="/css/markmap.css">
 
@@ -363,21 +313,21 @@
     <footer class="post-footer">
 
           <div class="post-tags">
-              <a href="/tags/%E7%9F%A5%E8%AF%86/" rel="tag"># 知识</a>
-              <a href="/tags/%E6%80%9D%E7%BB%B4/" rel="tag"># 思维</a>
+              <a href="/tags/RFID/" rel="tag"># RFID</a>
+              <a href="/tags/%E5%8E%9F%E7%90%86/" rel="tag"># 原理</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/05/05/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/" rel="prev" title="vue项目前端解决跨域问题">
-                  <i class="fa fa-angle-left"></i> vue项目前端解决跨域问题
+                <a href="/2023/11/20/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" rel="prev" title="JRebel安装使用教程">
+                  <i class="fa fa-angle-left"></i> JRebel安装使用教程
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/11/20/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" rel="next" title="JRebel安装使用教程">
-                  JRebel安装使用教程 <i class="fa fa-angle-right"></i>
+                <a href="/2023/12/21/%E6%97%B6%E9%97%B4%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9A%E4%B9%89%E7%9A%84/" rel="next" title="时间是如何定义的">
+                  时间是如何定义的 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

@@ -910,10 +910,6 @@ pre code {
     transform: translate(1pt, -2pt) rotate(-1deg);
   }
 }
-.mermaid {
-  margin-bottom: 20px;
-  text-align: center;
-}
 .post-body .note {
   border-radius: 3px;
   margin-bottom: 20px;
@@ -1389,7 +1385,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #fff93e;
+    background: #ff03ff;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2572,6 +2568,9 @@ ul.breadcrumb li:last-child {
     color: #eee;
   }
 }
+.utterances {
+  max-width: unset;
+}
 mark.search-keyword {
   background: transparent;
   border-bottom: 1px dashed #ff2a2a;
@@ -2906,5 +2905,248 @@ header.header {
   }
   .comments {
     padding: 10px 12px;
+  }
+}
+@import url("https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&family=Long+Cang&family=Liu+Jian+Mao+Cao&display=swap");
+.headband {
+  background: #e8d0a8;
+}
+.main-inner .post-block {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.1) !important;
+  background: var(--card-bg-color) !important;
+  margin-bottom: 24px !important;
+  padding: 20px;
+}
+.sidebar-inner {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.1) !important;
+  background: var(--card-bg-color) !important;
+  padding: 18px;
+}
+.site-brand-container {
+  border-radius: 12px 12px 0 0 !important;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.2) !important;
+}
+.header {
+  border-radius: 12px !important;
+}
+.sidebar {
+  border-radius: 12px !important;
+}
+.menu-item {
+  transition: all var(--menu-transition);
+  margin-bottom: 2px;
+}
+.menu-item a {
+  display: flex;
+  align-items: center;
+  padding: 6px 15px;
+  border-radius: 8px;
+  transition: all var(--menu-transition);
+  border: 1px solid transparent;
+}
+.menu-item a i {
+  margin-right: 8px;
+  width: 16px;
+  text-align: center;
+}
+.menu-item a:focus {
+  outline: 2px solid var(--menu-hover-bg);
+  outline-offset: 2px;
+}
+.menu-item a.menu-item-active {
+  background-color: var(--menu-active-bg) !important;
+  color: var(--menu-active-text) !important;
+  font-weight: bold;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+.menu-item a.menu-item-active i {
+  transform: scale(1.1);
+}
+.dark .menu-item:hover {
+  background-color: transparent !important;
+}
+.site-title {
+  font-family: "微软雅黑", cursive, sans-serif !important;
+  font-size: 2.4em !important;
+  font-weight: normal !important;
+  color: #fff !important;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3) !important;
+  padding: 10px 0 !important;
+  letter-spacing: 2px;
+}
+.site-subtitle {
+  color: rgba(255,255,255,0.9) !important;
+  font-family: 'ZCOOL XiaoWei', serif !important;
+  font-size: 1.1em !important;
+  letter-spacing: 1px;
+}
+.post-title {
+  font-family: 'Ma Shan Zheng', cursive, sans-serif !important;
+  font-size: 1.8em !important;
+  margin-bottom: 20px !important;
+}
+.post-button {
+  margin-top: 30px !important;
+  text-align: center !important;
+}
+.post-button .btn {
+  border-radius: 12px !important;
+  background: linear-gradient(to right, #c2bbab, #c0a266) !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 5px 24px !important;
+  transition: all 0.3s ease !important;
+  font-size: 14px !important;
+  font-family: 'Long Cang', cursive !important;
+  letter-spacing: 1px;
+}
+.post-button .btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2) !important;
+  background: linear-gradient(to right, #c2bbab, #c0a266) !important;
+}
+.post-body {
+  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", "Helvetica Neue", Arial, sans-serif !important;
+  font-size: 16px !important;
+  line-height: 1.8 !important;
+  color: #333;
+}
+.post-body h1,
+.post-body h2,
+.post-body h3,
+.post-body h4,
+.post-body h5,
+.post-body h6 {
+  font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", "Hiragino Sans GB", sans-serif !important;
+}
+.post-body code,
+.post-body pre {
+  font-family: "PT Mono", "Consolas", "Monaco", "Andale Mono", monospace !important;
+}
+.post-body blockquote {
+  font-family: 'Long Cang', cursive, serif !important;
+  font-size: 1.1em !important;
+  border-left: 4px solid #42b983 !important;
+  background-color: #f8f9fa !important;
+  border-radius: 4px !important;
+  padding: 10px 15px !important;
+}
+:root {
+  --card-bg-color: #fff;
+  --menu-hover-bg: #e7d0a8;
+  --menu-active-bg: #e7d0a8;
+  --menu-active-text: #2c2c2c;
+  --menu-transition: 0.3s ease-in-out;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --card-bg-color: #2c2c2c;
+  }
+  .post-body {
+    color: #e0e0e0 !important;
+  }
+  .post-body h1,
+  .post-body h2,
+  .post-body h3,
+  .post-body h4,
+  .post-body h5,
+  .post-body h6 {
+    color: #f0f0f0 !important;
+  }
+  .post-body blockquote {
+    color: #d0d0d0 !important;
+    border-left-color: #555 !important;
+    background-color: #383838 !important;
+    font-family: 'Long Cang', cursive, serif !important;
+  }
+  .post-body code {
+    color: #e0e0e0 !important;
+    background-color: #2d2d2d !important;
+  }
+  .post-body pre {
+    background-color: #2d2d2d !important;
+    color: #e0e0e0 !important;
+  }
+  body {
+    background-color: #1a1a1a !important;
+  }
+}
+.dark {
+  --card-bg-color: #2c2c2c;
+}
+.dark .post-body {
+  color: #e0e0e0 !important;
+}
+.dark .post-body h1,
+.dark .post-body h2,
+.dark .post-body h3,
+.dark .post-body h4,
+.dark .post-body h5,
+.dark .post-body h6 {
+  color: #f0f0f0 !important;
+}
+.dark .post-body blockquote {
+  color: #d0d0d0 !important;
+  border-left-color: #555 !important;
+  background-color: #383838 !important;
+  font-family: 'Long Cang', cursive, serif !important;
+}
+.dark .post-body code {
+  color: #e0e0e0 !important;
+  background-color: #2d2d2d !important;
+}
+.dark .post-body pre {
+  background-color: #2d2d2d !important;
+  color: #e0e0e0 !important;
+}
+.dark .main-inner .post-block,
+.dark .sidebar-inner {
+  background: var(--card-bg-color) !important;
+}
+#cusdis_thread {
+  margin-top: 40px;
+  min-height: 150px;
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--card-bg-color);
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.1);
+}
+.dark #cusdis_thread {
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.3);
+}
+@media (prefers-color-scheme: dark) {
+  #cusdis_thread {
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.3);
+  }
+}
+.utterances {
+  margin-top: 40px !important;
+  max-width: 100% !important;
+}
+.utterances-container {
+  padding: 20px;
+  background: var(--card-bg-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+.utterances-container:hover {
+  box-shadow: 0 8px 24px 0 rgba(0,0,0,0.15);
+}
+.dark .utterances-container {
+  box-shadow: 0 4px 16px 0 rgba(0,0,0,0.3);
+}
+.dark .utterances-container:hover {
+  box-shadow: 0 8px 24px 0 rgba(0,0,0,0.5);
+}
+@media (prefers-color-scheme: dark) {
+  .utterances-container {
+    box-shadow: 0 4px 16px 0 rgba(0,0,0,0.3);
+  }
+  .utterances-container:hover {
+    box-shadow: 0 8px 24px 0 rgba(0,0,0,0.5);
   }
 }
