@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="单例模式，简单但是又不简单。简单是指原理很容易懂，即保证一个类只存在一个对象；不简单是指实现方式非常多样，而且需要注意的点非常多。  1、思考如何实现单例模式现在我们不去考虑单例模式的标准实现，而是让我们自己考虑，如何再代码中实现让一个类只能实例化一次，为了简单一点，我们先不考虑多线程并发的情况。思考：  首先，不能多次实例化，那么构造方法就不能随意调用，我们需要控制对构造方法的调用 全局唯一，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实用的设计模式04-单例模式">
+<meta property="og:url" content="https://18253321614.github.io/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="单例模式，简单但是又不简单。简单是指原理很容易懂，即保证一个类只存在一个对象；不简单是指实现方式非常多样，而且需要注意的点非常多。  1、思考如何实现单例模式现在我们不去考虑单例模式的标准实现，而是让我们自己考虑，如何再代码中实现让一个类只能实例化一次，为了简单一点，我们先不考虑多线程并发的情况。思考：  首先，不能多次实例化，那么构造方法就不能随意调用，我们需要控制对构造方法的调用 全局唯一，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407674.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407709.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407714.png">
+<meta property="article:published_time" content="2021-08-24T17:02:37.000Z">
+<meta property="article:modified_time" content="2026-02-11T06:23:28.659Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="单例模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407674.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/","path":"2021/08/25/DesignPatterns/实用的设计模式04-单例模式/","title":"实用的设计模式04-单例模式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>实用的设计模式04-单例模式 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E6%80%9D%E8%80%83%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">1、思考如何实现单例模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E6%87%92%E6%B1%89%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">2、懒汉式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E9%A5%BF%E6%B1%89%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">3、饿汉式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4%E3%80%81%E5%8F%8C%E9%87%8D%E6%A3%80%E6%B5%8B%E9%94%81%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">4、双重检测锁式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5%E3%80%81%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">5、静态内部类式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6%E3%80%81%E5%8F%8D%E5%B0%84%E5%AF%B9%E5%8D%95%E4%BE%8B%E7%9A%84%E7%A0%B4%E5%9D%8F"><span class="nav-number">6.</span> <span class="nav-text">6、反射对单例的破坏</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7%E3%80%81%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F%E7%9A%84%E6%9C%80%E4%BC%98%E8%A7%A3%E2%80%93%E6%9E%9A%E4%B8%BE%E5%BC%8F"><span class="nav-number">7.</span> <span class="nav-text">7、单例模式的最优解–枚举式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8%E3%80%81%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">8、总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9%E3%80%81%E8%A1%A5%E5%85%85"><span class="nav-number">9.</span> <span class="nav-text">9、补充</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="实用的设计模式04-单例模式 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实用的设计模式04-单例模式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-25 01:02:37" itemprop="dateCreated datePublished" datetime="2021-08-25T01:02:37+08:00">2021-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>单例模式，简单但是又不简单。简单是指原理很容易懂，即保证一个类只存在一个对象；不简单是指实现方式非常多样，而且需要注意的点非常多。</p>
+</blockquote>
+<h1 id="1、思考如何实现单例模式"><a href="#1、思考如何实现单例模式" class="headerlink" title="1、思考如何实现单例模式"></a>1、思考如何实现单例模式</h1><p>现在我们不去考虑单例模式的标准实现，而是让我们自己考虑，如何再代码中实现让一个类只能实例化一次，为了简单一点，我们先不考虑多线程并发的情况。<br><strong>思考</strong>：</p>
+<ol>
+<li>首先，不能多次实例化，那么构造方法就不能随意调用，我们需要控制对构造方法的调用</li>
+<li>全局唯一，刚好对应的是static的作用，static修饰的变量，是该类所有实例所共有的，如下例：</li>
+</ol>
+<span id="more"></span>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 天空颜色</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">String</span> <span class="variable">color</span> <span class="operator">=</span> <span class="string">&quot;blue&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">color</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;今天的天空颜色是：&quot;</span>+color);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line"></span><br><span class="line">        sky1.color();</span><br><span class="line">        sky2.color();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//修改color</span></span><br><span class="line">        Sky.color = <span class="string">&quot;gray&quot;</span>;</span><br><span class="line"></span><br><span class="line">        sky1.color();</span><br><span class="line">        sky2.color();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出</span><br><span class="line">今天的天空颜色是：blue</span><br><span class="line">今天的天空颜色是：blue</span><br><span class="line">今天的天空颜色是：gray</span><br><span class="line">今天的天空颜色是：gray</span><br></pre></td></tr></table></figure>
+
+
+<p>所以，我们可以在类中添加一个static修饰成员变量 A ，类型就是该类的类型；然后把构造方法改成私有的，并且在类中提供一个静态方法可以返回该类的成员变量 A ，当然返回之前需要先判断A是否为null。</p>
+<h1 id="2、懒汉式"><a href="#2、懒汉式" class="headerlink" title="2、懒汉式"></a>2、懒汉式</h1><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Sky.sky==<span class="literal">null</span>)&#123;</span><br><span class="line">            sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line"></span><br><span class="line">        System.out.println(sky1==sky2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>因为只有在调用<code>Sky.getInstance()</code>之后才会创建对象，像懒汉一样，饿了才去讨饭，所以称为懒汉式。<br>优点是延迟加载，真正用到对象的时候才去实例化，提高了资源利用率。<br>缺点时存在并发访问无效的问题，具体请看下面的双重锁检测。</p>
+<h1 id="3、饿汉式"><a href="#3、饿汉式" class="headerlink" title="3、饿汉式"></a>3、饿汉式</h1><p>上述代码中只有在调用<code>Sky.getInstance()</code>之后才会创建对象，如果想在简单一点可以这样做</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line">        <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line"></span><br><span class="line">        System.out.println(sky1==sky2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>上述代码不管调不调用<code>Sky.getInstance()</code>，对象早就存在，像饿汉一样饥渴，所以称为饿汉式。<br>一般不采用此种方式，因为在类初始化时就创建了对象，有可能这个对象在某些业务逻辑张不会用到，这样就造成了资源浪费。<br>但是也有优点，那就是不存并发访问的问题。</p>
+<h1 id="4、双重检测锁式"><a href="#4、双重检测锁式" class="headerlink" title="4、双重检测锁式"></a>4、双重检测锁式</h1><p>懒汉模式存在并发访问的问题。如下测试：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (Sky.sky==<span class="literal">null</span>)&#123;</span><br><span class="line">            sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">                Sky.getInstance();</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br></pre></td></tr></table></figure>
+<p>可以看到，对象被执行了多次，这显然不符合我们的预期，我们的预期是在程序的整个生命周期，该类只被实例化一次。<br>想要解决这个问题，首先得弄明白问题的根源。代码中创建了20个线程，但是根据输出结果，构造方法被调用了7次，重复执行测试代码发现，构造方法被调用的次数并不完全相同。那这是为什么呢？<br>原因在每个线程中<code>Sky.getInstance();</code>的调用时间，可能存在上一个线程刚刚执行完判断语句，还未创建对象，如下图所示：<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407674.png" alt="在这里插入图片描述"></p>
+<p>解决并发异常，很自然的们会想到锁 。那么加锁就会涉及到两个问题，对谁加锁？加在哪？我们主要讨论锁加载哪的问题。至于对谁加锁，因为我们实在静态方法内部加锁，所以要锁的对象是类的Class对象（不理解的话简单记住就行）。</p>
+<p>情形一：对整个if语句加锁，<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png" alt="在这里插入图片描述"><br>思考以下这种加锁形式可以解决问题？当然是可以的，但是存在很大问题，每个线程都只能等待上个线程执行完if语句块的内容才能接着执行，这样所有的线程就变成了串行执行，对性能的影响十分大。</p>
+<p>情形二：仅仅对if内的new语句加锁<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png" alt="在这里插入图片描述"><br>这种加锁形式也是行不通的，它甚至没有解决并发带来的类重复实例化的问题，还是会导致饿汉式单例模式中的并发问题。</p>
+<p>情形三：最终解决办法，双重检测锁式<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407688.png" alt="在这里插入图片描述"><br>首先不会导致情形一中使得程序串行执行的问题，同时同步语句块内部的if判断语句也解决了类重复实例化的问题</p>
+<p><strong>完整代码：</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (Sky.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                        sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">                Sky.getInstance();</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br></pre></td></tr></table></figure>
+<p>其实情形三到这里还没有结束，因为还存在JVM指令重排的问题，所以完整的双重检测锁式还需在成员变量sky上加上<code>volatile</code>关键字。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * volatile是为了解决指令重排的问题</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br></pre></td></tr></table></figure>
+
+<h1 id="5、静态内部类式"><a href="#5、静态内部类式" class="headerlink" title="5、静态内部类式"></a>5、静态内部类式</h1><p>先看实现代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky2</span> &#123;</span><br><span class="line">    <span class="comment">//静态内部类</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title class_">inner</span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Sky2</span> <span class="variable">sky2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Sky2</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有的构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky2</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky2 <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> inner.sky2;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(()-&gt;&#123;</span><br><span class="line">                Sky2.getInstance();</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br></pre></td></tr></table></figure>
+<p>此种实现方式，乍一看和饿汉模式相同，但实际上并不是，使用静态内部类实现和懒汉模式一样，也是一种懒加载的方式。<br>为什么可以这样？原因在于外部类与静态内部类的加载顺序，外部类初次加载，会初始化静态变量、静态代码块、静态方法，但不会加载内部类和静态内部类，只有在调用静态内部类的方法时候才会初始化，所以就实现了懒加载。<br>所以静态内部类的实现方式结合了懒汉和饿汉式优点，是一种很不错的单例模式实现方式。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://t.csdn.cn/yFdmF">http://t.csdn.cn/yFdmF</a><br>所以修正一下的说法便是，静态内部类单例模式的核心原理为对于一个类，JVM在仅用一个类加载器加载它时，静态变量的赋值在全局只会执行一次！<br>使用静态内部类的优点是：因为外部类对内部类的引用属于被动引用，不属于前面提到的三种必须进行初始化的情况，所以加载类本身并不需要同时加载内部类。在需要实例化该类是才触发内部类的加载以及本类的实例化，做到了延时加载(懒加载)，节约内存。同时因为JVM会保证一个类的()方法(初始化方法)执行时的线程安全，从而保证了实例在全局的唯一性。</p>
+</blockquote>
+<p>使用静态内部类的优点是：因为外部类对内部类的引用属于被动引用，不属于前面提到的三种必须进行初始化的情况，所以加载类本身并不需要同时加载内部类。在需要实例化该类是才触发内部类的加载以及本类的实例化，做到了延时加载(懒加载)，节约内存。同时因为JVM会保证一个类的()方法(初始化方法)执行时的线程安全，从而保证了实例在全局的唯一性。</p>
+<h1 id="6、反射对单例的破坏"><a href="#6、反射对单例的破坏" class="headerlink" title="6、反射对单例的破坏"></a>6、反射对单例的破坏</h1><p>查看如下测试代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * volatile是为了解决指令重排的问题</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (Sky.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                        sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line">		<span class="comment">//拿到构造器</span></span><br><span class="line">        Constructor&lt;Sky&gt; skyConstructor = Sky.class.getDeclaredConstructor(<span class="literal">null</span>);</span><br><span class="line">        skyConstructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">		<span class="comment">//创建对象</span></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> skyConstructor.newInstance(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(sky1);</span><br><span class="line">        System.out.println(sky2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">SingletonPattern.statictest.Sky@23fc625e</span><br><span class="line">SingletonPattern.statictest.Sky@3f99bd52</span><br></pre></td></tr></table></figure>
+<p>可以看到，构造器被执行了两遍，显然与预期不符。<br><strong>问题探究</strong>：为什么使用反射回再次实例化对象？因为<code>Sky.class.getDeclaredConstructor(null);</code>方法可以拿到对象私有的构造器，使用可以实例化对象。<br><strong>解决方式探索</strong>：</p>
+<ol>
+<li>我们能不能阻止反射创建对象，再创建对象之前首先判断对象是否已存在<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407709.png" alt="在这里插入图片描述"><br>因为判空的时候可能会有线程同步到达，所以仍然需要加锁。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * volatile是为了解决指令重排的问题</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (Sky.class)&#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky !=<span class="literal">null</span>)&#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;对象已存在！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (Sky.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                        sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> Sky.getInstance();</span><br><span class="line"></span><br><span class="line">        Constructor&lt;Sky&gt; skyConstructor = Sky.class.getDeclaredConstructor(<span class="literal">null</span>);</span><br><span class="line">        skyConstructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> skyConstructor.newInstance(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(sky1);</span><br><span class="line">        System.out.println(sky2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br><span class="line">Exception in thread <span class="string">&quot;main&quot;</span> java.lang.reflect.InvocationTargetException</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">	at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:<span class="number">45</span>)</span><br><span class="line">	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:<span class="number">500</span>)</span><br><span class="line">	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:<span class="number">481</span>)</span><br><span class="line">	at SingletonPattern.statictest.Sky.main(Sky.java:<span class="number">52</span>)</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">	at java.base/java.lang.reflect.Method.invoke(Method.java:<span class="number">567</span>)</span><br><span class="line">	at com.intellij.rt.execution.application.AppMainV2.main(AppMainV2.java:<span class="number">131</span>)</span><br><span class="line">Caused by: java.lang.Exception: 对象已存在！</span><br><span class="line">	at SingletonPattern.statictest.Sky.&lt;init&gt;(Sky.java:<span class="number">25</span>)</span><br><span class="line">	... <span class="number">11</span> more</span><br></pre></td></tr></table></figure>
+可见，这样就阻止了反射创建对象。<br>但是，上面的测试代码种，两个对象，一个是通过单例获取，一个是通过反射获取，这样是可以的。但是当两个都是反射获取时，因为都是直接调用构造方法，不会执行单例的代码（getInstance()方法种获取单例的代码），也就是<code>private static volatile Sky sky = null;</code>种sky的值一值为空，所以仍然回实例化两次。<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Sky</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * volatile是为了解决指令重排的问题</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="type">Sky</span> <span class="variable">sky</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 私有构造方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="title function_">Sky</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">synchronized</span> (Sky.class)&#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky !=<span class="literal">null</span>)&#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;对象已存在！&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Sky <span class="title function_">getInstance</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">            <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (Sky.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (Sky.sky == <span class="literal">null</span>) &#123;</span><br><span class="line">                        sky = <span class="keyword">new</span> <span class="title class_">Sky</span>();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> sky;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 测试</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//final Sky sky1 = Sky.getInstance();</span></span><br><span class="line"></span><br><span class="line">        Constructor&lt;Sky&gt; skyConstructor = Sky.class.getDeclaredConstructor(<span class="literal">null</span>);</span><br><span class="line">        skyConstructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky1</span> <span class="operator">=</span> skyConstructor.newInstance(<span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">final</span> <span class="type">Sky</span> <span class="variable">sky2</span> <span class="operator">=</span> skyConstructor.newInstance(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(sky1);</span><br><span class="line">        System.out.println(sky2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">输出：</span><br><span class="line">我被创建了</span><br><span class="line">我被创建了</span><br><span class="line">SingletonPattern.statictest.Sky@23fc625e</span><br><span class="line">SingletonPattern.statictest.Sky@3f99bd52</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>最终问题解决</strong>：能不能想办法阻止反射创建对象呢，或者说存不存在某种反射无法创建的对象呢？<br>让我们翻开<code>skyConstructor.newInstance(null);</code>的源码，往下找，可以发现：<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407714.png" alt="在这里插入图片描述"></p>
+<h1 id="7、单例模式的最优解–枚举式"><a href="#7、单例模式的最优解–枚举式" class="headerlink" title="7、单例模式的最优解–枚举式"></a>7、单例模式的最优解–枚举式</h1><p>实现代码，将需要单例的类声明成一个枚举类型，关于枚举类型的详细说明这里就不探讨了，不熟悉的朋友可以去再回顾一下。<br>枚举主要有以下特点：</p>
+<ol>
+<li>构造方法天生就是私有的；</li>
+<li>枚举对象无法通过反射创建；</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">EnumSky</span> &#123;</span><br><span class="line">    <span class="comment">/*实例*/</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">color</span> <span class="operator">=</span> <span class="string">&quot;blue&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getColor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> color;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setColor</span><span class="params">(String color)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.color = color;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构造方法默认就是私有的</span></span><br><span class="line">    EnumSky()&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">color</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;今天的天空颜色是：&quot;</span>+color);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">EnumSky</span> <span class="variable">sky1</span> <span class="operator">=</span> EnumSky.INSTANCE;</span><br><span class="line">            <span class="type">EnumSky</span> <span class="variable">sky2</span> <span class="operator">=</span> EnumSky.INSTANCE;</span><br><span class="line">            Class[] params = &#123;String.class,<span class="type">int</span>.class&#125;;</span><br><span class="line">            Constructor&lt;EnumSky&gt; constructor = EnumSky.class.getDeclaredConstructor(params);</span><br><span class="line">            constructor.setAccessible(<span class="literal">true</span>);</span><br><span class="line">            <span class="type">EnumSky</span> <span class="variable">sky3</span> <span class="operator">=</span> constructor.newInstance(<span class="literal">null</span>);</span><br><span class="line"></span><br><span class="line">            System.out.println(sky1);</span><br><span class="line">            System.out.println(sky2);</span><br><span class="line">            System.out.println(sky3);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">输出：</span><br><span class="line">我被创建了！</span><br><span class="line">java.lang.IllegalArgumentException: Cannot reflectively create <span class="keyword">enum</span> <span class="title class_">objects</span></span><br><span class="line">	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:<span class="number">493</span>)</span><br><span class="line">	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:<span class="number">481</span>)</span><br><span class="line">	at SingletonPattern.statictest.Test.main(Test.java:<span class="number">19</span>)</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:<span class="number">62</span>)</span><br><span class="line">	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:<span class="number">43</span>)</span><br><span class="line">	at java.base/java.lang.reflect.Method.invoke(Method.java:<span class="number">567</span>)</span><br><span class="line">	at com.intellij.rt.execution.application.AppMainV2.main(AppMainV2.java:<span class="number">131</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>测试结果可以看到，不仅单例，而且无法反射创建，解决了反射破坏单例的问题。</p>
+<h1 id="8、总结"><a href="#8、总结" class="headerlink" title="8、总结"></a>8、总结</h1><p>单例模式实现方式众多，最安全的方式就是采用枚举类，但是上面所说的众多方式都是默认需要单例的类由我们自己实现。但是再实际场景中，需要单例创建的类很多并不似由我们自己定义，而且引用的已有的类。非常典型的一个例子就是窗体程序的开发，很多时候我们想要某个窗体是单例创建的，这时候应该怎么做的呢？其实这种情况下无法保证绝对安全的单例，因为它是个普通的类，一定可以反射创建。所以只能是我们去实现一个另外一个类来控制该类的实例化，凡是需要该类实例的情况都使通过我们自定义的类来实现。</p>
+<p>作为控制实例化的类，上述的几种方式都可以，无非是将需要单例的类的实例作为我们创建的控制类的一个成员变量而已。下面我们使用枚举的方式来创建一个单例的JFrame类。</p>
+<p><em>说明：JFrame就是一个窗体类，贴一下JDK中的描述</em><br><em>An extended version of java.awt.Frame that adds support for the JFC&#x2F;Swing component architecture. You can find task-oriented documentation about using JFrame in The Java Tutorial, in the section [How to Make Frames]</em>(<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html">https://docs.oracle.com/javase/tutorial/uiswing/components/frame.html</a>).</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> <span class="title class_">SingletonJFrame</span> &#123;</span><br><span class="line">    <span class="comment">/**实例*/</span></span><br><span class="line">    INSTANCE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> JFrame frame;</span><br><span class="line"></span><br><span class="line">    SingletonJFrame()&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我被创建了！&quot;</span>);</span><br><span class="line">        frame = <span class="keyword">new</span> <span class="title class_">JFrame</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> JFrame <span class="title function_">getInstance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> frame;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">JFrame</span> <span class="variable">instance1</span> <span class="operator">=</span> SingletonJFrame.INSTANCE.getInstance();</span><br><span class="line">        <span class="type">JFrame</span> <span class="variable">instance2</span> <span class="operator">=</span> SingletonJFrame.INSTANCE.getInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">输出：</span><br><span class="line">我被创建了！</span><br></pre></td></tr></table></figure>
+
+<h1 id="9、补充"><a href="#9、补充" class="headerlink" title="9、补充"></a>9、补充</h1><ol>
+<li><p>如何解决序列化破坏单例的问题<br>在把一个对象反序列化后，也会创建出一个对象的示例，可能存在多次反序列化导致单例破坏的情况，可采用如下方法解决：在类中新建一个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> Object <span class="title function_">readResolve</span><span class="params">()</span> &#123;</span><br><span class="line"> 	<span class="keyword">return</span> INSTANCE;<span class="comment">//将单例对象返回，这样反序列化时就不会再次创建对象了</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：枚举单例不会存在反序列化问题。</p>
+</li>
+<li><p>单例类最好用final修饰，这样可一避免子类对破环单例。</p>
+</li>
+</ol>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+              <a href="/tags/%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" rel="tag"># 单例模式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/25/Tools/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/" rel="prev" title="SpringCloudAlibaba微服务环境搭建版本冲突避坑指南">
+                  <i class="fa fa-angle-left"></i> SpringCloudAlibaba微服务环境搭建版本冲突避坑指南
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/30/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F05-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="next" title="实用的设计模式05-原型模式">
+                  实用的设计模式05-原型模式 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">199k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

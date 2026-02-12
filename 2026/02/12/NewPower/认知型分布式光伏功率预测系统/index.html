@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="可行性分析传统的LSTM、XGBoost或Transformer变体（如Informer）对数值型数据（历史功率、辐照度、温度）处理极佳，但对文本型数据（运维日志、天气预警文本、设备检修单）无能为力。例如，如果运维人员提交了一条“3号汇流箱下午2点检修”的文本记录，传统模型无法读取，导致预测偏高。LLM可以理解非结构化数据（如“受台风外围气流影响，午后可能有短时强降水”），同时结合RAG知识增强，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="认知型分布式光伏功率预测系统">
+<meta property="og:url" content="https://18253321614.github.io/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="可行性分析传统的LSTM、XGBoost或Transformer变体（如Informer）对数值型数据（历史功率、辐照度、温度）处理极佳，但对文本型数据（运维日志、天气预警文本、设备检修单）无能为力。例如，如果运维人员提交了一条“3号汇流箱下午2点检修”的文本记录，传统模型无法读取，导致预测偏高。LLM可以理解非结构化数据（如“受台风外围气流影响，午后可能有短时强降水”），同时结合RAG知识增强，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111307830.png">
+<meta property="article:published_time" content="2026-02-12T01:42:20.000Z">
+<meta property="article:modified_time" content="2026-02-12T11:05:48.898Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="分布式光伏">
+<meta property="article:tag" content="功率预测">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111307830.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/","path":"2026/02/12/NewPower/认知型分布式光伏功率预测系统/","title":"认知型分布式光伏功率预测系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>认知型分布式光伏功率预测系统 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E8%A1%8C%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">可行性分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%9E%E5%93%81%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">竞品分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%A7%E5%93%81%E6%9E%B6%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">产品架构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%A8%A1%E5%9D%97"><span class="nav-number">4.</span> <span class="nav-text">功能模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E4%BF%AE%E6%AD%A3"><span class="nav-number">4.1.</span> <span class="nav-text">结果修正</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%AF%8A%E6%96%AD"><span class="nav-number">4.2.</span> <span class="nav-text">故障诊断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%B7%E5%90%AF%E5%8A%A8"><span class="nav-number">4.3.</span> <span class="nav-text">冷启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E6%9C%9F%E8%AE%B0%E5%BF%86"><span class="nav-number">4.4.</span> <span class="nav-text">长期记忆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%BA%E8%83%BD%E4%BA%A4%E4%BA%92"><span class="nav-number">4.5.</span> <span class="nav-text">智能交互</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E4%BB%B7%E5%80%BC"><span class="nav-number">5.</span> <span class="nav-text">客户价值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E6%9C%AC"><span class="nav-number">5.1.</span> <span class="nav-text">降本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A2%9E%E6%95%88"><span class="nav-number">5.2.</span> <span class="nav-text">增效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E9%99%A9"><span class="nav-number">5.3.</span> <span class="nav-text">避险</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E5%88%86%E6%9E%90"><span class="nav-number">6.</span> <span class="nav-text">风险分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E5%8A%9B%E6%88%90%E6%9C%AC%E9%AB%98"><span class="nav-number">6.1.</span> <span class="nav-text">算力成本高</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%A3%8E%E9%99%A9"><span class="nav-number">6.2.</span> <span class="nav-text">安全风险</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E6%95%88%E6%80%A7"><span class="nav-number">6.3.</span> <span class="nav-text">时效性</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="认知型分布式光伏功率预测系统 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          认知型分布式光伏功率预测系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-12 09:42:20" itemprop="dateCreated datePublished" datetime="2026-02-12T09:42:20+08:00">2026-02-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%96%B0%E8%83%BD%E6%BA%90/" itemprop="url" rel="index"><span itemprop="name">新能源</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="可行性分析"><a href="#可行性分析" class="headerlink" title="可行性分析"></a>可行性分析</h2><p>传统的LSTM、XGBoost或Transformer变体（如Informer）对<strong>数值型</strong>数据（历史功率、辐照度、温度）处理极佳，但对<strong>文本型</strong>数据（运维日志、天气预警文本、设备检修单）无能为力。例如，如果运维人员提交了一条“3号汇流箱下午2点检修”的文本记录，传统模型无法读取，导致预测偏高。LLM可以理解非结构化数据（如“受台风外围气流影响，午后可能有短时强降水”），同时结合RAG知识增强，检索该电站的历史类似气象日的表现、检索电站的物理拓扑信息、检索最新的设备维护手册或日志，完成数据修正、结果解释、可视化展示、运维辅助、智能交互等功能。</p>
+<span id="more"></span>
+
+<p>直接让deepseek等通用大模型进行数值预测（Time-Series Forecasting），其精度通常低于专用的小模型（如LightGBM），且存在幻觉风险。采用 “传统时序模型（Base）+ LLM（Agent）” 的混合架构。传统时序模型负责基准功率预测，保证下限，同时使用LLM+RAG进行校正，通过读取天气描述、运维日志，检索历史相似情形，得到微调系数后对时序模型的结果进行修正。</p>
+<h2 id="竞品分析"><a href="#竞品分析" class="headerlink" title="竞品分析"></a>竞品分析</h2><p>报告选择了国新日能、金风科技、中国华电三家公司进行产品对比：</p>
+<ul>
+<li>国新日能成立与2008年，，总部位于北京，2024年在创业板上市，是功率预测领域龙头企业，市场占有率长期居前，定位为新能源数字化服务商，不持有电站资产，专注软件与数据服务，是典型的“轻资产、高技术”型能源科技公司。</li>
+<li>金风科技前身为新疆风电研究所，20021年成立公司。总部位于乌鲁木齐，2007年、2010年分别在深交所和港交所上市，是全球领先的风电整机制造商，定位是全球清洁能源整体解决方案提供商，兼具“重资产”（风机制造、电站投资）与“轻资产”（技术服务、软件平台）双重属性。</li>
+<li>中国华电成立为2002年，总部位于北京，属于央企，核心业务以电力生产与热力供应为主，定位是传统发电央企向绿色低碳转型的代表，核心优势在于资源获取、项目开发与并网协调能力。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>国能日新</th>
+<th>金风科技</th>
+<th>中国华电</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>核心技术路线</td>
+<td>自研“旷冥”新能源大模型（3.0版，2025年8月发布），融合AI大模型+传统时序算法</td>
+<td>“新一代智能化风光功率预测技术”，基于大模型深度赋能，融合6700+场站数据</td>
+<td>以自研气象-功率耦合模型为主，部分试点引入AI辅助，但未公开大模型应用</td>
+</tr>
+<tr>
+<td>是否明确使用LLM</td>
+<td>✅ 是。”旷冥”为垂直领域大模型，用于中长期趋势研判、极端天气响应、电力交易策略等</td>
+<td>✅ 是。构建区域气象大模型，用于提升短期&#x2F;中期风速与功率预测精度</td>
+<td>❌ 否。未见公开披露使用通用或垂直大语言模型，仍以物理+统计模型为主</td>
+</tr>
+<tr>
+<td>是否具备RAG能力</td>
+<td>⭕ 部分具备。通过融合实时气象、历史功率、电网调度指令等多源异构数据，实现动态上下文增强，接近RAG理念</td>
+<td>⭕ 部分具备。建立“三维立体-网站联动-动态验证”极端天气采集体系，可视为一种结构化RAG机制</td>
+<td>❌ 未见明确RAG架构设计，数据融合方式偏静态</td>
+</tr>
+<tr>
+<td>分布式光伏支持</td>
+<td>✅ 强项。积极响应国家“四可”（可观、可测、可调、可控）政策，推出全系列分布式功率预测软硬件方案</td>
+<td>⭕ 支持，但重心仍在集中式风光电站；分布式作为资产管理和光储协同的一部分</td>
+<td>✅ 支持，依托旗下华电福新等平台推进分布式项目，但预测系统多为内部使用，商业化程度低</td>
+</tr>
+<tr>
+<td>数据规模与颗粒度</td>
+<td>截至2025年中，服务电站5,461家；空间分辨率未明确，但强调“细化气象要素预测颗粒度”</td>
+<td>超6700个新能源场站，总容量623GW；空间分辨率达100米（显著优于行业）</td>
+<td>数据规模庞大（央企背景），但未公开具体预测业务数据细节</td>
+</tr>
+<tr>
+<td>极端天气应对</td>
+<td>借助大模型提升极端天气识别与响应能力</td>
+<td>覆冰&#x2F;覆沙场景下预测准确率分别提升5%&#x2F;8%</td>
+<td>依赖传统气象预警+人工干预，智能化程度相对较低</td>
+</tr>
+<tr>
+<td>标准化与生态</td>
+<td>参与行业讨论，但未主导标准制定</td>
+<td>✅ 主导制定《风电场风速短期和超短期预报准确性评判方法》（QX&#x2F;T 243—2024）</td>
+<td>参与电力调度标准，但功率预测标准话语权较弱</td>
+</tr>
+<tr>
+<td>商业模式</td>
+<td>SaaS+软件销售+资产运营（日新鸿晟）</td>
+<td>预测即服务（PaaS）+ 全生命周期资产管理</td>
+<td>内部使用为主，少量对外技术服务</td>
+</tr>
+</tbody></table>
+<p>国新日能作为细分行业龙头企业，已经在业内率先提出光伏功率预测融合大模型的路线，尤其是“旷冥”新能源大模型的发布，在一定程度也证明该路线的可行性，目前旷冥大模型已接入并服务近6000家新能源场站，并在极端长场景下表现了良好的预测能力。金风科技业务风电为主，其产品聚焦在风光功率预测，其新一代风光功率预测技术以大模型进行深度赋能，融合多场站数据，构建了气象大模型，基于此构建的功率预测系统获得了自治区科技进步一等奖。中国华电联合华为等公司联合推出了基于AI大模型技术新能源气象功率预测解决方案，但该方案中重点解决的功率预测中的气象预测问题，使用盘古大模型和云溪微观气象引擎，子公司华电福新是其新能源开发主力平台，但产品主要用于内部，商业化程度较低。</p>
+<p>通过分析可以得出结论，大模型在功率预测中的融合应用已成为趋势，但在应用深度方面还有待挖掘，例如部分国内创新型能源AI公司，例如远景能源，开始尝试用“能源大模型”做交互式问答（BI），但在预测核心流中引入RAG做实时校正的极少。</p>
+<h2 id="产品架构"><a href="#产品架构" class="headerlink" title="产品架构"></a>产品架构</h2><p>产品架构分为三层，最底层是数据感知与检索层，中间是混合推理层，最上层是交互应用，如图1所示：</p>
+<img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111307830.png" alt="image-20260211130711712" style="zoom:80%;" />
+
+<p>在数据感知与检索层中，数值输入模块主要获取电站运行数据，如发电功率数据、数值天气预报、辐照度数据等，让时序模型进行功率预测。文本输入模块用来获取电站临时的一些信息，例如组件清晰计划等。RAG知识库作为LLM推理的核心信息来源，包含静态数据和动态数据，静态数据即电站相关参数，动态数据则是历史异常时间列表、说明手册等，需要更新的数据。</p>
+<p>在混合推理层，包含LLM、时序预模型、决策模块、意识识别与路由四部分，时序模型负责根据数值数据完成基准功率预测，LLM则根据功率预测结果和RAG知识库中的有关信息，例如当天天气情况、是否有作业任务、历史相数值数据时的输出等进行推理修正，若出现问题则根据历史故障信息、操作手册等数据进行故障诊断，将修正参数与诊断结论发送给运维人员，运维人员确认后，根据融合决策策略进行预测结果修正，并将想过结论结论写入记忆文件，最终输出完整预测结果和结论。意识识别与路由模块负责快速判断输入文本的意图和价值，从而判断是否调用LLM完成推理，其本身是一个LLM蒸馏得到的小模型，用于完成简单任务，从而降低成本。</p>
+<p>在交互层包含数据预测大屏和智能问答窗口，会和推理层完成功率预测结果的修正后通过数据大屏进行显示。智能问答窗口是用户与系统交互的核心，例如进行文本输入，告诉LLM明天有面板清理计划，LLM会记忆下来用于对第二天的预测结果进行修正。</p>
+<h2 id="功能模块"><a href="#功能模块" class="headerlink" title="功能模块"></a>功能模块</h2><h3 id="结果修正"><a href="#结果修正" class="headerlink" title="结果修正"></a>结果修正</h3><ol>
+<li><p>物理合规性修正：功率预测应该在[0,装机容量]之间；LLM根据日出日落时间强制归零；</p>
+</li>
+<li><p>实时误差动态修正：监测过去 4 小时的预测误差。如果发现模型持续偏高 5%（例如因组件积灰导致），则自动将未来预测值下调 5%。</p>
+</li>
+<li><p>RAG 事件驱动修正：</p>
+<ul>
+<li><p>限电指令响应 ：当接收到电网调度的“限电通知”（文本输入）时，检索 RAG 知识库中的限电策略（如“削峰至 80%”），强制压低预测曲线。</p>
+</li>
+<li><p>设备故障响应 ：当数据采集系统系统上报故障代码（如 E001 ）时，检索故障影响库，根据故障类型自动扣减功率（全停或降额）。</p>
+</li>
+<li><p>运维计划对齐 ：接收到临时工作计划通知是，自动调整预测值（清洗时段功率为0，清洗后效率提升）。</p>
+</li>
+</ul>
+</li>
+<li><p>复杂环境场景修正：对非常规气象情形进行修正</p>
+<ul>
+<li><p>积雪&#x2F;遮挡修正 ：当气象预报为“大雪”且气温低于 0℃ 时，即使辐照度正常，也大幅下调预测值（因为组件被雪覆盖）。</p>
+</li>
+<li><p>阴影遮挡修正 ：针对分布式电站特有的“女儿墙&#x2F;树木遮挡”，基于 RAG 中的“季节性阴影分析报告”，在特定月份的特定时段（如冬至日下午 3 点后）扣减功率。</p>
+</li>
+<li><p>极端天气熔断 ：遇到台风、冰雹等极端预警，自动切换到“保守模式”或触发人工审核。</p>
+</li>
+</ul>
+</li>
+<li><p>人工干预与策略下发：允许专家经验介入，并将专家的调整转化为模型的“长期记忆”。</p>
+<ul>
+<li><p>专家策略叠加 ：允许运维人员手动输入修正系数（如“明天全站停电检修，预测置 0”）。</p>
+</li>
+<li><p>策略反馈学习 ：记录人工修改的历史（如“专家在雨后将预测值上调了 2%”），通过 RAG 的 Few-shot 机制，让模型学会下次自动应用该策略。</p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="故障诊断"><a href="#故障诊断" class="headerlink" title="故障诊断"></a>故障诊断</h3><ol>
+<li><p>多维异常感知功能：传统系统只看“阈值”（如电流超过 10A 报警），而智能诊断需要看“逻辑”</p>
+<ul>
+<li><p>设备状态感知 ：直接解析逆变器、汇流箱上报的 错误代码 (Error Codes)</p>
+</li>
+<li><p>性能偏差感知：实时计算 理论功率 （基于气象数据）与 实际功率 的偏差，当 实际功率 &lt; 理论功率 * 80% 且持续 15 分钟以上时，触发“低效告警”</p>
+</li>
+<li><p>数据质量感知：识别传感器故障（如辐照度卡死、温度漂移）等情况</p>
+</li>
+</ul>
+</li>
+<li><p>智能根因分析功能：回答为什么发电低</p>
+<ul>
+<li>内外部因素剥离：区分 “天灾” （阴雨、积雪、沙尘）与 “人祸&#x2F;设备故障” （跳闸、积灰、遮挡）</li>
+<li>故障模式识别 ：识别并区分阴影遮挡、组件机会、组串短路等不同情况</li>
+</ul>
+</li>
+<li><p>运维决策支持：利用 RAG 检索设备维修手册，提供解决方案，</p>
+</li>
+</ol>
+<h3 id="冷启动"><a href="#冷启动" class="headerlink" title="冷启动"></a>冷启动</h3><p>在传统模式下，新建电站如果没有积累3-6个月的数据，模型基本不可用。在当前产品架构中，可以基于属性相似度的知识迁移，利用LLM和RAG在找到相似配置环境状况的电站的数据并结合生成式数据增强来预测：</p>
+<ol>
+<li>新电站接入后，建立元数据描述文档，包含经纬度、海拔、组件类型、装机容量等数据，LLM使用自然语言描述。</li>
+<li>在RAG数据库中基于相似度进行检索。</li>
+<li>提取相似电站在当前气象预报下的历史功率曲线，LLM根据两个电站的差异在LLM推理下生成迁移数据。</li>
+<li>利用迁移数据微调时序模型进行新电站的功率预测。</li>
+<li>随着新电站不断产生数据，逐步降低RAG数据的权重，增加真实数据的权重，在一段时间后实现平滑过渡。</li>
+</ol>
+<h3 id="长期记忆"><a href="#长期记忆" class="headerlink" title="长期记忆"></a>长期记忆</h3><ol>
+<li>电站画像记忆：存储每个电站独特的元数据</li>
+<li>运维经验记忆：记录历史发生的“异常事件”及其“解决结果”，用于 RAG 的 Few-shot 检索，创建故障案例库和限电策略库。</li>
+<li>预测修正记忆：记录“模型预测错”和“人工修对”的差值，形成闭环学习。包含记录预测值与实际值的偏差、用户手动修改预测值的操作等</li>
+<li>用户偏好记忆：记住用户的个性化习惯，例如用户喜欢看“简报”还是“详细数据表格”等</li>
+</ol>
+<h3 id="智能交互"><a href="#智能交互" class="headerlink" title="智能交互"></a>智能交互</h3><p>该模块的核心目标是执行与反馈 ，它要从“被动查询工具”进化为“主动工作伙伴”。</p>
+<ol>
+<li>拟人化专家问答：基于 RAG 的自然语言问答<ul>
+<li>故障诊断 ：基于现象推理原因</li>
+<li>政策&#x2F;标准查询 ：例如“现在的光伏并网补贴政策是什么？”</li>
+<li>多模态交互 ：支持用户上传一张“组件照片”，AI 识别是否有裂纹或积灰</li>
+</ul>
+</li>
+<li>信息主动推送：不要等用户问，系统自己发现问题并“拍一拍”用户，例如“检测到明日有台风，根据历史经验，建议提前检查压块稳固性”、每周五自动生成《周运行分析报告》PDF并通过邮件发送给站长等。</li>
+<li>API扩展能力，即提供工具调用能力，支持与其他系统交互，例如检测到故障自动生产工单发送到工单系统。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th><strong>模块</strong></th>
+<th><strong>核心产出</strong></th>
+<th><strong>协同关系</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>冷启动</strong></td>
+<td>初始预测能力</td>
+<td>为新场站提供第一版曲线</td>
+</tr>
+<tr>
+<td><strong>结果修正</strong></td>
+<td>精准实时曲线</td>
+<td>捕捉突发变化，是预测的主逻辑</td>
+</tr>
+<tr>
+<td><strong>故障诊断</strong></td>
+<td>根因报告</td>
+<td>解释预测偏低的原因，反馈至“长期记忆”</td>
+</tr>
+<tr>
+<td><strong>长期记忆</strong></td>
+<td>场站个性化知识</td>
+<td>优化“预测值修正”的精准度</td>
+</tr>
+<tr>
+<td><strong>智能交互</strong></td>
+<td>用户价值呈现</td>
+<td>承载上述所有模块的输出</td>
+</tr>
+</tbody></table>
+<h2 id="客户价值"><a href="#客户价值" class="headerlink" title="客户价值"></a>客户价值</h2><h3 id="降本"><a href="#降本" class="headerlink" title="降本"></a>降本</h3><p>解决传统运维依赖人工巡检，大量时间浪费在“假报警”和“无效上站”上。通过 RAG 识别传感器故障，减少误报。同时在派单前已明确故障原因（如“逆变器接地”），运维人员可携带正确备件一次修复，减少“二次上站”。</p>
+<h3 id="增效"><a href="#增效" class="headerlink" title="增效"></a>增效</h3><p>组件积灰、阴影遮挡等“软故障”往往被忽视，导致长期隐性损失。通过实时计算实时计算 系统效率值，发现低效电站，并结合天气预报结合天气预报（“明天有雨，不用洗” vs “未来一周晴，赶紧洗”），优化清洗时机。</p>
+<h3 id="避险"><a href="#避险" class="headerlink" title="避险"></a>避险</h3><p>应对电网对功率预测准确率考核。 在台风、暴雨、限电等场景下，RAG 检索历史策略，自动修正预测值，避免“断崖式”偏差。</p>
+<h2 id="风险分析"><a href="#风险分析" class="headerlink" title="风险分析"></a>风险分析</h2><h3 id="算力成本高"><a href="#算力成本高" class="headerlink" title="算力成本高"></a>算力成本高</h3><p>分布式电站数量庞大（成千上万个）。如果对每个电站、每 15 分钟都调用一次 GPT-4 级别的模型进行预测，假设单次调用成本 0.1 元。则1万个电站的年成本为3500万元，这使得分布式光伏本就微薄的利润更加雪上加霜。</p>
+<p>（1）解决方案是使用分级路由架构，在95%的常规下使用时序模型直接完成预测，大模型不干预，只有当天气突变、故障报警、临时计划时进行调用。</p>
+<p>（2）将故障诊断、分析报告等功能作为增值服务</p>
+<p>（3）使用量化模型或蒸馏模型部署在端侧硬件上</p>
+<h3 id="安全风险"><a href="#安全风险" class="headerlink" title="安全风险"></a>安全风险</h3><p>大模型本质是“文字接龙”的概率模型，同样的输入可能生成不同的输出。同时受制于上下文和训练语料可能会产生幻觉，这对电网调度来说是不可接受的。</p>
+<p>（1）规则限制与人在闭环，规则限制是底线，由确定性的代码逻辑执行；对于高风险和模糊场景的决策需要人工确认方可执行。</p>
+<p>（2）避免LLM参与数值运算，制作决策，输出修正参数后通过物理公式得到最终预测</p>
+<p>（3）增加置信度熔断：LLM预测损失值低于某个阈值的值，进行舍弃</p>
+<h3 id="时效性"><a href="#时效性" class="headerlink" title="时效性"></a>时效性</h3><p>电网调度通常要求秒级响应，LLM的推理时长无法满足实时控制需求。</p>
+<p>可采用异步修正的模式，电网指令响应还是交由时序模型，大模型异步生成修正系数。时序模型在生成数据时，尝试读最新修正系数，成功则应用修正，失败则上传元数据。</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F/" rel="tag"># 分布式光伏</a>
+              <a href="/tags/%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B/" rel="tag"># 功率预测</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/04/NewPower/%E9%80%86%E5%8F%98%E5%99%A8/" rel="prev" title="逆变器">
+                  <i class="fa fa-angle-left"></i> 逆变器
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">199k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

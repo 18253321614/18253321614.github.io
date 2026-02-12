@@ -170,18 +170,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">51</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-count">72</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -215,7 +215,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/10/05/java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A8%8D%E5%BE%AE%E9%AB%98%E7%BA%A7%E4%B8%80%E7%82%B9%E7%9A%84%E7%94%A8%E6%B3%95/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/12/06/CSBasics/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -233,7 +233,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/10/05/java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A8%8D%E5%BE%AE%E9%AB%98%E7%BA%A7%E4%B8%80%E7%82%B9%E7%9A%84%E7%94%A8%E6%B3%95/" class="post-title-link" itemprop="url">java正则表达式稍微高级一点的用法</a>
+          <a href="/2023/12/06/CSBasics/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/" class="post-title-link" itemprop="url">RFID工作原理浅析</a>
         </h2>
 
         <div class="post-meta-container">
@@ -244,7 +244,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-10-05 22:01:21" itemprop="dateCreated datePublished" datetime="2022-10-05T22:01:21+08:00">2022-10-05</time>
+      <time title="创建时间：2023-12-06 14:30:14" itemprop="dateCreated datePublished" datetime="2023-12-06T14:30:14+08:00">2023-12-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -252,7 +252,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+          <a href="/categories/%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">技术</span></a>
         </span>
     </span>
 
@@ -263,14 +263,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.2k</span>
+      <span>1.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -281,90 +281,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="1、基础语法回顾"><a href="#1、基础语法回顾" class="headerlink" title="1、基础语法回顾"></a>1、基础语法回顾</h2><table>
-<thead>
-<tr>
-<th>符号</th>
-<th>含义</th>
-<th>示例</th>
-<th>示例描述</th>
-<th>其他示例</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>\\b</code></td>
-<td>匹配目标字符串的边界，边界指的是串的最后或者空格之前</td>
-<td><code>wang\\b</code></td>
-<td>匹配边界的wang</td>
-<td></td>
-</tr>
-<tr>
-<td><code>\\B</code></td>
-<td>匹配目标字符串的非边界</td>
-<td><code>wang\\B</code></td>
-<td>匹配非边界的wang</td>
-<td></td>
-</tr>
-<tr>
-<td><code>\\d和\\D</code>,<code>\\w和\\W</code></td>
-<td><code>\\d和\\D</code>表示<code>[0-9]</code>和<code>[^0-9]</code>，<code>\\w和\\W</code>表示<code>[0-9a-zA-Z]</code>和<code>[^0-9a-zA-Z]</code></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>&#96;</td>
-<td>&#96;</td>
-<td>匹配｜前或者后面的表达式</td>
-<td>ab|cd</td>
-<td>匹配ab或者cd</td>
-</tr>
-<tr>
-<td><code>？</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td>？只是作用于离它最近的字符生效。</td>
-</tr>
-<tr>
-<td><code>(?!)</code></td>
-<td></td>
-<td><code>a(?i)bc</code></td>
-<td>匹配abc字符,abc不区分大小写，只有b不区分大小写</td>
-<td></td>
-</tr>
-<tr>
-<td>&#96;&#96;</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>&#96;&#96;</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>&#96;&#96;</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>&#96;&#96;</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+          <p>rfid（Radio Frequency Identification，射频识别）本质上是一种无线通信方式，可以以非接触的方式与特定器械进行数据交换。一个rfid系统至少需要3个方面组成：</p>
+<ul>
+<li>rfid标签：标签内部可以存储数据。</li>
+<li>读写器：读写器可以向标签中读取或写入数据。</li>
+<li>软件系统：软件从读写器中获取从标标签中获取的数据进行处理。</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/10/05/java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A8%8D%E5%BE%AE%E9%AB%98%E7%BA%A7%E4%B8%80%E7%82%B9%E7%9A%84%E7%94%A8%E6%B3%95/#more" rel="contents">
+              <a class="btn" href="/2023/12/06/CSBasics/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -395,7 +320,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/05/09/jvm%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/07/14/CSBasics/https%E7%9A%84%E8%AF%81%E4%B9%A6%E6%9C%BA%E5%88%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -413,7 +338,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/09/jvm%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92/" class="post-title-link" itemprop="url">jvm指令重排</a>
+          <a href="/2022/07/14/CSBasics/https%E7%9A%84%E8%AF%81%E4%B9%A6%E6%9C%BA%E5%88%B6/" class="post-title-link" itemprop="url">https的证书机制</a>
         </h2>
 
         <div class="post-meta-container">
@@ -424,7 +349,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-05-09 10:24:01" itemprop="dateCreated datePublished" datetime="2022-05-09T10:24:01+08:00">2022-05-09</time>
+      <time title="创建时间：2022-07-14 17:28:14" itemprop="dateCreated datePublished" datetime="2022-07-14T17:28:14+08:00">2022-07-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -432,7 +357,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
         </span>
     </span>
 
@@ -443,7 +368,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2k</span>
+      <span>2.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -462,11 +387,11 @@
     
     <div class="post-body" itemprop="articleBody">
           <blockquote>
-<p>JVM会在不影响正确性的前提下调整语句（指令）的顺序。</p>
+<p>参考：（1）<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45901741/article/details/119223513">HTTPS的加密方式超详细解读_渔火愁眠__CSDN</a> （2）<a target="_blank" rel="noopener" href="https://blog.csdn.net/codeyanbao/article/details/111569150">通俗易懂的带你了解HTTPS的原理_IT烂笔头_CSDN</a>（3）<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/67762134">网站向CA申请的数字安全证书可能被盗用吗？</a>（4）<a target="_blank" rel="noopener" href="https://www.cnblogs.com/007sx/p/10987906.html">rsa公钥和私钥到底哪个才是用来加密，哪个用来解密？</a></p>
 </blockquote>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/05/09/jvm%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92/#more" rel="contents">
+              <a class="btn" href="/2022/07/14/CSBasics/https%E7%9A%84%E8%AF%81%E4%B9%A6%E6%9C%BA%E5%88%B6/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -497,7 +422,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/10/21/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/06/19/CSBasics/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -515,109 +440,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/10/21/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/" class="post-title-link" itemprop="url">mybatis动态sql一对多查询</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-10-21 18:52:15" itemprop="dateCreated datePublished" datetime="2023-10-21T18:52:15+08:00">2023-10-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>在数据库设计中，一对多关系是非常多的，例如消息通知和附件，一个消息通知中往往会包含多个附件，这种情况下使用mybatis动态sql可以很方便的查询出来。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/10/21/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/" class="post-title-link" itemprop="url">linux常用命令-查询手册</a>
+          <a href="/2021/06/19/CSBasics/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/" class="post-title-link" itemprop="url">linux常用命令-查询手册</a>
         </h2>
 
         <div class="post-meta-container">
@@ -672,8 +495,10 @@
 <p>注意：1、&lt;&gt;代表是必填项，[]表示是选填项。真正填入的时候不需要加&lt;&gt;和[]；2、本文命令以cenos7为例进行测试。</p>
 </blockquote>
 <h3 id="〇、连接远程linux主机"><a href="#〇、连接远程linux主机" class="headerlink" title="〇、连接远程linux主机"></a>〇、连接远程linux主机</h3><ul>
-<li>使用ssh命令（linux主机需要开启ssh服务）：<code>ssh &lt;用户名&gt;@&lt;主机IP&gt;</code>，例：ssh <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#48;&#49;&#46;&#51;&#x32;&#x2e;&#49;&#x35;&#x35;&#46;&#49;&#x30;&#48;">&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#48;&#49;&#46;&#51;&#x32;&#x2e;&#49;&#x35;&#x35;&#46;&#49;&#x30;&#48;</a><br>之后会提示输入用户密码，正确输入密码即可进入。</li>
+<li>使用ssh命令（linux主机需要开启ssh服务）：<code>ssh &lt;用户名&gt;@&lt;主机IP&gt;</code>，例：ssh <a href="mailto:&#x72;&#x6f;&#111;&#116;&#64;&#49;&#x30;&#x31;&#46;&#x33;&#50;&#46;&#49;&#x35;&#x35;&#x2e;&#49;&#x30;&#x30;">&#x72;&#x6f;&#111;&#116;&#64;&#49;&#x30;&#x31;&#46;&#x33;&#50;&#46;&#49;&#x35;&#x35;&#x2e;&#49;&#x30;&#x30;</a><br>之后会提示输入用户密码，正确输入密码即可进入。</li>
 </ul>
+<!-- more -->
+
 <hr>
 <h3 id="一、日常使用命令"><a href="#一、日常使用命令" class="headerlink" title="一、日常使用命令"></a>一、日常使用命令</h3><h4 id="1、开关机命令"><a href="#1、开关机命令" class="headerlink" title="1、开关机命令"></a>1、开关机命令</h4><ol>
 <li><code>shutdown -h now</code>：现在关机</li>
@@ -1018,7 +843,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/10/21/mysql8%E5%AE%89%E8%A3%85-Windows/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1036,7 +861,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/10/21/mysql8%E5%AE%89%E8%A3%85-Windows/" class="post-title-link" itemprop="url">mysql8安装---Windows</a>
+          <a href="/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/" class="post-title-link" itemprop="url">认知型分布式光伏功率预测系统</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1047,7 +872,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-10-21 18:52:15" itemprop="dateCreated datePublished" datetime="2023-10-21T18:52:15+08:00">2023-10-21</time>
+      <time title="创建时间：2026-02-12 09:42:20" itemprop="dateCreated datePublished" datetime="2026-02-12T09:42:20+08:00">2026-02-12</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1055,7 +880,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+          <a href="/categories/%E6%96%B0%E8%83%BD%E6%BA%90/" itemprop="url" rel="index"><span itemprop="name">新能源</span></a>
         </span>
     </span>
 
@@ -1066,14 +891,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>5.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -1084,12 +909,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>本教程适用Windows64位系统压缩包方式安装Mysql8版本。安装过程中遇到错误往下翻查看  &#x3D;&#x3D;8、碰到的问题及解决&#x3D;&#x3D;</p>
-</blockquote>
+          <h2 id="可行性分析"><a href="#可行性分析" class="headerlink" title="可行性分析"></a>可行性分析</h2><p>传统的LSTM、XGBoost或Transformer变体（如Informer）对<strong>数值型</strong>数据（历史功率、辐照度、温度）处理极佳，但对<strong>文本型</strong>数据（运维日志、天气预警文本、设备检修单）无能为力。例如，如果运维人员提交了一条“3号汇流箱下午2点检修”的文本记录，传统模型无法读取，导致预测偏高。LLM可以理解非结构化数据（如“受台风外围气流影响，午后可能有短时强降水”），同时结合RAG知识增强，检索该电站的历史类似气象日的表现、检索电站的物理拓扑信息、检索最新的设备维护手册或日志，完成数据修正、结果解释、可视化展示、运维辅助、智能交互等功能。</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/10/21/mysql8%E5%AE%89%E8%A3%85-Windows/#more" rel="contents">
+              <a class="btn" href="/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1120,7 +943,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2024/03/21/pdf-test/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/04/01/CSBasics/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%BC%80%E5%8F%91%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1138,7 +961,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/03/21/pdf-test/" class="post-title-link" itemprop="url">PDF功能测试</a>
+          <a href="/2022/04/01/CSBasics/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%BC%80%E5%8F%91%E7%AE%80%E4%BB%8B/" class="post-title-link" itemprop="url">微信公众号开发简介</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1149,97 +972,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-03-21 12:00:00" itemprop="dateCreated datePublished" datetime="2024-03-21T12:00:00+08:00">2024-03-21</time>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>53</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>这是一个PDF测试页面。推荐使用 HTML iframe 标签来嵌入 PDF。</p>
-<h3 id="使用-HTML-iframe-标签-推荐"><a href="#使用-HTML-iframe-标签-推荐" class="headerlink" title="使用 HTML iframe 标签 (推荐)"></a>使用 HTML iframe 标签 (推荐)</h3><iframe src="/pdfs/dummy.pdf" width="100%" height="800px">
-</iframe>
-<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
-<link rel="stylesheet" href="/css/markmap.css">
-
-<script src="/js/markmap.js"></script>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/05/05/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/05/05/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">vue项目前端解决跨域问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-05-05 11:41:21" itemprop="dateCreated datePublished" datetime="2023-05-05T11:41:21+08:00">2023-05-05</time>
+      <time title="创建时间：2022-04-01 13:31:01" itemprop="dateCreated datePublished" datetime="2022-04-01T13:31:01+08:00">2022-04-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1258,14 +991,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
+      <span>17k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -1277,13 +1010,16 @@
     
     <div class="post-body" itemprop="articleBody">
           <blockquote>
-<p>在前后端分离项目中，跨域是一定会出现的问题，本文主要介绍跨域问题的解决思路，以及在vue项目中如何使用代理的方式在前端解决跨域问题，同时提供一个后段解决的方案。</p>
+<p>文末附源码，或可先将依赖复制到自己的项目，内容参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38225558/article/details/86311495">郑清的博客-CSDN博客</a></p>
 </blockquote>
-<h1 id="1、产生原因"><a href="#1、产生原因" class="headerlink" title="1、产生原因"></a>1、产生原因</h1><p>跨域问题产生的原因是浏览器的同源策略。浏览器同源策略是浏览器中的一种安全机制，用于防止一个域下的文档或脚本访问另一个域下的文档或脚本。同源指的是两个URL的协议、主机名和端口号都相同，只有这些都相同的情况下，两个文档之间才满足同源条件。</p>
-<p>也就是指，当&#x3D;&#x3D;浏览器地址栏的地址（页面访问地址）&#x3D;&#x3D;和&#x3D;&#x3D;接口访问地址&#x3D;&#x3D;不一样时就会出现跨域问题，浏览器会拦截服务器返回的数据，并报CROS错误。</p>
+<h3 id="1、微信中的几个概念"><a href="#1、微信中的几个概念" class="headerlink" title="1、微信中的几个概念"></a>1、微信中的几个概念</h3><p>想要进行微信相关的开发，首先是要弄明白几个概念，明确自己要干什么：</p>
+<p>（1）微信公众平台和微信开放平台</p>
+<blockquote>
+<p>开放平台：<a target="_blank" rel="noopener" href="https://open.weixin.qq.com/">https://open.weixin.qq.com</a>；公众平台：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/">https://mp.weixin.qq.com</a></p>
+</blockquote>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/05/05/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/#more" rel="contents">
+              <a class="btn" href="/2022/04/01/CSBasics/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%BC%80%E5%8F%91%E7%AE%80%E4%BB%8B/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1314,7 +1050,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/01/30/%E5%9C%B0%E8%B4%A8%E6%97%B6%E4%BB%A3%E7%AE%80%E5%8D%95%E6%A2%B3%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/06/08/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F01%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1332,7 +1068,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/30/%E5%9C%B0%E8%B4%A8%E6%97%B6%E4%BB%A3%E7%AE%80%E5%8D%95%E6%A2%B3%E7%90%86/" class="post-title-link" itemprop="url">地质时代简单梳理</a>
+          <a href="/2021/06/08/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F01%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">实用的设计模式01之建造者模式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1343,7 +1079,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-01-30 13:32:29" itemprop="dateCreated datePublished" datetime="2023-01-30T13:32:29+08:00">2023-01-30</time>
+      <time title="创建时间：2021-06-08 19:18:47" itemprop="dateCreated datePublished" datetime="2021-06-08T19:18:47+08:00">2021-06-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1351,7 +1087,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B1%82%E7%9F%A5/" itemprop="url" rel="index"><span itemprop="name">求知</span></a>
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
         </span>
     </span>
 
@@ -1362,14 +1098,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>475</span>
+      <span>6.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -1380,145 +1116,232 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
+          <blockquote>
+<p>想重新温习一下设计模式，所以准备写到一个专栏来记录，这是第一篇。知识的学习应该通过输入-内化-输出三个过程，输出的过程尤为重要，写博客也是为了输出知识以巩固之。设计模式可以说是面向对象编程的秘笈，凝结了无数前人们的经验积累和实践探索，最终形成了这些针对某类特定问题的的高效、优雅的解决方案。是开发人员进阶必须掌握的内容。</p>
+</blockquote>
+<blockquote>
+<p>设计模式的使用，如果在开发阶段遇到响应问题能立刻想到某种设计模式自然是最好不过。也可以在优化阶段，使用设计模式重构代码，使之变得更加优雅高效。</p>
+</blockquote>
+<p>现在网上有无数的关于各种设计模式的内容供大家学习使用，虽然各教程中都会给出案例，但大多数都是黑板上的案例，缺少真实场景下的应用，或者已有的经典使用场景，例如在JDK中对某些设计模式的使用。我准备从一下几个方面对某个设计模式进行阐述：<br>@<a href="%E7%9B%AE%E5%BD%95">TOC</a></p>
+<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><ul>
+<li>构建者模式是一种创建型模式，创建型模式(Creational Pattern)说直白些就是代替new关键字的作用。</li>
+<li>构建者模式的定义是：将一个复杂对象的构建与它的表示分离，使得同样的构建过程可以创建不同的表示。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/08/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F01%E4%B9%8B%E5%BB%BA%E9%80%A0%E8%80%85%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
 
-<p>地质时代是指地球上各种地质事件发生的时代。</p>
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/06/28/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F02-%E5%A5%BD%E5%A5%BD%E8%81%8A%E8%81%8A%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E5%92%8C%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/06/28/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F02-%E5%A5%BD%E5%A5%BD%E8%81%8A%E8%81%8A%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E5%92%8C%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95/" class="post-title-link" itemprop="url">实用的设计模式02-好好聊聊简单工厂和工厂方法</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-28 18:56:58" itemprop="dateCreated datePublished" datetime="2021-06-28T18:56:58+08:00">2021-06-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>对于工厂的用法其实并没有可说的，就是当一个抽象类或接口有多个实现类，在应用时需要实例化某个实现类对象时，不是直接new，而是用工厂类获取对象实例。但是根据实际场景的复杂程度也需要选择最优方案，就是简单工厂、工厂方法、抽象工厂。<br>下面就通过业务场景来这三个模式和他们的关系、区别和演进。<br>由于篇幅较大，分成两篇，第一篇聊工厂方法和简单工厂，第二篇聊抽象工厂，抽象工厂中在研究一下Mybatis中对工厂模式的应用。<br>@<a href="%E7%9B%AE%E5%BD%95">TOC</a></p>
+<h1 id="1、先介绍两个程序设计原则"><a href="#1、先介绍两个程序设计原则" class="headerlink" title="1、先介绍两个程序设计原则"></a>1、先介绍两个程序设计原则</h1><p>关于下面两条设计原则，我们先做简单阐述，在应用具体案例之后在根据案例详细讲解。</p>
+<h2 id="1-1-开放-封闭原则"><a href="#1-1-开放-封闭原则" class="headerlink" title="1.1 开放-封闭原则"></a>1.1 开放-封闭原则</h2><ul>
+<li>原则：软件实体（类、模块、函数等等）应该可以扩展，而不可以修改</li>
+<li>特点：对于扩展是开放的，对修改时封闭的。也就是说在开发软件系统时，针对以后可能的需求的变更，在设计上应该力求对程序的改动是通过新增代码完成的，而不是修改代码。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/06/28/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F02-%E5%A5%BD%E5%A5%BD%E8%81%8A%E8%81%8A%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E5%92%8C%E5%B7%A5%E5%8E%82%E6%96%B9%E6%B3%95/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">实用的设计模式04-单例模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-08-25 01:02:37" itemprop="dateCreated datePublished" datetime="2021-08-25T01:02:37+08:00">2021-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>单例模式，简单但是又不简单。简单是指原理很容易懂，即保证一个类只存在一个对象；不简单是指实现方式非常多样，而且需要注意的点非常多。</p>
+</blockquote>
+<h1 id="1、思考如何实现单例模式"><a href="#1、思考如何实现单例模式" class="headerlink" title="1、思考如何实现单例模式"></a>1、思考如何实现单例模式</h1><p>现在我们不去考虑单例模式的标准实现，而是让我们自己考虑，如何再代码中实现让一个类只能实例化一次，为了简单一点，我们先不考虑多线程并发的情况。<br><strong>思考</strong>：</p>
 <ol>
-<li>从大到小分为宙、代、纪、世、期。比如我们常说的侏罗纪，就是属于显生宙中生代侏罗纪；寒武纪属于显生宙古生代。</li>
-<li>冥古宙、太古宙、元古宙、显生宙，从距今5.41亿年开始就是显生宙了（现在也是），显生宙的标志就是古生代寒武纪生物大爆发。其中前三个时期又称为隐生宙，因为当时生命还很原始。</li>
-<li>将显生宙细看开来，分为古生代-中生代-新生代<ul>
-<li>古生代：距今2.25亿年-约6亿年前，脊椎海洋生物开始繁盛，藻类、鱼类繁盛，两栖类登录，蕨类植物登录。<ul>
-<li>寒武纪：5-6亿年前</li>
-<li>奥陶纪：4.4-5亿年前</li>
-<li>志留纪</li>
-<li>泥盆纪</li>
-<li>石炭纪</li>
-<li>二叠纪</li>
-</ul>
-</li>
-<li>中生代：0.7亿-2.25亿年前，爬行动物的时代，裸子植物<ul>
-<li>三叠纪</li>
-<li>侏罗纪：1.35-1.8亿年前</li>
-<li>白垩纪：0.7-1.35亿年前，恐龙灭绝，白垩纪结束，地质进入新生代。</li>
-</ul>
-</li>
-<li>新生代：从7000万年前开始，哺乳动物的时代，被子植物繁盛。<ul>
-<li>第三纪</li>
-<li>第四纪：它从约260万年前开始，一直延续。<ol>
-<li>更新世</li>
-<li>全新世：开始于1.2-1万年前，直到现在。</li>
+<li>首先，不能多次实例化，那么构造方法就不能随意调用，我们需要控制对构造方法的调用</li>
+<li>全局唯一，刚好对应的是static的作用，static修饰的变量，是该类所有实例所共有的，如下例：</li>
 </ol>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>每个纪的生物都不太一样，而化石是识别地层的头号指标，因此纪是最常用的地址单位。</li>
-</ol>
-<p>简单了解后期在补充。</p>
-<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
-<link rel="stylesheet" href="/css/markmap.css">
-
-<script src="/js/markmap.js"></script>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">大工业用电计费及其相关知识</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-11-07 16:09:26" itemprop="dateCreated datePublished" datetime="2022-11-07T16:09:26+08:00">2022-11-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B1%82%E7%9F%A5/" itemprop="url" rel="index"><span itemprop="name">求知</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p> 电费计算方法主要分为<strong>大工业用电</strong>和一般工商业用电、农业生产用电用电、居民生活用电。</p>
-</blockquote>
-<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551847.png" alt="image-20221107151123912"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/#more" rel="contents">
+              <a class="btn" href="/2021/08/25/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F04-%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1549,7 +1372,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/02/21/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/08/30/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F05-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1567,7 +1390,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/02/21/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/" class="post-title-link" itemprop="url">时间序列数据预测的类型</a>
+          <a href="/2021/08/30/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F05-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">实用的设计模式05-原型模式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1578,7 +1401,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-02-21 10:49:01" itemprop="dateCreated datePublished" datetime="2023-02-21T10:49:01+08:00">2023-02-21</time>
+      <time title="创建时间：2021-08-30 01:19:20" itemprop="dateCreated datePublished" datetime="2021-08-30T01:19:20+08:00">2021-08-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1586,7 +1409,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
         </span>
     </span>
 
@@ -1597,14 +1420,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.2k</span>
+      <span>8.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -1616,11 +1439,124 @@
     
     <div class="post-body" itemprop="articleBody">
           <blockquote>
-<p>本文主要内容是使用LSTM网络进行不同类型的时间序列预测任务，不涉及代码，仅仅就不同类型的预测任务和数据划分进行说明。<br>参考文章：<a target="_blank" rel="noopener" href="https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/">https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/</a></p>
+<p>原型模式也是创建型模式的一种，关于原型模式其实应用的非常广泛，例如spring中的Bean的@Scope(“prototype”)注解，JSON.parseObject() 等都是原型模式的具体应用。今天我们就来学习学习一下原型模式。</p>
 </blockquote>
+<p>@<a href="%E7%9B%AE%E5%BD%95">TOC</a></p>
+<h1 id="1、什么是原型模式"><a href="#1、什么是原型模式" class="headerlink" title="1、什么是原型模式"></a>1、什么是原型模式</h1><ol>
+<li>在开发中有时候我们回碰到这种问题<br>（1）一个对象创建的代价很大，在创建该对象前需要大量的准备工作，同时这个对象还要多次创建；<br>（2）多个&#x3D;&#x3D;对象&#x3D;&#x3D;之前区别不大，由于没有好的办法，任然要多次创建；<br>（3）有&#x3D;&#x3D;一个对象&#x3D;&#x3D;需要被大量使用，同时在不同的使用场景需要给属性重新赋值；<br>在以上的情形中，我们都是要对一个类（class）进行多次实例化（上述1和2），或者不断的修改一个对象（上述3）。问题有首先比较操作比较麻烦，在一个影响性能。有什么方法可以解决上述场景的问题？那就是原型模式。</li>
+</ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2023/02/21/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/#more" rel="contents">
+              <a class="btn" href="/2021/08/30/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F05-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">实用的设计模式06-代理模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 22:05:16" itemprop="dateCreated datePublished" datetime="2021-12-05T22:05:16+08:00">2021-12-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <blockquote>
+<p>结构型模式总共有七种，它们分别是适配器模式、装饰器模式、代理模式、外观模式(门面模式)、桥接模式、组合模式、享元模式，本文就来讨论一下大名鼎鼎的代理模式。代理模式使用非常多，比如在SpringAOP就是使用的JDK动态代理实现的，还有远程过程调用RPC等。</p>
+</blockquote>
+<p>@<a href="content">TOC</a></p>
+<h1 id="代理模式及其作用"><a href="#代理模式及其作用" class="headerlink" title="代理模式及其作用"></a>代理模式及其作用</h1><p>代理模式就是为其他对象提供一种代理控制对这个对象的访问。例如：我要使用对象A的某些功能，但是我的权限比较低不能让我使用A的全部功能，就可以为A提供一个代理对象ProxyA，ProxyA就是A的一个代理，也可以理解成助理，我要操作A必须通过ProxyA。<br>动态代理有什么作用呢？</p>
+<ul>
+<li>首先就是上面提到的，可以做权限的控制，隔离或者隐藏原来的对象，也就是隔离作用。</li>
+<li>其次，可以对原来的对象做功能的扩充，也就是增强作用。</li>
+<li>代理对象甚至可以完全替代原来的对象。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1644,7 +1580,7 @@
 
 
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
@@ -1667,14 +1603,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">103k</span>
+    <span title="站点总字数">199k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:34</span>
+    <span title="站点阅读时长">3:01</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

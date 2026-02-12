@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="整体路线 大模型部署首先需要有训练好的模型、推理引擎、服务管理发布平台，常用的推理引擎有vLLM、Hugging Face TGI、Ollama等，其中前两者主要用于企业级模型部署，而Ollama比较适合本地化部署。服务发布管理平台负责管理企业部署的各种模型，例如LLM、Embedding、Rerank等，提供统一的API供其他应用访问，但是Xinference本身也是可以作为推理引擎使用的，并且">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大模型部署">
+<meta property="og:url" content="https://18253321614.github.io/2026/01/20/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="整体路线 大模型部署首先需要有训练好的模型、推理引擎、服务管理发布平台，常用的推理引擎有vLLM、Hugging Face TGI、Ollama等，其中前两者主要用于企业级模型部署，而Ollama比较适合本地化部署。服务发布管理平台负责管理企业部署的各种模型，例如LLM、Embedding、Rerank等，提供统一的API供其他应用访问，但是Xinference本身也是可以作为推理引擎使用的，并且">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602121000229.png">
+<meta property="article:published_time" content="2026-01-20T01:54:46.000Z">
+<meta property="article:modified_time" content="2026-02-12T10:06:36.525Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="大模型">
+<meta property="article:tag" content="部署">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602121000229.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/01/20/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/01/20/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/","path":"2026/01/20/AI/大模型部署/","title":"大模型部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>大模型部署 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E8%B7%AF%E7%BA%BF"><span class="nav-number">1.</span> <span class="nav-text">整体路线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E7%BA%BF1"><span class="nav-number">2.</span> <span class="nav-text">主线1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E7%BA%BF2"><span class="nav-number">3.</span> <span class="nav-text">主线2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E7%BA%BF3"><span class="nav-number">4.</span> <span class="nav-text">主线3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">5.</span> <span class="nav-text">补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">问题</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/01/20/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="大模型部署 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大模型部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-20 09:54:46" itemprop="dateCreated datePublished" datetime="2026-01-20T09:54:46+08:00">2026-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="整体路线"><a href="#整体路线" class="headerlink" title="整体路线"></a>整体路线</h2><p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602121000229.png" alt="img"></p>
+<p>大模型部署首先需要有训练好的模型、推理引擎、服务管理发布平台，常用的推理引擎有vLLM、Hugging Face TGI、Ollama等，其中前两者主要用于企业级模型部署，而Ollama比较适合本地化部署。服务发布管理平台负责管理企业部署的各种模型，例如LLM、Embedding、Rerank等，提供统一的API供其他应用访问，但是Xinference本身也是可以作为推理引擎使用的，并且支持各种模型的推理应用。而Dify在上面的作用是应用开发平台，可以用各种模型的API结合内置的工具快速完成应用构建和开发，和Coze比较相似，只是Coze更适合新手，偏向低代码化。</p>
+<p>AutoDL是一个算力市场，可在线租用GPU：<a target="_blank" rel="noopener" href="https://www.autodl.com/home">https://www.autodl.com/home</a></p>
+<h2 id="主线1"><a href="#主线1" class="headerlink" title="主线1"></a>主线1</h2><p>对于企业来说，数据安全至关重要，这也是企业私有化部署大模型服务的主要原因，但是除非企业有自己的机房和私有云系统，最好的方式还是采用云服务厂商的云服务，数据安全方面也有云服务厂商做保障，购买后的与资源也是私有的不用担心泄露。</p>
+<p>我们可以使用腾讯云部署Dify的docker容器，首先购买服务器，然后在服务器上安装dokcer，使用腾讯云的镜像加速服务中的镜像源地址，使用docker拉取Dify即可完成部署，默认使用80端口，直接访问即可。</p>
+<p>这样Dify服务就快速部署好了。接下来就是在Dify中设置大模型的服务，既可以使用各大厂商提供的API服务，也可以使用在自己服务器上部署的模型服务。</p>
+<h2 id="主线2"><a href="#主线2" class="headerlink" title="主线2"></a>主线2</h2><blockquote>
+<p>注意：AutoDL可以开启学术加速，下载国外资源失败时可以</p>
+</blockquote>
+<p>主线2使用一句话概括，就是在AutoDL的服务器上安装Ollama后，使用Ollama命令一键部署大模型服务。</p>
+<p>在AutoDL中租赁好服务器后，使用脚本安装Ollama，安装好启动Ollama服务，例如<code>OLLAMA_HOST=27.0.0.1:6006 ollama serve</code>（这里指定了开放端口，AutoDL只开放6006）。接着就可以使用Ollama拉取模型，模型名称可以在Ollama的市场中寻找，模型部署好，我们就完成了大模型服务API的部署，接着在Dify就可以调用AutoDL中部署的Ollama服务了。</p>
+<h2 id="主线3"><a href="#主线3" class="headerlink" title="主线3"></a>主线3</h2><p>在主线三中Xinfraence作为一个推理框架使用，首先在AutoDL市场中租赁服务器和显卡资源，使用pip命令可以直接安装Xinference后启动服务并暴露端口，然后在Xinference中下载模型即可。最后配置Dify和Xinference连接。</p>
+<h2 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h2><ol>
+<li><p>推理服务引擎（如 vLLM、Ollama）在大模型应用中的作用，可以类比为<strong>“餐厅的后厨引擎”</strong>或<strong>“汽车的发动机”</strong>。它的核心使命不是让你“拥有模型”（那是下载器的事），也不是让你“管理模型”（那是管理平台的事），而是<strong>如何在有限的硬件资源下，以最快的速度、最低的成本，处理最多的用户请求</strong>。</p>
+</li>
+<li><p>目前推理引擎用的比较多还有vLLM，如果你正在搭建一个高并发的API服务，追求每秒处理最多的Token，且只关注文本生成，选 vLLM，它是性能的首选，虽然文档未直接列出，但它是构建高性能服务的基石，Xinference和Ollama使用资源较大。</p>
+</li>
+<li><p><strong>大语言模型推理（LLM Inference）</strong> ：是指利用已经训练好的模型参数，将用户输入的文本（Prompt）转化为模型输出的文本（Response）的计算过程。</p>
+</li>
+<li><p>Ollama不支持重排序模型</p>
+</li>
+</ol>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><blockquote>
+<p>上面集中方式都是直接下载大模型，如果自己使用预训练模型微调了一个模型，该怎么部署</p>
+</blockquote>
+<p>这里以LoRA微调为例，微调完成后会产生一个文件夹，里面包含<code>adapter_config.json</code> 和 <code>adapter_model.bin</code> 等文件，在Ollama中可以直接加载，但是要告诉Ollama使用的基座模型是什么。</p>
+<p>如果使用的是全量微调并且对模型架构进行了修改之后在微调得到的模型会复杂一些，但本质都是两个东西，模型架构和权重参数，如果仅仅是修改权重参数，模型架构保持不变，那么各种推理框架都可以快速部署。但是入股修改了模型架构，就需要让推理框架了解你的模型架构。</p>
+<blockquote>
+<p> tips:<br>github clone失败的解决方案：</p>
+<ul>
+<li>在gitee创建一个仓库</li>
+<li>导入仓库：从github导入仓库，这个是比较快的</li>
+<li>从gitee clone项目</li>
+</ul>
+</blockquote>
+<p>tts：将大模型生成的<strong>文本（Text）</strong>转化为自然的<strong>语音（Speech）</strong>。</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B/" rel="tag"># 大模型</a>
+              <a href="/tags/%E9%83%A8%E7%BD%B2/" rel="tag"># 部署</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/18/AI/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E5%B8%B8%E8%A7%81%E6%A6%82%E5%BF%B5/" rel="prev" title="深度学习常见概念">
+                  <i class="fa fa-angle-left"></i> 深度学习常见概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/29/AI/AI%E7%BC%96%E7%A8%8B/" rel="next" title="AI编程">
+                  AI编程 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">199k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

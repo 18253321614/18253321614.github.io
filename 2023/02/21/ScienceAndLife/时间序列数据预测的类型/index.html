@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本文主要内容是使用LSTM网络进行不同类型的时间序列预测任务，不涉及代码，仅仅就不同类型的预测任务和数据划分进行说明。参考文章：https:&#x2F;&#x2F;machinelearningmastery.com&#x2F;how-to-develop-lstm-models-for-time-series-forecasting&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="时间序列数据预测的类型">
+<meta property="og:url" content="https://18253321614.github.io/2023/02/21/ScienceAndLife/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="本文主要内容是使用LSTM网络进行不同类型的时间序列预测任务，不涉及代码，仅仅就不同类型的预测任务和数据划分进行说明。参考文章：https:&#x2F;&#x2F;machinelearningmastery.com&#x2F;how-to-develop-lstm-models-for-time-series-forecasting&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081603506.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081603518.png">
+<meta property="article:published_time" content="2023-02-21T02:49:01.000Z">
+<meta property="article:modified_time" content="2026-02-08T08:49:54.646Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="LSTM">
+<meta property="article:tag" content="时间序列">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081603506.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2023/02/21/ScienceAndLife/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2023/02/21/ScienceAndLife/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/","path":"2023/02/21/ScienceAndLife/时间序列数据预测的类型/","title":"时间序列数据预测的类型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>时间序列数据预测的类型 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E5%8D%95%E5%8F%98%E9%87%8F%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B"><span class="nav-number">1.</span> <span class="nav-text">1 单变量时间序列数据预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 单步预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%A4%9A%E6%AD%A5%E9%A2%84%E6%B5%8B"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 多步预测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%A4%9A%E5%8F%98%E9%87%8F%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B"><span class="nav-number">2.</span> <span class="nav-text">2 多变量时间序列数据预测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E5%8D%95%E6%AD%A5%E9%A2%84%E6%B5%8B"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 单步预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-%E5%A4%9A%E5%8F%98%E9%87%8F%E9%A2%84%E6%B5%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 多变量预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-%E5%B9%B6%E8%A1%8C%E9%A2%84%E6%B5%8B-%EF%BC%88%E5%85%A8%E5%8F%98%E9%87%8F%E9%A2%84%E6%B5%8B%EF%BC%89"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 并行预测 （全变量预测）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%A4%9A%E6%AD%A5%E9%A2%84%E6%B5%8B"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 多步预测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E5%A4%9A%E5%8F%98%E9%87%8F%E9%A2%84%E6%B5%8B"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 多变量预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-%E5%B9%B6%E8%A1%8C%E9%A2%84%E6%B5%8B-%EF%BC%88%E5%85%A8%E5%8F%98%E9%87%8F%E9%A2%84%E6%B5%8B%EF%BC%89"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 并行预测 （全变量预测）</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/02/21/ScienceAndLife/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="时间序列数据预测的类型 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          时间序列数据预测的类型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-21 10:49:01" itemprop="dateCreated datePublished" datetime="2023-02-21T10:49:01+08:00">2023-02-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>本文主要内容是使用LSTM网络进行不同类型的时间序列预测任务，不涉及代码，仅仅就不同类型的预测任务和数据划分进行说明。<br>参考文章：<a target="_blank" rel="noopener" href="https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/">https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/</a></p>
+</blockquote>
+<span id="more"></span>
+
+<p><strong>注：所涉及的概念在数据案例会说明</strong></p>
+<p>时间序列数据预测本质就是利用先前的值预测后面的值，在得到一组数据后，需要将数据处理为一个个样本，每个样本中包括先前的数据和要预测的数据，将其作为训练集</p>
+<h1 id="1-单变量时间序列数据预测"><a href="#1-单变量时间序列数据预测" class="headerlink" title="1 单变量时间序列数据预测"></a>1 单变量时间序列数据预测</h1><p><code>单变量时间序列数据</code>指的是，&#x3D;&#x3D;除了时间属性数据&#x3D;&#x3D;，只有单一属性的一组数据，比如2010一年间黄金的价格，按天统计，也就是一天一个数据。数据中只有价格这一个属性，共365个数据。<br>同时单变量也是指数据只有一个序列，一个变量也就是一个特征（feature）。<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081603506.png" alt="在这里插入图片描述"></p>
+<h2 id="1-1-单步预测"><a href="#1-1-单步预测" class="headerlink" title="1.1 单步预测"></a>1.1 单步预测</h2><p>单步预测中的单步是指<code>一个时间步长（time step）</code>，比如上述黄金价格数据中，每一天就是一个时间步长，即在时间序列数据中每获取一次数据就是一个时间步。</p>
+<p>单步预测就是仅仅预测一个时间步长的数据。</p>
+<p><strong>单变量时间序列数据的单步预测（单变量单步预测，Univariate Step）</strong>：利于前边几个时间步长的数据预测下一个时间步长的数据</p>
+<p>数据处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数据集dateset</span><br><span class="line">[10, 20, 30, 40, 50, 60, 70, 80, 90]</span><br></pre></td></tr></table></figure>
+<p>上面的少量数据中，只是单一属性的一组数据。在进行预测前要将数据处理为样本（假设使用3个时间步长的数据预测下一个时间步长的数据），样本结构如下：<br>以下数据共有6个样本，每个样本中都是前三个时间步长的数据为一组作为输入，下一个时间步长的数据为另一组作为输出。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[10 20 30] 40</span><br><span class="line">[20 30 40] 50</span><br><span class="line">[30 40 50] 60</span><br><span class="line">[40 50 60] 70</span><br><span class="line">[50 60 70] 80</span><br><span class="line">[60 70 80] 90</span><br><span class="line"></span><br><span class="line">即：</span><br><span class="line">	输入			输出</span><br><span class="line">[[10, 20, 30],		[40,</span><br><span class="line">[20, 30, 40].		50,</span><br><span class="line">……			]			]</span><br></pre></td></tr></table></figure>
+
+
+<p>使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。</p>
+<p>最后我们在看一下样本中输入数据和输出数据的维度：<br>输入：两个维度，样本总数、用于预测的时间步长，这里分别是6、3<br>输出：一个维度，样本数量，这里是6</p>
+<h2 id="1-2-多步预测"><a href="#1-2-多步预测" class="headerlink" title="1.2 多步预测"></a>1.2 多步预测</h2><p><strong>单变量时间序列数据的多步预测（单变量多步预测，Univariate Multi-Step）</strong>：利于前边几个时间步长的数据预测下面多个时间步长的数据。</p>
+<p>本例：使用3个时间步长的数据预测后2个时间步长的数据，</p>
+<p>数据处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">数据集dateset</span><br><span class="line">[10, 20, 30, 40, 50, 60, 70, 80, 90]</span><br></pre></td></tr></table></figure>
+<p>样本结构如下：<br>以下数据共有6个样本，每个样本中都是前三个时间步长的数据为一组作为输入，后两个时间步长的数据为另一组作为输出。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[10 20 30] [40 50]</span><br><span class="line">[20 30 40] [50 60]</span><br><span class="line">[30 40 50] [60 70]</span><br><span class="line">[40 50 60] [70 80]</span><br><span class="line">[50 60 70] [80 90]</span><br><span class="line"></span><br><span class="line">即：</span><br><span class="line">	输入			输出</span><br><span class="line">[[10, 20, 30],		[[40,50],</span><br><span class="line">[20, 30, 40],		[50,60],</span><br><span class="line">……]					……		]</span><br><span class="line"></span><br><span class="line">说明：后面的输入输出也都是这样分析，只是不再表明输入输出和完整的数组结构。</span><br></pre></td></tr></table></figure>
+<p>使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。</p>
+<p>使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。</p>
+<p>输入数据和输出数据的维度：<br>输入：两个维度，样本总数、用于预测的时间步长，这里分别是6、3<br>输出：两个维度，样本数据、预测的时间步长，这里分别是6、2</p>
+<h1 id="2-多变量时间序列数据预测"><a href="#2-多变量时间序列数据预测" class="headerlink" title="2 多变量时间序列数据预测"></a>2 多变量时间序列数据预测</h1><p><code>多变量时间序列数据</code>是指，除了时间属性外，还有多个属性或者说特征的一组数据。<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081603518.png" alt="在这里插入图片描述"></p>
+<h2 id="2-1-单步预测"><a href="#2-1-单步预测" class="headerlink" title="2.1 单步预测"></a>2.1 单步预测</h2><h3 id="2-1-1-多变量预测"><a href="#2-1-1-多变量预测" class="headerlink" title="2.1.1 多变量预测"></a>2.1.1 多变量预测</h3><p><strong>多时间变量数据的单步预测（多变量单步预测，Multivariate Input Series）</strong>：利用前面的多个时间步的部分属性数据，预测下一个时间步的某个属性数据，与单变量不同，这里每个时间步都有多个数据。以上边电耗数据为例。一种预测方式是：使用三个时间步的平均电流、平均电压的数据，预测一个时间步平均功率。</p>
+<p>数据集处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[ 10  15  25]</span><br><span class="line"> [ 20  25  45]</span><br><span class="line"> [ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]</span><br><span class="line"> [ 80  85 165]</span><br><span class="line"> [ 90  95 185]]</span><br></pre></td></tr></table></figure>
+<p>划分样本<br>以下数据共有6个样本，每个样本中都是前三个时间步长的数据是平均电流和平均电压作为输入，后一个时间步长的平均功率作为输出。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">[[10 15]</span><br><span class="line"> [20 25]</span><br><span class="line"> [30 35]] 65</span><br><span class="line">[[20 25]</span><br><span class="line"> [30 35]</span><br><span class="line"> [40 45]] 85</span><br><span class="line">[[30 35]</span><br><span class="line"> [40 45]</span><br><span class="line"> [50 55]] 105</span><br><span class="line">[[40 45]</span><br><span class="line"> [50 55]</span><br><span class="line"> [60 65]] 125</span><br><span class="line">[[50 55]</span><br><span class="line"> [60 65]</span><br><span class="line"> [70 75]] 145</span><br><span class="line">[[60 65]</span><br><span class="line"> [70 75]</span><br><span class="line"> [80 85]] 165</span><br><span class="line">[[70 75]</span><br><span class="line"> [80 85]</span><br><span class="line"> [90 95]] 185</span><br></pre></td></tr></table></figure>
+<p>使用这样的方式可以利用前三个时间步的电流、电压数据，预测当前功率（只给电流、电压信息）。</p>
+<p>输入数据和输出数据的维度：<br>输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2<br>输出：两个维度，样本数据、预测的特征数，这里分别是6、1</p>
+<h3 id="2-1-2-并行预测-（全变量预测）"><a href="#2-1-2-并行预测-（全变量预测）" class="headerlink" title="2.1.2 并行预测 （全变量预测）"></a>2.1.2 并行预测 （全变量预测）</h3><p><strong>多变量时间序列数据单步并行预测（多变量单步并行预测，Multivariate Multi-Step Parallel Series）</strong>：使用前面几个时间步的所有属性数据，预测下一个时间步的所有属性数据。以上面的电耗数据为例，使用前3个时间步的平均电流、平均电压、平均功率预测下&#x3D;&#x3D;一个&#x3D;&#x3D;时间的平均电流、平均电压、平均功率。</p>
+<p>数据集：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[ 10  15  25]</span><br><span class="line"> [ 20  25  45]</span><br><span class="line"> [ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]</span><br><span class="line"> [ 80  85 165]</span><br><span class="line"> [ 90  95 185]]</span><br></pre></td></tr></table></figure>
+<p>样本处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[[10 15 25]</span><br><span class="line"> [20 25 45]</span><br><span class="line"> [30 35 65]] [40 45 85]</span><br><span class="line">[[20 25 45]</span><br><span class="line"> [30 35 65]</span><br><span class="line"> [40 45 85]] [ 50  55 105]</span><br><span class="line">[[ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]] [ 60  65 125]</span><br><span class="line">[[ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]] [ 70  75 145]</span><br><span class="line">[[ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]] [ 80  85 165]</span><br><span class="line">[[ 60  65 125]</span><br><span class="line"> [ 70  75 145]</span><br><span class="line"> [ 80  85 165]] [ 90  95 185]</span><br></pre></td></tr></table></figure>
+<p>使用这样的方式可以利用前三个时间步的电流、电压、功率数据，预测时预测后面1个时间步长的电流、电压、功率。</p>
+<p>输入数据和输出数据的维度：<br>输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、3<br>输出：两个维度，样本数据、预测的特征数，这里分别是6、3</p>
+<h2 id="2-2-多步预测"><a href="#2-2-多步预测" class="headerlink" title="2.2 多步预测"></a>2.2 多步预测</h2><h3 id="2-2-1-多变量预测"><a href="#2-2-1-多变量预测" class="headerlink" title="2.2.1 多变量预测"></a>2.2.1 多变量预测</h3><p><strong>多时间变量数据的多步预测（多变量多步预测，Multiple Input Multi-Step Output）</strong>：利用前面的多个时间步的部分属性数据，预测后面多个时间步的某个属性数据。以上面的电耗数据为例，一中预测方式是，使用前3个时间步的平均电流、平均电压预测后面&#x3D;&#x3D;2个&#x3D;&#x3D;时间步长的平均功率。<br>数据集：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[ 10  15  25]</span><br><span class="line"> [ 20  25  45]</span><br><span class="line"> [ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]</span><br><span class="line"> [ 80  85 165]</span><br><span class="line"> [ 90  95 185]]</span><br></pre></td></tr></table></figure>
+<p>样本处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[[10 15]</span><br><span class="line"> [20 25]</span><br><span class="line"> [30 35]] [65 85]</span><br><span class="line">[[20 25]</span><br><span class="line"> [30 35]</span><br><span class="line"> [40 45]] [ 85 105]</span><br><span class="line">[[30 35]</span><br><span class="line"> [40 45]</span><br><span class="line"> [50 55]] [105 125]</span><br><span class="line">[[40 45]</span><br><span class="line"> [50 55]</span><br><span class="line"> [60 65]] [125 145]</span><br><span class="line">[[50 55]</span><br><span class="line"> [60 65]</span><br><span class="line"> [70 75]] [145 165]</span><br><span class="line">[[60 65]</span><br><span class="line"> [70 75]</span><br><span class="line"> [80 85]] [165 185]</span><br></pre></td></tr></table></figure>
+
+<p>使用这样的方式可以利用前三个时间步的电流、电压数据，预测时预测后面2个时间步长的平均功率。</p>
+<p>输入数据和输出数据的维度：<br>输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2<br>输出：两个维度，样本数据、预测的时间步长，这里分别是6、2</p>
+<h3 id="2-2-2-并行预测-（全变量预测）"><a href="#2-2-2-并行预测-（全变量预测）" class="headerlink" title="2.2.2 并行预测 （全变量预测）"></a>2.2.2 并行预测 （全变量预测）</h3><p><strong>多变量时间序列数据的多步并行预测（多变量多步并行预测，Multiple Parallel Input and Multi-Step Output）</strong>：使用前面几个时间步的所有属性数据，预测下一个时间步的所有属性数据。以上面的电耗数据为例，使用前3个时间步的平均电流、平均电压、平均功率预测后面&#x3D;&#x3D;多个&#x3D;&#x3D;时间的平均电流、平均电压、平均功率。</p>
+<p>数据集：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[[ 10  15  25]</span><br><span class="line"> [ 20  25  45]</span><br><span class="line"> [ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]</span><br><span class="line"> [ 80  85 165]</span><br><span class="line"> [ 90  95 185]]</span><br></pre></td></tr></table></figure>
+<p>样本处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">(5, 3, 3) (5, 2, 3)</span><br><span class="line"></span><br><span class="line">[[10 15 25]</span><br><span class="line"> [20 25 45]</span><br><span class="line"> [30 35 65]] [[ 40  45  85]</span><br><span class="line"> [ 50  55 105]]</span><br><span class="line">[[20 25 45]</span><br><span class="line"> [30 35 65]</span><br><span class="line"> [40 45 85]] [[ 50  55 105]</span><br><span class="line"> [ 60  65 125]]</span><br><span class="line">[[ 30  35  65]</span><br><span class="line"> [ 40  45  85]</span><br><span class="line"> [ 50  55 105]] [[ 60  65 125]</span><br><span class="line"> [ 70  75 145]]</span><br><span class="line">[[ 40  45  85]</span><br><span class="line"> [ 50  55 105]</span><br><span class="line"> [ 60  65 125]] [[ 70  75 145]</span><br><span class="line"> [ 80  85 165]]</span><br><span class="line">[[ 50  55 105]</span><br><span class="line"> [ 60  65 125]</span><br><span class="line"> [ 70  75 145]] [[ 80  85 165]</span><br><span class="line"> [ 90  95 185]]</span><br></pre></td></tr></table></figure>
+
+<p>使用这样的方式可以利用前三个时间步的电流、电压、功率数据，预测时预测后面2个时间步长的电流、电压、功率。</p>
+<p>输入数据和输出数据的维度：<br>输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2<br>输出：三个维度，样本数据、预测的时间步长、预测的特征数，这里分别是6、2、3</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/LSTM/" rel="tag"># LSTM</a>
+              <a href="/tags/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97/" rel="tag"># 时间序列</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/30/ScienceAndLife/%E5%9C%B0%E8%B4%A8%E6%97%B6%E4%BB%A3%E7%AE%80%E5%8D%95%E6%A2%B3%E7%90%86/" rel="prev" title="地质时代简单梳理">
+                  <i class="fa fa-angle-left"></i> 地质时代简单梳理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/09/Java/ThreadLocal%E6%B5%85%E6%9E%90/" rel="next" title="ThreadLocal浅析">
+                  ThreadLocal浅析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">199k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

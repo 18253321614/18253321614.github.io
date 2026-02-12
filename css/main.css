@@ -1385,7 +1385,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #3cffec;
+    background: #ff4aff;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -3255,4 +3255,10 @@ header.header {
   .utterances-container:hover {
     box-shadow: 0 8px 24px 0 rgba(0,0,0,0.5);
   }
+}
+.search-popup {
+  border-radius: 12px !important;
+}
+.search-input {
+  border-radius: 12px !important;
 }

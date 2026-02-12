@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="结构型模式总共有七种，它们分别是适配器模式、装饰器模式、代理模式、外观模式(门面模式)、桥接模式、组合模式、享元模式，本文就来讨论一下大名鼎鼎的代理模式。代理模式使用非常多，比如在SpringAOP就是使用的JDK动态代理实现的，还有远程过程调用RPC等。  @TOC 代理模式及其作用代理模式就是为其他对象提供一种代理控制对这个对象的访问。例如：我要使用对象A的某些功能，但是我的权限比较低不能让">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实用的设计模式06-代理模式">
+<meta property="og:url" content="https://18253321614.github.io/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="结构型模式总共有七种，它们分别是适配器模式、装饰器模式、代理模式、外观模式(门面模式)、桥接模式、组合模式、享元模式，本文就来讨论一下大名鼎鼎的代理模式。代理模式使用非常多，比如在SpringAOP就是使用的JDK动态代理实现的，还有远程过程调用RPC等。  @TOC 代理模式及其作用代理模式就是为其他对象提供一种代理控制对这个对象的访问。例如：我要使用对象A的某些功能，但是我的权限比较低不能让">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407082.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407096.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407113.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407224.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407314.png">
+<meta property="article:published_time" content="2021-12-05T14:05:16.000Z">
+<meta property="article:modified_time" content="2026-02-11T06:23:42.311Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="设计模式">
+<meta property="article:tag" content="代理模式">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407082.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/","path":"2021/12/05/DesignPatterns/实用的设计模式06-代理模式/","title":"实用的设计模式06-代理模式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>实用的设计模式06-代理模式 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F%E5%8F%8A%E5%85%B6%E4%BD%9C%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">代理模式及其作用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">静态代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">两种动态代理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%8F%8D%E5%B0%84%E5%AE%9E%E7%8E%B0%E7%9A%84JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">基于反射实现的JDK动态代理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B1%E5%85%A5JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">深入JDK动态代理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9ASpringAOP"><span class="nav-number">5.</span> <span class="nav-text">案例：SpringAOP</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">51</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/12/05/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F06-%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="实用的设计模式06-代理模式 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实用的设计模式06-代理模式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 22:05:16" itemprop="dateCreated datePublished" datetime="2021-12-05T22:05:16+08:00">2021-12-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>结构型模式总共有七种，它们分别是适配器模式、装饰器模式、代理模式、外观模式(门面模式)、桥接模式、组合模式、享元模式，本文就来讨论一下大名鼎鼎的代理模式。代理模式使用非常多，比如在SpringAOP就是使用的JDK动态代理实现的，还有远程过程调用RPC等。</p>
+</blockquote>
+<p>@<a href="content">TOC</a></p>
+<h1 id="代理模式及其作用"><a href="#代理模式及其作用" class="headerlink" title="代理模式及其作用"></a>代理模式及其作用</h1><p>代理模式就是为其他对象提供一种代理控制对这个对象的访问。例如：我要使用对象A的某些功能，但是我的权限比较低不能让我使用A的全部功能，就可以为A提供一个代理对象ProxyA，ProxyA就是A的一个代理，也可以理解成助理，我要操作A必须通过ProxyA。<br>动态代理有什么作用呢？</p>
+<ul>
+<li>首先就是上面提到的，可以做权限的控制，隔离或者隐藏原来的对象，也就是隔离作用。</li>
+<li>其次，可以对原来的对象做功能的扩充，也就是增强作用。</li>
+<li>代理对象甚至可以完全替代原来的对象。</li>
+</ul>
+<span id="more"></span>
+
+<h1 id="静态代理"><a href="#静态代理" class="headerlink" title="静态代理"></a>静态代理</h1><p>首先介绍静态代理，静态代理非常容易理解</p>
+<ol>
+<li>静态代理的结构<ul>
+<li>接口Subject：代理对象和真实对象的共同接口，这样在使用真实对象的地方才可以使用代理对象替换。</li>
+<li>真实对象RealObject：真实的对象</li>
+<li>代理对象Proxy：真实对象的代理对象，其中会包含真实对象<br> <img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407082.png" alt="在这里插入图片描述"></li>
+</ul>
+</li>
+<li>实现</li>
+</ol>
+<p><code>Subject.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(String name)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>RealObject.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RealObject</span> <span class="keyword">implements</span> <span class="title class_">Subject</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello &quot;</span>+name);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>ProxyObject.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyObject</span> <span class="keyword">implements</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> RealObject realObject;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ProxyObject</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (realObject == <span class="literal">null</span>)&#123;</span><br><span class="line">            <span class="built_in">this</span>.realObject = <span class="keyword">new</span> <span class="title class_">RealObject</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;====before=====&quot;</span>);</span><br><span class="line">        realObject.sayHello(name);</span><br><span class="line">        System.out.println(<span class="string">&quot;====after=====&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>Subject.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;原对象：&quot;</span>);</span><br><span class="line">        <span class="type">RealObject</span> <span class="variable">realObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RealObject</span>();</span><br><span class="line">        realObject.sayHello(<span class="string">&quot;real&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println();</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;代理对象：&quot;</span>);</span><br><span class="line">        <span class="type">ProxyObject</span> <span class="variable">proxyObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ProxyObject</span>();</span><br><span class="line">        proxyObject.sayHello(<span class="string">&quot;proxy&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出：<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407096.png" alt="在这里插入图片描述"><br>3.静态代理的特点<br>使用静态代理我们需要为每一个代理对象单独开发类，并且将对应的控制、增强等逻辑写到代理类中，在程序运行之前都已经固定了，正因此称之为静态代理。</p>
+<h1 id="两种动态代理"><a href="#两种动态代理" class="headerlink" title="两种动态代理"></a>两种动态代理</h1><p>静态代理简单却不够灵活，首先代理对象的逻辑代码是提前写死的，其次代理对象和原对象实现了相同的接口，代理对象中的方法需要和原对象中的一致，因此任何原对象的更改都需要在代理对象中更改。<br>动态代理就是代码执行过程中动态的创建代理对象，这样我们就可以为代理对象动态地增加方法、增加行为，比如根据运行环境（客户类传来的参数等）动态决定代理类的行为等，同时不需要担心原对象的修改，在java中主要有两种实现方式：</p>
+<ul>
+<li>反射实现：基于反射的方式，需要被代理对象实现接口。</li>
+<li>Cglib实现：基于字节码实现，不需要代理对象实现接口，但是效率稍低，生成的代理对象是原对象的子类，因此要求原对象不能是final的。</li>
+</ul>
+<h2 id="基于反射实现的JDK动态代理"><a href="#基于反射实现的JDK动态代理" class="headerlink" title="基于反射实现的JDK动态代理"></a>基于反射实现的JDK动态代理</h2><p>在java中反射实现动态代理十分容易，JDK已经提供了创建代理对象的静态方法：<br><code>Object Proxy.newProxyInstance(ClassLoader loader,Class&lt;?&gt;[] interfaces,InvocationHandler h)</code><br>我们先看一下如何使用，还是上面的例子，在Client.java中添加如下代码：<br><code>Client,java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;原对象：&quot;</span>);</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">realObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RealObject</span>();</span><br><span class="line">        realObject.sayHello(<span class="string">&quot;real&quot;</span>);</span><br><span class="line"></span><br><span class="line">        </span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;代理对象：&quot;</span>);</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">proxyObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ProxyObject</span>();</span><br><span class="line">        proxyObject.sayHello(<span class="string">&quot;proxy&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println();</span><br><span class="line"></span><br><span class="line">         <span class="comment">/**</span></span><br><span class="line"><span class="comment">          public static Object newProxyInstance(ClassLoader loader,</span></span><br><span class="line"><span class="comment">                                                    Class&lt;?&gt;[] interfaces,</span></span><br><span class="line"><span class="comment">                                                    InvocationHandler h)</span></span><br><span class="line"><span class="comment">         ClassLoader loader ：这是一个类加载器，作用就是将编译好的字节码文件加载到内存。</span></span><br><span class="line"><span class="comment">         Class&lt;?&gt;[] interfaces ：这是一个Class数组，其中是原对象所实现的接口的Class对象，因为接口是多继承的，所以此处是一个数组，以此确定代理对象的类型。</span></span><br><span class="line"><span class="comment">         InvocationHandler h ：InvocationHandler是一个接口，因此此处需要一个实现了该接口的对象，或者直接使用匿名内部类，</span></span><br><span class="line"><span class="comment">         其中只有一个方法invoke，在创建代理对象后，无论我们调用代理对象的任何方法，都会通过该invoke方法通过反射的方式执行。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="type">Subject</span> <span class="variable">subject</span> <span class="operator">=</span> (Subject) Proxy.newProxyInstance(Client.class.getClassLoader(), <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Subject.class&#125;, <span class="keyword">new</span> <span class="title class_">InvocationHandler</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;-------dynamic before-----&quot;</span>);</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                    method.invoke(realObject,args)： 执行realObject对象的method方法，参数为args</span></span><br><span class="line"><span class="comment">                    该案例中就是执行的subject.sayHello(&quot;dynamic proxy&quot;);</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                method.invoke(realObject,args);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">//subject就是realObject的代理</span></span><br><span class="line">        subject.sayHello(<span class="string">&quot;dynamic proxy&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行后的输出：<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407113.png" alt="在这里插入图片描述"><br>我们可以看到，没有创建额外的类，甚至只需要一个对象realObject，使用Proxy.newProxyInstance就创建了一个该类的代理对象，并且实现了接口中所有方法的增强。使用JDK动态代理的要点就是Proxy.newProxyInstance方法的三个参数，详情参考代码注释即可。</p>
+<h1 id="深入JDK动态代理"><a href="#深入JDK动态代理" class="headerlink" title="深入JDK动态代理"></a>深入JDK动态代理</h1><p>知道了JDK动态代理怎么用是还不够的，其实现原理是什么呢？<br>动态代理的过程，代理对象和被代理对象的关系不像静态代理那样一目了然，清晰明了。因为动态代理的过程中，我们并没有实际看到代理类，也没有很清晰地的看到代理类的具体样子，而且动态代理中被代理对象和代理对象是通过InvocationHandler来完成的代理过程的，其中具体是怎样操作的，&#x3D;&#x3D;为什么代理对象执行的方法都会通过InvocationHandler中的invoke方法来执行&#x3D;&#x3D;。带着这些问题，我们就需要对java动态代理的源码进行简要的分析，弄清楚其中缘由。<br>首先我们看一下Proxy.newProxyInstance：<br>Proxy.newProxyInstance<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407224.png" alt="在这里插入图片描述"><br>上述代码中可以看到Proxy.newProxyInstance方法是如何创建代理对象的，在深入的反射如何创建对象，我们不去讨论。但是代理对象为什么通过InvocationHandler的invoke方法执行原对象的方法，我们需要找到代理对象一探究竟。我们在Client类中添加如下代码<br><code>Client.java</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Client</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;原对象：&quot;</span>);</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">realObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">RealObject</span>();</span><br><span class="line">        realObject.sayHello(<span class="string">&quot;real&quot;</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;代理对象：&quot;</span>);</span><br><span class="line">        <span class="type">Subject</span> <span class="variable">proxyObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ProxyObject</span>();</span><br><span class="line">        proxyObject.sayHello(<span class="string">&quot;proxy&quot;</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//Subject subject = (Subject) Proxy.newProxyInstance(realObject.getClass().getClassLoader(), new Class[]&#123;Subject.class&#125;, new ProxyBean&lt;Subject&gt;(realObject));</span></span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">          public static Object newProxyInstance(ClassLoader loader,</span></span><br><span class="line"><span class="comment">                                                    Class&lt;?&gt;[] interfaces,</span></span><br><span class="line"><span class="comment">                                                    InvocationHandler h)</span></span><br><span class="line"><span class="comment">         ClassLoader loader ：这是一个类加载器，作用就是将编译好的字节码文件加载到内存。</span></span><br><span class="line"><span class="comment">         Class&lt;?&gt;[] interfaces ：这是一个Class数组，其中是原对象所实现的接口的Class对象，因为接口是多继承的，所以此处是一个数组。</span></span><br><span class="line"><span class="comment">         InvocationHandler h ：InvocationHandler是一个接口，因此此处需要一个实现了该接口的对象，或者直接使用匿名内部类。</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="type">Subject</span> <span class="variable">subject</span> <span class="operator">=</span> (Subject) Proxy.newProxyInstance(Client.class.getClassLoader(), <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Subject.class&#125;, <span class="keyword">new</span> <span class="title class_">InvocationHandler</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;-------dynamic before-----&quot;</span>);</span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                    method.invoke(realObject,args)： 执行realObject对象的method方法，参数为args</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                method.invoke(realObject,args);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//下面的代码是将生成的代理类反编译写入到根目录的RealObject.class</span></span><br><span class="line">        <span class="type">byte</span>[] classFile = ProxyGenerator.generateProxyClass(<span class="string">&quot;$Proxy0&quot;</span>, RealObject.class.getInterfaces());</span><br><span class="line">        <span class="type">String</span> <span class="variable">path</span> <span class="operator">=</span> <span class="string">&quot;./RealObject.class&quot;</span>;</span><br><span class="line">        <span class="keyword">try</span>(<span class="type">FileOutputStream</span> <span class="variable">fos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(path)) &#123;</span><br><span class="line">            fos.write(classFile);</span><br><span class="line">            fos.flush();</span><br><span class="line">            System.out.println(<span class="string">&quot;代理类class文件写入成功&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;写文件错误&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        subject.sayHello(<span class="string">&quot;dynamic proxy&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行上述代码我们就可以得到动态代理生成的代理类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">class</span> <span class="title class_">$Proxy0</span> <span class="keyword">extends</span> <span class="title class_">Proxy</span> <span class="keyword">implements</span> <span class="title class_">Subject</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m1;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m3;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m2;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Method m0;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 调用的是父类的构造方法生成对象，上述Proxy类中标记的第四部正是调用的该方法创建对象。</span></span><br><span class="line"><span class="comment">     *          protected Proxy(InvocationHandler h) &#123;</span></span><br><span class="line"><span class="comment">     *              Objects.requireNonNull(h);</span></span><br><span class="line"><span class="comment">     *              this.h = h;//Proxy中有一个InvocationHandler</span></span><br><span class="line"><span class="comment">     *          &#125;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> var1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> $Proxy0(InvocationHandler var1) <span class="keyword">throws</span>  &#123;</span><br><span class="line">        <span class="built_in">super</span>(var1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 这里就是代理对象的sayHello方法，我们可以看到正式通过InvocationHandler的invoke方法执行的</span></span><br><span class="line"><span class="comment">     * m3是一个Method，在下面的静态代码块中使用反射的方式创建的。</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> var1</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">sayHello</span><span class="params">(String var1)</span> <span class="keyword">throws</span>  &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="built_in">super</span>.h.invoke(<span class="built_in">this</span>, m3, <span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;var1&#125;);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (RuntimeException | Error var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> var3;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable var4) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">UndeclaredThrowableException</span>(var4);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            m1 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;equals&quot;</span>, Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>));</span><br><span class="line">            m3 = Class.forName(<span class="string">&quot;com.iwat.design.pattern.proxy.Subject&quot;</span>).getMethod(<span class="string">&quot;sayHello&quot;</span>, Class.forName(<span class="string">&quot;java.lang.String&quot;</span>));</span><br><span class="line">            m2 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;toString&quot;</span>);</span><br><span class="line">            m0 = Class.forName(<span class="string">&quot;java.lang.Object&quot;</span>).getMethod(<span class="string">&quot;hashCode&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (NoSuchMethodException var2) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoSuchMethodError</span>(var2.getMessage());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClassNotFoundException var3) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">NoClassDefFoundError</span>(var3.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/*省略toString() hashCode()*/</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再想想，代理对象持有一个InvocationHandler对象，InvocationHandler对象持有一个被代理的对象（匿名内部类中的method.invoke(realObject,args);realObject对象），再联系到InvacationHandler中的invoke方法。</p>
+<h1 id="案例：SpringAOP"><a href="#案例：SpringAOP" class="headerlink" title="案例：SpringAOP"></a>案例：SpringAOP</h1><blockquote>
+<p>案例源码：<a target="_blank" rel="noopener" href="https://download.csdn.net/download/baidu_40120883/56971860">https://download.csdn.net/download/baidu_40120883&#x2F;56971860</a></p>
+</blockquote>
+<p>最后我实现了一个使用SpringBoot+自定义注解的SpringAOP使用案例，通过环绕通知的方式自动生成日志。我们来对比一下JDK动态代理，观察一下在AOP中是如何运用动态代理的。</p>
+<p>此处我们重点看一下切面的实现：<br><code>SysLogAspect</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 系统日志：切面处理类</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Created by LMD on 2019/3/22.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Aspect</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SysLogAspect</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="type">Logger</span> <span class="variable">LOG</span> <span class="operator">=</span> LoggerFactory.getLogger(SysLogAspect.class);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//定义切点 @Pointcut</span></span><br><span class="line">    <span class="comment">//在注解的位置切入代码</span></span><br><span class="line">    <span class="meta">@Pointcut(&quot;@annotation( com.iwat.spring.aop.annotation.OperLog)&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">logPoinCut</span><span class="params">()</span> &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//@Around：环绕通知</span></span><br><span class="line">    <span class="meta">@Around(&quot;logPoinCut()&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">saveSysLog</span><span class="params">(ProceedingJoinPoint proceedingJoinPoint)</span> &#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;环绕通知开始。。。。。&quot;</span>);</span><br><span class="line">        <span class="comment">//保存日志</span></span><br><span class="line">        <span class="type">SysLog</span> <span class="variable">sysLog</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SysLog</span>();</span><br><span class="line"></span><br><span class="line">        <span class="type">MethodSignature</span> <span class="variable">signature</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">        <span class="comment">//从切面织入点处通过反射机制获取织入点处的方法</span></span><br><span class="line">        <span class="keyword">if</span> (proceedingJoinPoint.getSignature() <span class="keyword">instanceof</span>  MethodSignature)&#123;</span><br><span class="line">            signature = (MethodSignature) proceedingJoinPoint.getSignature();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//获取切入点所在的方法</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">method</span> <span class="operator">=</span> signature.getMethod();</span><br><span class="line">        <span class="comment">//获取操作</span></span><br><span class="line">        <span class="type">OperLog</span> <span class="variable">myLog</span> <span class="operator">=</span> method.getAnnotation(OperLog.class);</span><br><span class="line">        <span class="keyword">if</span> (myLog != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> myLog.message();</span><br><span class="line">            sysLog.setMessage(value);<span class="comment">//保存获取的操作</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//获取请求的类名</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">className</span> <span class="operator">=</span> signature.getClass().getName();</span><br><span class="line">        <span class="comment">//获取请求的方法名</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">methodName</span> <span class="operator">=</span> method.getName();</span><br><span class="line">        sysLog.setMethod(className + <span class="string">&quot;.&quot;</span> + methodName);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求的参数</span></span><br><span class="line">        Object[] args = proceedingJoinPoint.getArgs();</span><br><span class="line">        <span class="comment">//将参数所在的数组转换成json</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">params</span> <span class="operator">=</span> JSON.toJSONString(args);</span><br><span class="line">        sysLog.setParams(params);</span><br><span class="line"></span><br><span class="line">        sysLog.setCreateDate(<span class="keyword">new</span> <span class="title class_">Date</span>());</span><br><span class="line">        <span class="comment">//获取用户名</span></span><br><span class="line">        <span class="comment">//获取用户ip地址</span></span><br><span class="line">        <span class="comment">// 接收到请求，记录请求内容</span></span><br><span class="line">        <span class="type">ServletRequestAttributes</span> <span class="variable">attributes</span> <span class="operator">=</span> (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();</span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">request</span> <span class="operator">=</span> attributes.getRequest();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 记录下请求内容</span></span><br><span class="line">        LOG.info(<span class="string">&quot;URL : &quot;</span> + request.getRequestURL().toString());</span><br><span class="line">        LOG.info(<span class="string">&quot;HTTP_METHOD : &quot;</span> + request.getMethod());</span><br><span class="line">        LOG.info(<span class="string">&quot;IP : &quot;</span> + request.getRemoteAddr());</span><br><span class="line">        sysLog.setIp(request.getRemoteAddr());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//开始调用时间</span></span><br><span class="line">        <span class="comment">// 计时并调用目标函数</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        <span class="type">Long</span> <span class="variable">time</span> <span class="operator">=</span> System.currentTimeMillis() - start;</span><br><span class="line">        sysLog.setTotalTime(time);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//打印日志</span></span><br><span class="line">        LOG.info(sysLog.toString());</span><br><span class="line"></span><br><span class="line">        <span class="comment">//调用service保存SysLog实体类到数据库</span></span><br><span class="line">        <span class="comment">//sysLogService.save(sysLog);</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//proceedingJoinPoint.proceed();的作用就是动态代理中的invocationHandler中method.invoke()的方法的作用，</span></span><br><span class="line">            <span class="comment">// 执行原方法，proceedingJoinPoint本身就是一个拦截到的方法的签名</span></span><br><span class="line">            <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> proceedingJoinPoint.proceed();</span><br><span class="line">            System.out.println(<span class="string">&quot;接口返回信息：&quot;</span>+result.toString());</span><br><span class="line">            System.out.println(<span class="string">&quot;环绕通知结束。。。。。&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Throwable throwable) &#123;</span><br><span class="line">            throwable.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;String,Object&gt;()&#123;&#123;put(<span class="string">&quot;msg&quot;</span>,<span class="string">&quot;error&quot;</span>);&#125;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>proceedingJoinPoint.proceed();的作用就是动态代理中的invocationHandler中method.invoke()的方法的作用: 执行原方法，proceedingJoinPoint本身就是一个拦截到的方法的签名。</p>
+<p>所以切面类就类似于动态代理中的InvocationHandler匿名内部类，可以在方法执行的前后去执行一些操作。但是SpringAOP更强大，可以通过切点指定多个需要增强的方法，进而创建代理对象，通过代理对象去执行增强后的方法。可以任意的对某个对象实现代理而进行统一的增强处理。</p>
+<p>运行项目以后，在浏览器访问localhost:8888&#x2F;test，查看控制台打印的信息：<br><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602111407314.png" alt="在这里插入图片描述"><br>可以看到，和动态代理是一样的，在原方法执行的前后增加了一些业务实现。</p>
+<p>需要注意的是，本案例中创建代理对象时使用的是Cjlib的方式，因为Controller类没有实现任何接口，所以无法使用反射的方式，如果将注解加到service层的方法上（实现类中），就会发现使用反射的方式创建代理对象。读者可以下载源码后自行试一试。</p>
+<p>如有不足，欢迎指正。</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 设计模式</a>
+              <a href="/tags/%E4%BB%A3%E7%90%86%E6%A8%A1%E5%BC%8F/" rel="tag"># 代理模式</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/08/30/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F05-%E5%8E%9F%E5%9E%8B%E6%A8%A1%E5%BC%8F/" rel="prev" title="实用的设计模式05-原型模式">
+                  <i class="fa fa-angle-left"></i> 实用的设计模式05-原型模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/21/Java/java%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/" rel="next" title="java反射入门及其使用案例">
+                  java反射入门及其使用案例 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">199k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
