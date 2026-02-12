@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="@TOC linux常用命令 注意：1、&lt;&gt;代表是必填项，[]表示是选填项。真正填入的时候不需要加&lt;&gt;和[]；2、本文命令以cenos7为例进行测试。  〇、连接远程linux主机 使用ssh命令（linux主机需要开启ssh服务）：ssh &lt;用户名&gt;@&lt;主机IP&gt;，例：ssh &#x72;&#x6f;&#111;&#x74;&#x40;&amp;#x3">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux常用命令-查询手册">
+<meta property="og:url" content="https://18253321614.github.io/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="@TOC linux常用命令 注意：1、&lt;&gt;代表是必填项，[]表示是选填项。真正填入的时候不需要加&lt;&gt;和[]；2、本文命令以cenos7为例进行测试。  〇、连接远程linux主机 使用ssh命令（linux主机需要开启ssh服务）：ssh &lt;用户名&gt;@&lt;主机IP&gt;，例：ssh &#x72;&#x6f;&#111;&#x74;&#x40;&amp;#x3">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i-blog.csdnimg.cn/blog_migrate/fbc3834dc02a47c5cc0c8b02490fcf1b.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081619081.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081619098.png">
+<meta property="article:published_time" content="2021-06-19T14:30:15.000Z">
+<meta property="article:modified_time" content="2026-02-08T08:33:24.642Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="命令">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i-blog.csdnimg.cn/blog_migrate/fbc3834dc02a47c5cc0c8b02490fcf1b.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/","path":"2021/06/19/linux常用命令-查询手册/","title":"linux常用命令-查询手册"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>linux常用命令-查询手册 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.</span> <span class="nav-text">linux常用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E3%80%87%E3%80%81%E8%BF%9E%E6%8E%A5%E8%BF%9C%E7%A8%8Blinux%E4%B8%BB%E6%9C%BA"><span class="nav-number">1.0.1.</span> <span class="nav-text">〇、连接远程linux主机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%97%A5%E5%B8%B8%E4%BD%BF%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.2.</span> <span class="nav-text">一、日常使用命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%BC%80%E5%85%B3%E6%9C%BA%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.2.1.</span> <span class="nav-text">1、开关机命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%B8%B8%E7%94%A8%E5%BF%AB%E6%8D%B7%E9%94%AE%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.2.2.</span> <span class="nav-text">2、常用快捷键命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.2.3.</span> <span class="nav-text">3、常用工具命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E7%94%A8%E7%9B%AE%E5%BD%95%E6%88%96%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.3.</span> <span class="nav-text">二、常用目录或文件操作命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%E3%80%81%E5%B1%95%E7%A4%BA%E7%9B%AE%E5%BD%95%E5%88%97%E8%A1%A8%E5%91%BD%E4%BB%A4ls%EF%BC%88list%EF%BC%89"><span class="nav-number">1.0.3.1.</span> <span class="nav-text">1、展示目录列表命令ls（list）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%E3%80%81%E5%88%87%E6%8D%A2%E7%9B%AE%E5%BD%95%E5%91%BD%E4%BB%A4cd%EF%BC%88change-directory%EF%BC%89"><span class="nav-number">1.0.3.2.</span> <span class="nav-text">2、切换目录命令cd（change directory）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E3%80%81%E7%9B%AE%E5%BD%95%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">1.0.3.3.</span> <span class="nav-text">3、目录的创建和删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4%E3%80%81%E6%96%87%E4%BB%B6%E7%9A%84%E5%88%9B%E5%BB%BA%E5%92%8C%E5%88%A0%E9%99%A4"><span class="nav-number">1.0.3.4.</span> <span class="nav-text">4、文件的创建和删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5%E3%80%81%E6%96%87%E4%BB%B6%E6%89%93%E5%8C%85%E6%88%96%E8%80%85%E8%A7%A3%E5%8E%8B%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.3.5.</span> <span class="nav-text">5、文件打包或者解压命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81linux%E4%B8%AD%E7%9A%84%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98"><span class="nav-number">1.0.4.</span> <span class="nav-text">三、linux中的权限问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9%E7%9A%84%E5%A4%8D%E5%88%B6%E3%80%81%E7%A7%BB%E5%8A%A8%E3%80%81%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.0.5.</span> <span class="nav-text">四、文件&#x2F;文件夹的复制、移动、查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.0.6.</span> <span class="nav-text">五、文件内容查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E7%B3%BB%E7%BB%9F%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4"><span class="nav-number">1.0.7.</span> <span class="nav-text">六、系统常用操作命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E7%A3%81%E7%9B%98%E5%8F%8A%E5%88%86%E5%8C%BA%E7%AE%A1%E7%90%86"><span class="nav-number">1.0.8.</span> <span class="nav-text">七、磁盘及分区管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%B8%B8%E7%94%A8%E7%9A%84%E5%8A%9F%E8%83%BD%E6%80%A7%E5%A4%8D%E5%90%88%E5%91%BD%E4%BB%A4%E6%B1%87%E6%80%BB"><span class="nav-number">1.0.9.</span> <span class="nav-text">八、常用的功能性复合命令汇总</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="linux常用命令-查询手册 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          linux常用命令-查询手册
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-19 22:30:15" itemprop="dateCreated datePublished" datetime="2021-06-19T22:30:15+08:00">2021-06-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<p>@<a href="%E7%9B%AE%E5%BD%95">TOC</a></p>
+<h1 id="linux常用命令"><a href="#linux常用命令" class="headerlink" title="linux常用命令"></a>linux常用命令</h1><blockquote>
+<p>注意：1、&lt;&gt;代表是必填项，[]表示是选填项。真正填入的时候不需要加&lt;&gt;和[]；2、本文命令以cenos7为例进行测试。</p>
+</blockquote>
+<h3 id="〇、连接远程linux主机"><a href="#〇、连接远程linux主机" class="headerlink" title="〇、连接远程linux主机"></a>〇、连接远程linux主机</h3><ul>
+<li>使用ssh命令（linux主机需要开启ssh服务）：<code>ssh &lt;用户名&gt;@&lt;主机IP&gt;</code>，例：ssh <a href="mailto:&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#48;&#49;&#46;&#51;&#x32;&#x2e;&#49;&#x35;&#x35;&#46;&#49;&#x30;&#48;">&#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#48;&#49;&#46;&#51;&#x32;&#x2e;&#49;&#x35;&#x35;&#46;&#49;&#x30;&#48;</a><br>之后会提示输入用户密码，正确输入密码即可进入。</li>
+</ul>
+<hr>
+<h3 id="一、日常使用命令"><a href="#一、日常使用命令" class="headerlink" title="一、日常使用命令"></a>一、日常使用命令</h3><h4 id="1、开关机命令"><a href="#1、开关机命令" class="headerlink" title="1、开关机命令"></a>1、开关机命令</h4><ol>
+<li><code>shutdown -h now</code>：现在关机</li>
+<li><code>shutdown -r now</code>：现在重启</li>
+<li><code>reboot</code>：现在重启计算机</li>
+<li><code>su [用户名]</code>：切换用户，不加用户名的话默认切换到root用户</li>
+<li><code>password</code> ：修改密码 # 未成功</li>
+<li><code>logout</code>：用户注销</li>
+</ol>
+<h4 id="2、常用快捷键命令"><a href="#2、常用快捷键命令" class="headerlink" title="2、常用快捷键命令"></a>2、常用快捷键命令</h4><ol>
+<li><code>tab</code>：补全</li>
+<li><code>ctrl+l</code>：清屏</li>
+<li><code>ctrl+r</code>：查找历史命令</li>
+<li><code>ctrl+c</code>：终止</li>
+<li><code>ctrl+k</code>：删除此处至末尾的所有内容</li>
+<li><code>ctrl+u</code>：删除此处至开始的所有内容</li>
+</ol>
+<h4 id="3、常用工具命令"><a href="#3、常用工具命令" class="headerlink" title="3、常用工具命令"></a>3、常用工具命令</h4><ol>
+<li><p><code>man</code></p>
+</li>
+<li><p><code>wc</code>（wordcount）：文本统计</p>
+<ol>
+<li>常见参数<ol>
+<li>-l：只查看行数</li>
+<li>-w：只查看单词数</li>
+<li>-c：只查看字符数</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p><code>du</code>：文件大小统计</p>
+<ol>
+<li>常用参数：<ol>
+<li>-s：只统计该文件目录的大小，不递归</li>
+<li>-h：人性化显示单位</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>find：文件检索命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">语法：</span><br><span class="line">	find	path	[-option]	[-exec|-ok	command]	&#123;&#125; \;</span><br><span class="line">	注意：</span><br><span class="line">		&lt;&gt;中的内容是必填项，[]中的内容是选填项；</span><br><span class="line">		-exec command是对查找出来的文件执行command命令；</span><br><span class="line">		&#123;&#125; 花括号代表前面find查找出来的文件名，就是对他们执行command；</span><br><span class="line">		然后是一个空格；</span><br><span class="line">		语句必须以分号结束，因为不同系统对分号解析可能有区别，所以前面价格转义符。</span><br><span class="line">		-ok和-exec作用相似，不同的是-ok在执行内一个命令之前都会提示用户确认</span><br><span class="line">	参数说明：</span><br><span class="line">		find：find之后，第一个命令参数之前的内容是搜索路径，默认为当前路径，命令参数默认位[-print]（. 表示当前目录及其子目录）</span><br><span class="line">		命令参数[-option]众多：</span><br><span class="line">			-amin n：在过去n分钟内被读取过</span><br><span class="line">			-atime n：在过去n天内被读取过</span><br><span class="line">			-anewer file：比file文件更晚被读取过的文件</span><br><span class="line">			</span><br><span class="line">			-cmin n：在过去n分钟内被修改过</span><br><span class="line">			-ctime n：在过去n天内被修改过</span><br><span class="line">			-cnewer file：比file文件更晚被读修改的文件</span><br><span class="line">			</span><br><span class="line">			-empty：空的文件</span><br><span class="line">			-path p 和 -ipath p：路径名符合p的文件，ipath会忽略大小写</span><br><span class="line">			-name fileName 和 -iname fileName：文件名符合p的文件，iname会忽略大小写</span><br><span class="line">			-type c：文件类型是c的文件（c的取值：目录d，一般文件f，符号链接l，socket s，）</span><br><span class="line">			-size n单位：文件大小是n单位，例：10k</span><br><span class="line">	例子：</span><br><span class="line">		查找/var/log 目录中更改时间在7日以前的普通文件，并在删除他们以前询问用户：</span><br><span class="line">		find /var/log -ctime +7 -type f -ok rm &#123;&#125; \;</span><br><span class="line">		</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>grep命令：</p>
+<pre><code>Grep 是 Global Regular Expression Print 的缩写，它搜索指定文件的内容，匹配指定的模式，默认情况下输出匹配内容所在的行。注意，grep 只支持匹配而不能替换匹配到的内容。
+</code></pre>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">### 常见用法</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">1、在当前目录中递归查询所有文件中包含username字符的行</span></span><br><span class="line">grep -r &quot;username&quot; ./</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">2、在指定文件中查找某字符串所在行的内容</span></span><br><span class="line">grep &quot;被查找的字符串&quot; 文件名</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">3、在制定文件查找符合某正则表达式的文本所在的行</span></span><br><span class="line">grep –e &quot;正则表达式&quot; 文件名</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">4、忽略大小写</span></span><br><span class="line">grep –i &quot;被查找的字符串&quot; 文件名</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">5、在指定文件中查找某不匹配该字符串的行的内容</span></span><br><span class="line">grep –v &quot;被查找的字符串&quot; 文件名</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">6、从根目录开始查找所有扩展名为 .<span class="built_in">log</span> 的文本文件，并找出包含 <span class="string">&quot;ERROR&quot;</span> 的行：</span></span><br><span class="line">find / -type f -name &quot;*.log&quot; | xargs grep &quot;ERROR&quot;</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">7、</span></span><br><span class="line">find . -name &quot;*.in&quot; | xargs grep &quot;thermcontact&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>I&#x2F;O重定向：&gt;， 覆盖输出 ；&gt;&gt;，追加输出</p>
+</li>
+<li><p>管道：管道是将前一个命令的输出作为后一个命令的输入</p>
+</li>
+<li><p>xargs：是给其他命令传递参数的一个过滤器，它擅长将标准输入数据转换成命令行参数</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat test.txt | xargs # 多行数据单行输出</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="二、常用目录或文件操作命令"><a href="#二、常用目录或文件操作命令" class="headerlink" title="二、常用目录或文件操作命令"></a>二、常用目录或文件操作命令</h3><h4 id="1、展示目录列表命令ls（list）"><a href="#1、展示目录列表命令ls（list）" class="headerlink" title="1、展示目录列表命令ls（list）"></a>1、展示目录列表命令ls（list）</h4><ol>
+<li>ls；ls -a；ls -l；ll；ll -a；ll -h，友好的显示当前目录下的文件信息；pwd</li>
+</ol>
+<h4 id="2、切换目录命令cd（change-directory）"><a href="#2、切换目录命令cd（change-directory）" class="headerlink" title="2、切换目录命令cd（change directory）"></a>2、切换目录命令cd（change directory）</h4><ol>
+<li>cd test；cd ..；cd ～；cd -；</li>
+</ol>
+<h4 id="3、目录的创建和删除"><a href="#3、目录的创建和删除" class="headerlink" title="3、目录的创建和删除"></a>3、目录的创建和删除</h4><ol>
+<li>mkdir test：在当前目录创建test目录</li>
+<li>mkdir -p test&#x2F;a&#x2F;b：在test目录下的a目录下创建b目录，如果a目录不存在一并创建</li>
+<li>rmdir test：删除当前目录下的test目录</li>
+</ol>
+<h4 id="4、文件的创建和删除"><a href="#4、文件的创建和删除" class="headerlink" title="4、文件的创建和删除"></a>4、文件的创建和删除</h4><ol>
+<li>touch test.txt：创建text.txt文件</li>
+<li>rm test.txt：删除test.txt文件，删除前询问用户</li>
+<li>rm -f test.txt：直接删除，不询问</li>
+<li>rm -r test.txt：递归删除，test目录及其子目录，删除前询问用户</li>
+<li>rm -rf test.txt：递归直接删除</li>
+</ol>
+<h4 id="5、文件打包或者解压命令"><a href="#5、文件打包或者解压命令" class="headerlink" title="5、文件打包或者解压命令"></a>5、文件打包或者解压命令</h4><ol>
+<li>打包并压缩文件（打包文件.tag，压缩文件.gz），一般情况下，打包和压缩是在一起的，打包压缩后文件后缀为.tag.gz。<ol>
+<li>命令：tar -zcvf &lt;指定打包压缩后的文件名&gt; &lt;要打包的文件&gt;<ol>
+<li>z：压缩</li>
+<li>c：打包</li>
+<li>v：显示运行过程</li>
+<li>f：指定文件名</li>
+</ol>
+</li>
+<li>注意：指定新文件名要自己加后缀，如<code>tar -zcvf test.txt.tag.gz aa</code></li>
+</ol>
+</li>
+<li>解压压缩包<ol>
+<li>命令：tar [-xvf] &lt;压缩文件&gt;<ol>
+<li>x：解压缩</li>
+<li>v、f和打包压缩的时候用法一致</li>
+</ol>
+</li>
+<li>主要：要解压的压缩文件名要写全，如<code>tar -xvf test.txt.tag.gz</code></li>
+</ol>
+</li>
+<li>zip类型：unzip &lt;文件名&gt;</li>
+<li>rar类型<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">1.安装rar解压工具</span></span><br><span class="line">wget http://www.rarlab.com/rar/rarlinux-x64-5.0.0.tar.gz</span><br><span class="line">tar -zxvf rarlinux-x64-5.0.0.tar.gz</span><br><span class="line">mv rar /opt/</span><br><span class="line">cd /opt/rar/</span><br><span class="line">make &amp;&amp; make install</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">2. 使用：</span></span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">2.1、rar命令</span></span><br><span class="line">rar a test.rar file1 file2　　#压缩</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">2.2、unrar命令</span></span><br><span class="line">unrar e test.rar DestPath　　#解压（会在把当前压缩包内容解压到当前目录内，容易造成解压内容和当前目录原文件混合，不容易区分，不建议使用）</span><br><span class="line">unrar x test.rar DestPath　　#解压（会在当前解压目录内产生一个以压缩包名字命名的目录，目录内是解压内容，推荐使用）</span><br></pre></td></tr></table></figure></li>
+</ol>
+<hr>
+<h3 id="三、linux中的权限问题"><a href="#三、linux中的权限问题" class="headerlink" title="三、linux中的权限问题"></a>三、linux中的权限问题</h3><p>文件详情：</p>
+<p><img src="https://i-blog.csdnimg.cn/blog_migrate/fbc3834dc02a47c5cc0c8b02490fcf1b.png" alt="[外链图片转存失败,源站可能有防盗链机制,建议将图片保存下来直接上传(img-R0fTd30u-1624112753391)(文件详情.png)]"></p>
+<p>因此可以得出，文件的权限问题就是：所有者、同组用户、无关用户对文件的读、写、执行操作的管理。 </p>
+<p>注意：读权限用数字4表示，写权限用数字2表示，执行权限用数字1表示，同时拥有读写权限则为数字6</p>
+<ol>
+<li>修改文件&#x2F;或目录的权限：chmod<ol>
+<li>例：修改文件test.txt文件的权限为，所有者拥有读写执行权限、同组用户可读可执行，其他用户没有权限，<code>chmod 730 test.txt</code></li>
+</ol>
+</li>
+<li>修改文件的所属用户和所属组<ol>
+<li><code>chown userName:groupName fileName</code>，修改文件所属用户和所属用户组</li>
+<li><code>chown userName: fileName</code>，修改文件所属用户</li>
+<li><code>chown :groupName fileName</code>，修改文件所属用户组</li>
+</ol>
+</li>
+<li>用户管理<ol>
+<li>查看所有用户：users，或者查看<code>etc/password</code></li>
+<li>添加用户：useradd &lt;用户名&gt;，useradd -d &lt;指定家目录&gt; &lt;用户名&gt;，useradd -g &lt;组名&gt; &lt;用户名&gt;</li>
+<li>删除用户：userdel &lt;用户名&gt;，userdel -r &lt;用户名&gt;</li>
+<li>查询用户信息：id &lt;用户名&gt;</li>
+<li>修改用户所在组：usermod -g &lt;新组名&gt; &lt;用户名&gt;</li>
+</ol>
+</li>
+<li>用户组管理<ol>
+<li>查看所有：<code>groups</code>，或者查看etc&#x2F;group</li>
+<li>添加组：<code>groupadd &lt;组名&gt;</code></li>
+<li>删除组：<code>groupdel &lt;组名&gt;</code></li>
+<li>usermod -aG wheel username.       #centos将用户添加到wheel组即可执行sudo</li>
+</ol>
+</li>
+</ol>
+<h3 id="四、文件-文件夹的复制、移动、查看"><a href="#四、文件-文件夹的复制、移动、查看" class="headerlink" title="四、文件&#x2F;文件夹的复制、移动、查看"></a>四、文件&#x2F;文件夹的复制、移动、查看</h3><ol>
+<li>复制命令：cp<ol>
+<li>语法<ol>
+<li><code>cp [-option] source destination</code></li>
+<li><code>cp [options] source1 source2 .... directory</code></li>
+</ol>
+</li>
+<li>选项和参数<ol>
+<li>-d	若来源档为连结档属性，则复制结档属性而非文件本身</li>
+<li>-p 连同文件的属性一起复制过去</li>
+<li>-r 递归连续复制，用于目录</li>
+<li>-a 相当于-pdr</li>
+<li>-f 强制</li>
+<li>-i 若目标档已存在，询问用户</li>
+<li>-l 复制文件的硬式链接，而不是文件</li>
+<li>-s 复制成为符号链接档，快捷方式</li>
+<li>-u destination比source旧才升级</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>删除命令：rm<ol>
+<li>语法<ol>
+<li><code>rm [-option] 文件或者目录</code></li>
+</ol>
+</li>
+<li>选项与参数<ol>
+<li>-r -f -i</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>移动或改名：mv<ol>
+<li>语法<ol>
+<li><code>mv [-option] source destination</code></li>
+<li><code>mv [options] source1 source2 .. directory</code></li>
+</ol>
+</li>
+<li>参数<ol>
+<li>-rfi</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<hr>
+<h3 id="五、文件内容查看"><a href="#五、文件内容查看" class="headerlink" title="五、文件内容查看"></a>五、文件内容查看</h3><ul>
+<li>cat 有第一行开始显示文件<ul>
+<li>-b 显示行号</li>
+<li>-n 显示行号 包括空行</li>
+<li>-A  &#x3D;  -vET</li>
+<li>-T tab显示为见 I</li>
+<li>-v 列出一些看不出来的特殊字符</li>
+<li>-E 结尾的断行字节$显示出来</li>
+</ul>
+</li>
+<li>tac 从最后一行开始显示，cat倒过来写</li>
+<li>nl 显示行号<ul>
+<li>-b 制定行号显示方式：-b a 忽略空行，-b t 不忽略空行</li>
+<li>-n 行号的表示方法：-n ln 左边显示，-n rn 右边显示且不加0 ，-n rz 右边显示且加0</li>
+<li>-w 行号占用的位数</li>
+</ul>
+</li>
+<li>more 一页一页的看<ul>
+<li>enter：下一行</li>
+<li>空格：下一页</li>
+<li>b：上一页</li>
+<li>:f 显示文档名和目前的行数</li>
+</ul>
+</li>
+<li>less 一页一页的看，可以翻页<ul>
+<li>B上一页</li>
+<li>空格下一页</li>
+<li>&#x2F;字串 向上搜索字串</li>
+<li>?字串 向下搜索字串</li>
+<li>n 重复前一个搜索（&#x2F; or ?）</li>
+<li>N反向重复前一个搜索（&#x2F; or ?）</li>
+</ul>
+</li>
+<li>head 只看头几行</li>
+<li>tail只看尾几行：tail -n number；-f：表示持续侦测后面所接收的文档名，ctrl+c结束侦测</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="六、系统常用操作命令"><a href="#六、系统常用操作命令" class="headerlink" title="六、系统常用操作命令"></a>六、系统常用操作命令</h3><ol>
+<li><p>编辑sudo命令的配置：visudo</p>
+<p>Linux sudo命令以系统管理者的身份执行指令，也就是说，经由 sudo 所执行的指令就好像是 root 亲自执行。</p>
+<p>使用权限：在 &#x2F;etc&#x2F;sudoers 中有出现的使用者。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash">用户名 登陆的主机= (以什么样的身份运行) 可以执行什么样的命令</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">eg：</span></span><br><span class="line">lyx ALL=(root) NOPASSWD:ALL # allow lyx to run all commands anywhere</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>网络管理：ping、ifconfig</p>
+</li>
+<li><p>服务管理：</p>
+<ol>
+<li>服务启动｜关闭｜状态查看｜重启： <code>service service_name start|stop|status|restart</code><ol>
+<li>linux自带的所有服务名称在：&#x2F;etc&#x2F;init.d&#x2F; 下</li>
+<li>如：network（网络）、iptables（防火墙）、mysql（mysql5.5之前叫mysqld）</li>
+</ol>
+</li>
+<li>设置某服务是否开机自启<ol>
+<li>检查：<code>chkconfig iptables --list</code></li>
+<li>设置：<code>chkconfig iptables on|off</code></li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p>进程管理：ps</p>
+<ol>
+<li>查看某进程：<code>ps -ef | grep java</code>（如安装了JDK可用<code>jps</code>代替这条命令）</li>
+<li>杀死某个进程：<code>kill -9 pid</code></li>
+</ol>
+</li>
+<li><p>端口管理</p>
+<ol>
+<li>netstat：netstat 是网络状态查看命令，既可以查看到本机开启的端口，也可以查看有哪些客户端连接。netstat 命令的基本信息如下。</li>
+<li>参数<ul>
+<li><p>-a：列出所有网络状态，包括 Socket 程序；</p>
+</li>
+<li><p>-c秒数：指定每隔几秒刷新一次网络状态；</p>
+</li>
+<li><p>-n：使用 IP 地址和端口号显示，不使用域名与服务名；</p>
+</li>
+<li><p>-p：显示 PID 和程序名；</p>
+</li>
+<li><p>-t：显示使用 TCP 协议端口的连接状况；</p>
+</li>
+<li><p>-u：显示使用 UDP 协议端口的连接状况；</p>
+</li>
+<li><p>-I：仅显示监听状态的连接；</p>
+</li>
+<li><p>-r：显示路由表；</p>
+</li>
+</ul>
+</li>
+<li>常用：netstat -atunlp</li>
+</ol>
+</li>
+</ol>
+<h3 id="七、磁盘及分区管理"><a href="#七、磁盘及分区管理" class="headerlink" title="七、磁盘及分区管理"></a>七、磁盘及分区管理</h3><p>1、Linux磁盘类型</p>
+<ul>
+<li>IDE类型：<br>  - 个人电脑常用磁盘类型，缺点是在读写操作时都大量消耗CPU资源 ，优点是性价比高适用面广。<br>  - 磁盘在系统中的标识：sd，例如第一块IDE类型磁盘的第一个分区为sda1</li>
+<li>SCSI类型：<br>  - 服务器常用磁盘类型，缺点是贵，优点是在大量数据读写时，自己的处理器会处理，占用CPU很少的资源；同时扩充性好、稳定、可靠。<br>  - 磁盘在系统中的标识：hx，例如第一块SCSI类型磁盘的第三个分区为hxa3</li>
+</ul>
+<p>2、常用分区类型及特点</p>
+<ul>
+<li>mbr分区：<ul>
+<li>最多支持4个主分区</li>
+<li>系统只能安装在主分区</li>
+<li>扩展分区站一个主分区（扩展分区可有多个逻辑分区）</li>
+<li>最大支持2TB，但拥有较好的兼容性</li>
+</ul>
+</li>
+<li>gtp分区：<ul>
+<li>支持无限多个主分区</li>
+<li>最大支持18EB的分区1024*1024TB</li>
+<li>win7 64为以后支持</li>
+</ul>
+</li>
+</ul>
+<p>3、查看磁盘分区及挂载信息</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsblk -f</span><br></pre></td></tr></table></figure>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081619081.png" alt="在这里插入图片描述"></p>
+<p><strong>案例：给linux增加一块新的硬盘并且挂载到 &#x2F;home&#x2F;newdisk</strong></p>
+<ol>
+<li>步骤：虚拟机添加硬盘；设置分区；格式化分区；挂载目录</li>
+<li>操作：<br>（1）虚拟机设置中添加一块磁盘，重启虚拟机生效。<br>（2）<code>lsblk -f</code>命令查看新添加的磁盘名称<br>（3）对磁盘进行分区：<br> 1）fdisk &#x2F;dev&#x2F;sdb	# 对第二块mbr磁盘分区<br> 2）n<br> 3）p<br> 4）默认<br> 5）默认<br> 6）w		#写入</li>
+</ol>
+<p>（4）格式化刚才的分区：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkfs -t ext4 /dev/sdb1		<span class="comment">#mkfs = make file system</span></span><br></pre></td></tr></table></figure>
+<p>（5）设置挂载目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount sdb1 /home/newdisk		<span class="comment">#卸载：unmount sdb1 /home/newdisk</span></span><br></pre></td></tr></table></figure>
+<p>（6）设置永久在动挂载</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081619098.png" alt="在这里插入图片描述"></p>
+<p>4、磁盘状态查询</p>
+<ol>
+<li>df –lh：查新磁盘整体使用情况</li>
+<li>du -h 目录：查询某个目录的磁盘使用情况<br> -s：指定目录占用大小汇总<br> -h：带计量单位<br> -a：含文件<br> -max-depth&#x3D;1：子目录深度<br> -c：列出明细的同时增加汇总值</li>
+</ol>
+<h3 id="八、常用的功能性复合命令汇总"><a href="#八、常用的功能性复合命令汇总" class="headerlink" title="八、常用的功能性复合命令汇总"></a>八、常用的功能性复合命令汇总</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 统计某个目录下面某种类型（或多种类型）的文件内容的行数。可用来统计代码行数</span></span><br><span class="line"><span class="comment"># 例：统计当前所在目录下 .java文件和,xml文件的行数 注意：统计多种类型的文件用 -or 连接，同时&quot;(&quot;和&quot;)&quot;不能缺，只统计一种类型的话&quot;(&quot;和&quot;)&quot;可以省略。</span></span><br><span class="line">find ./ <span class="string">&quot;(&quot;</span> -name <span class="string">&quot;*.java&quot;</span> -or -name <span class="string">&quot;*.xml&quot;</span> <span class="string">&quot;)&quot;</span> -<span class="built_in">print</span> | xargs <span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment">#统计某目录下文件的个数：</span></span><br><span class="line"><span class="built_in">ls</span> –l /etc | grep     “^-” |<span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment">#统计某目录下目录的个数：</span></span><br><span class="line"><span class="built_in">ls</span> –l /etc | grep     “^d” |<span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment">#统计某目录下文件的个数：</span></span><br><span class="line"><span class="built_in">ls</span> –lR /etc | grep     “^-” |<span class="built_in">wc</span> -l</span><br><span class="line"><span class="comment">#统计某目录下目录的个数：</span></span><br><span class="line"><span class="built_in">ls</span> –lR /etc | grep     “^-” |<span class="built_in">wc</span> –l</span><br><span class="line"><span class="comment">#以树状展示目录结构：</span></span><br><span class="line"><span class="comment">#Yam安装tree：</span></span><br><span class="line">yam  instal tree</span><br><span class="line">tree</span><br><span class="line"><span class="comment">#查看某个文件夹的大小</span></span><br><span class="line"><span class="built_in">du</span> -sh 文件夹名称 </span><br><span class="line"></span><br><span class="line"><span class="comment">#查看nginx配置文件位置</span></span><br><span class="line">nginx -t</span><br><span class="line"></span><br><span class="line"><span class="comment">#scp使用</span></span><br><span class="line"><span class="comment">#将当前路径下的pn-acess-0.0.1-SNAPSHOT.jar文件上传到101.132.155.132服务器的root用户的/home目录下，命名为pn.jar</span></span><br><span class="line">scp ./pn-acess-0.0.1-SNAPSHOT.jar root@101.132.155.132:/home/pn.jar</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">#查看内存使用情况：</span></span><br><span class="line">free -m</span><br><span class="line"></span><br><span class="line"><span class="comment">#查看内存占用排行前10的进程：</span></span><br><span class="line">ps aux --<span class="built_in">sort</span> -rss | <span class="built_in">head</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改该时间为2024年4月9日11点</span></span><br><span class="line"><span class="built_in">sudo</span> <span class="built_in">date</span> 040911002024.00</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag"># 命令</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/03/16/%E6%B5%85%E6%98%BE%E7%9A%84%E8%B0%88%E4%B8%80%E4%B8%8B%E7%9B%B8%E5%AF%B9%E8%AE%BA/" rel="prev" title="浅显的谈一下相对论">
+                  <i class="fa fa-angle-left"></i> 浅显的谈一下相对论
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/25/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/" rel="next" title="SpringCloudAlibaba微服务环境搭建版本冲突避坑指南">
+                  SpringCloudAlibaba微服务环境搭建版本冲突避坑指南 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">103k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:34</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

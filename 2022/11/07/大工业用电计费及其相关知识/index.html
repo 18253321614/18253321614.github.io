@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="电费计算方法主要分为大工业用电和一般工商业用电、农业生产用电用电、居民生活用电。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大工业用电计费及其相关知识">
+<meta property="og:url" content="https://18253321614.github.io/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="电费计算方法主要分为大工业用电和一般工商业用电、农业生产用电用电、居民生活用电。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551847.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081553333.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551789.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551816.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551816.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551846.png">
+<meta property="article:published_time" content="2022-11-07T08:09:26.000Z">
+<meta property="article:modified_time" content="2026-02-08T08:34:21.954Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="知识">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551847.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/","path":"2022/11/07/大工业用电计费及其相关知识/","title":"大工业用电计费及其相关知识"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>大工业用电计费及其相关知识 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1、概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E5%B7%A5%E5%8E%82%E7%94%A8%E7%94%B5%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">2、工厂用电的类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%B7%A5%E5%8E%82%E7%94%B5%E5%8A%9B%E7%9A%84%E6%8E%A5%E5%85%A5%E6%96%B9%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">3、工厂电力的接入方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4%E3%80%81%E5%B7%A5%E4%B8%9A%E7%94%B5%E8%B4%B9%E7%9A%84%E8%AE%A1%E7%AE%97%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">4、工业电费的计算方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5%E3%80%81%E6%A1%88%E4%BE%8B%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">5、案例：</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%B8%AD%E6%95%B4%E4%BD%93%E5%88%86%E4%B8%BA%E4%B8%89%E9%83%A8%E5%88%86%EF%BC%9A"><span class="nav-number">5.1.</span> <span class="nav-text">其中整体分为三部分：</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="大工业用电计费及其相关知识 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大工业用电计费及其相关知识
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-07 16:09:26" itemprop="dateCreated datePublished" datetime="2022-11-07T16:09:26+08:00">2022-11-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B1%82%E7%9F%A5/" itemprop="url" rel="index"><span itemprop="name">求知</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p> 电费计算方法主要分为<strong>大工业用电</strong>和一般工商业用电、农业生产用电用电、居民生活用电。</p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551847.png" alt="image-20221107151123912"></p>
+<span id="more"></span>
+
+<h2 id="1、概念"><a href="#1、概念" class="headerlink" title="1、概念"></a>1、概念</h2><p>大工业用电指受电变压器（含不通过受电变压器的高压电动机）容量在315千伏安及以上的下列用电：</p>
+<p>（1）以电为原动力，或以电冶炼、烘焙、熔焊、电解、电化、电热的工业生产用电。</p>
+<p>（2）铁路（包括地下铁路、城铁）、航运、电车及石油（天然气、热力）加压站生产用电。</p>
+<p>（3）自来水、工业实验、电子计算中心、垃圾处理、污水处理生产用电。</p>
+<p>（4）农副产品加工业用电：是指直接以农、林、牧、渔产品为原料进行的谷物磨制、饲料加工、植物油和制糖加工、屠宰及肉类加工、水产品加工，以及蔬菜、水果、坚果等食品的加工用电。</p>
+<blockquote>
+<p>基础知识：</p>
+<ul>
+<li><p>变压器：用来改变交流电电压大小的电气设备。例如：在进行远距离输电时（电阻很大），如果电流较大，那么就会电阻功率就会很大，这样会导致损耗较大。所以在功率不变的情况下，为了降低损耗就需要增大电压以减少电流，这时候就需要用到变压器，这也就是变压器的作用了。变压器的使用场景见下图:</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081553333.png" alt="image-20221107091948947"></p>
+<p><strong>注意：理想变压器两端的功率比是1:1</strong></p>
+</li>
+<li><p>电阻：R&#x3D;ρL&#x2F;S (其中，ρ表示电阻的电阻率，是由其本身性质决定，L表示电阻的长度，S表示电阻的横截面积) </p>
+</li>
+<li><p>阻力功率公式：P&#x3D;UI&#x3D;U²&#x2F;R&#x3D;I²R，其中P为功率，U为电阻两端的电压，I为流经电阻的电流，R为电阻的电阻值。</p>
+</li>
+<li><p>变压器容量：其额定电压与额定电流的乘积，其单位是VA，容量大了也可以是KVA或者MVA，即视在功率。</p>
+</li>
+<li><p>变压器容量和功率的异同：</p>
+<ul>
+<li>相同点：变压器容量或视在功率&#x3D;额定电压*额定电流，功率&#x3D;电压*电流，两个都是电压和电流相乘。</li>
+<li>区别：发电机发电输出的是有功功率，有功功率的单位就是W(瓦)，而发电机除了产生有功电能用于输出外，还可以产生无功功率，输出无功电流用于为变压器、电动机建立磁场。所以发电机输出的功率包含有功功率和无功功率。有功功率(P)用W做单位，无功功率(Q)用VA表示，它们之间的关系是：S²&#x3D;P²+Q²，S：视在功率。</li>
+<li>有功功率： 有功功率是保持用电设备正常运行所需的电功率，也就是将电能转换为其他形式能量(机械能、光能、热能)的电功率。比如：5.5千瓦的电动机就是把5.5千瓦的电能转换为机械能，带动水泵抽水或脱粒机脱粒；各种照明设备将电能转换为光能，供人们生活和工作照明</li>
+<li>无功功率：它不对外作功，而是转变为其他形式的能量。凡是有电磁线圈的电气设备，要建立磁场，就要消耗无功功率。比如40瓦的日光灯，除需40多瓦有功功率(镇流器也需消耗一部分有功功率)来发光外，还需80乏左右的无功功率供镇流器的线圈建立交变磁场用</li>
+</ul>
+</li>
+<li><p>功率因数：有功电流和无功电流之间存在相位差，所以使得系统的电压和电流之间有相位差，也就是系统的功率因数（cosφ）产生的原因。P&#x3D;S×cosφ，Q&#x3D;S×sinφ。cosφ越大，系统的kVA中包含的kW就越大，这就是系统提高功率因数的原因。</p>
+</li>
+</ul>
+</blockquote>
+<p><strong>科普1：为什么电器开多了可能诱发火灾？</strong></p>
+<p>电源适配器的作用是变压器兼整流器，家用电为220v交流电，电器设备一般所需要的电压都会在设备上标定，通常不需要这么大的电压，也不一定需要交流电，所以需要使用电源适配器来提供稳定的电压和电流。对于电流的大小，就取决于电器的功率了，电压一定后，功率越大那么电流越大，电流大了，电线的电阻功率就变大，所以电线过热就可能引起火灾。</p>
+<p>注意⚠️：家用电电流和用电器的功率成正比，$电流&#x3D;功率&#x2F;电压$，也就是说你家里开的电器越多，电流就越大。例如电热水壶：额定功率1800W，工作电流8A，每小时耗电1.8度。最大容量烧水时间4~6分钟，预计耗电0.18度。就是说电流是一个变化的参数。</p>
+<p><strong>科普2：一度电的概念</strong></p>
+<p>我们用电的本质是使用电做功，用来转换成其他能量。所以度是对电所做功的度量，$1度 &#x3D; 1千瓦时$，这里的千瓦时是指，功率为一千瓦的电器工作一小时电所做的功。</p>
+<p><strong>科普3：为什么有的电器设备需要大电压？</strong></p>
+<p>这要从电器设备的功率考虑，大型电器设备的运行功率都是非常大的，如果电压太小需要要超大的电流，这是十分不安全的！所以有的工厂会有自己的变压器。</p>
+<h2 id="2、工厂用电的类型"><a href="#2、工厂用电的类型" class="headerlink" title="2、工厂用电的类型"></a>2、工厂用电的类型</h2><p>工业用电是指主要从事大规模生产加工行业的企业用电。大多使用三相电压，如三相380VAC，三相660VAC等，或者直接高压电线进户。作为对比，而民用电采用的是单相220VAC。</p>
+<p>注意：VAC中的V指的电压单位福特，AC指交流电。</p>
+<p>因此现在的工厂车间安装的智能电表会有Ua、Ub、Uc、Ia、Ib、Ic、有功电度、无功电度的示数，他们就是三项电压中每一项的示数。</p>
+<h2 id="3、工厂电力的接入方式"><a href="#3、工厂电力的接入方式" class="headerlink" title="3、工厂电力的接入方式"></a>3、工厂电力的接入方式</h2><p>电从发电厂出来，到工厂或者到你家，是经历了如下过程：发电—变电（升压）—输电—变电（降压）—配电—用电</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551789.png" alt="image-20221107143803044"></p>
+<p>当电被输送到用电地方后，<strong>变电所</strong>会将高压电使用变压器将为低压电，然后将电力输送到<strong>配电厂</strong>，配电厂根据不用的电力使用需求，负责一个区域内的所有用电分配，例如：普通家庭用电的电压为220V，而工业用电却是380V，所以要按需分配，将家庭、工厂、商业用电分开处理。</p>
+<p>而工业设备对电压的需求并不相同，也会自己安装变压器。选择变压器就会涉及到一个容量问题，即要选择容量为多大的变压器。</p>
+<h2 id="4、工业电费的计算方法"><a href="#4、工业电费的计算方法" class="headerlink" title="4、工业电费的计算方法"></a>4、工业电费的计算方法</h2><p>公式：</p>
+<pre><code>$电费=基本电费+电度电费+力调电费。$
+</code></pre>
+<p>（1）$基本电费&#x3D;用电容量×基本电价$</p>
+<ul>
+<li><p>用电容量：变压器容量或最大需量（按何种方式计费由用户选择，两种选择方式基本电价不一致）</p>
+</li>
+<li><p>基本电价：各地区电价不一致，总之是一个价格数值。</p>
+</li>
+<li><p><strong>注意：</strong></p>
+<ul>
+<li>一般工商业和农业用电无此部分；</li>
+<li>最大需量是指计量在一定结算期内(一般为一个月)某一段时间(我国现执行15 min)客户用电的平均功率，保留其最大一次指示值作为这一结算期的最大需量。</li>
+<li>基本电价反映电力工业企业成本中的容量成本，即固定费用部分。计算基本电费时，以用户设备容量（千伏·安）或用户最大需量（千瓦）为单位，用户每月所付的基本电费仅与其容量或需量有关，与实际使用点来那个无关。</li>
+</ul>
+</li>
+</ul>
+<p>（2）$电度电费&#x3D;电度电量×电量电价×倍率$</p>
+<ul>
+<li><p>电度电量：电度表计量的电量（尖峰平谷不同时间分别计量），每月按表读数。</p>
+</li>
+<li><p>电量电价：参照下表两部制电价部分（山东省电网销售电价表、山东省电网输配电价表）：</p>
+</li>
+</ul>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551816.png" alt="image-20221107150438567"></p>
+<ul>
+<li>注意⚠️：途中两部制电价，就是在大工业中使用的计费方式，也就是现在我们正在讨论的。两部就是两部分，即电度电费和基本电费。在单一制电价中没有基本电费，</li>
+</ul>
+<p>（3）力调电费</p>
+<p>力调电费：根据<strong>功率因数</strong>调整电费。这里的功率因数就是上文中<em>基础知识</em>中的功率因数。</p>
+<p>$功率因数&#x3D;有功用电量&#x2F;√（有功用电量的平方+无功用电量的平方）$</p>
+<p>功率因数和电费调整因数的关系如下表：</p>
+<p>$力调电费 &#x3D;（基本电费+电度电费）×力调电费调整因数$</p>
+<p><strong>例如</strong>：工厂实际功率因数为0.91，则力调电调整因数为-0.15%，力调电费这一项就相当于是电费减免了。</p>
+<p>但是整体来讲，奖低罚高，并且功率因数越低罚款越高，最高能达到总电费的145%。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551816.png" alt="image-20221107153208436"></p>
+<h2 id="5、案例："><a href="#5、案例：" class="headerlink" title="5、案例："></a>5、案例：</h2><blockquote>
+<p>来自知乎用户<a target="_blank" rel="noopener" href="https://www.zhihu.com/org/ming-qiao-jie-neng-huan-bao/answers">鸣乔节能环保 - 知乎 (zhihu.com)</a>对于问题《<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/324351024/answer/2380974737">工厂一年电费几百万，要想节省电费，从哪里做起呢？</a>》的回答</p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551846.png" alt="image-20221107155616816"></p>
+<p align="center">山东某企业2022年1月电费单据</p>
+
+<h3 id="其中整体分为三部分："><a href="#其中整体分为三部分：" class="headerlink" title="其中整体分为三部分："></a><strong>其中整体分为三部分：</strong></h3><p><strong>1、电度电费部分</strong></p>
+<p>计算方式为：</p>
+<p>$（计量表内本月抄表数 - 上月抄表数）×  倍率 × 电费单价$</p>
+<p>$抄见电量总抄见电量(总)&#x3D;(1895.5−1750.86)×2000&#x3D;289280kwh$</p>
+<p><strong>2、基本电费部分（一般工商业和农业用电无此部分）</strong></p>
+<p>基本电费的计费方式分为三种：按容量、按合同最大需量和按实际最大需量。</p>
+<p>$这里收费方式为按容量：变压器容量×山东省容量单价$</p>
+<p>$基本电费元元基本电费&#x3D;1500×28元&#x2F;KVA&#x3D;42000元$</p>
+<p><strong>3、电价附加费</strong></p>
+<p>各水利基金附加费等不做分析。</p>
+<p>其中大家比较关心的部分就是力调电费的考核，这里就要说一下关于功率因数的计算方式。</p>
+<pre><code>$功率因数=有功用电量/√（有功用电量的平方+无功用电量的平方）$
+
+功率因数功率因数=284594/√(2845942^2+1269002^2)=0.913$
+</code></pre>
+<p>注：最后一位3的取值各地方标准不同</p>
+<hr>
+<blockquote>
+<p> 参考：</p>
+<p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/522781531">各种类别电费计算方法及电费单解读 - 知乎 (zhihu.com)</a></p>
+<p> <a target="_blank" rel="noopener" href="https://www.haocat.cn/zonghe/news134077.html">变压器容量什么意思 变压器容量的解释 (haocat.cn)</a></p>
+<p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/258766219">变压器容量单位KVA和KW的区别与换算 - 知乎 (zhihu.com)</a></p>
+<p> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/258766219">变压器容量单位KVA和KW的区别与换算 - 知乎 (zhihu.com)</a></p>
+<p> <a target="_blank" rel="noopener" href="http://www.senwei88.com/articles/zndbxs6050.html">智能电表显示Ua、Ub、Uc代表什么呢？-江苏森维电子智能电表厂家 (senwei88.com)</a></p>
+<p> <a target="_blank" rel="noopener" href="https://www.kepuchina.cn/kpcs/jyh/jyh1/201709/t20170908_223469.shtml">天天用电，电是怎么一步步到你家的？_科普中国网 (kepuchina.cn)</a></p>
+<p> <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/324351024">工厂一年电费几百万，要想节省电费，从哪里做起呢？ - 知乎 (zhihu.com)</a></p>
+</blockquote>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E7%9F%A5%E8%AF%86/" rel="tag"># 知识</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/10/05/java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A8%8D%E5%BE%AE%E9%AB%98%E7%BA%A7%E4%B8%80%E7%82%B9%E7%9A%84%E7%94%A8%E6%B3%95/" rel="prev" title="java正则表达式稍微高级一点的用法">
+                  <i class="fa fa-angle-left"></i> java正则表达式稍微高级一点的用法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/30/%E5%9C%B0%E8%B4%A8%E6%97%B6%E4%BB%A3%E7%AE%80%E5%8D%95%E6%A2%B3%E7%90%86/" rel="next" title="地质时代简单梳理">
+                  地质时代简单梳理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">103k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:34</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

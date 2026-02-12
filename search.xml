@@ -1,0 +1,2068 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Integer类型比较大小【详解】</title>
+    <url>/2022/08/27/Integer%E7%B1%BB%E5%9E%8B%E6%AF%94%E8%BE%83%E5%A4%A7%E5%B0%8F%E3%80%90%E8%AF%A6%E8%A7%A3%E3%80%91/</url>
+    <content><![CDATA[
+面试中经常被问的一个问题就是Integer类型的对象的比较问题，今天我们就来一探究竟
+
+
+
+有如下代码：问输出是什么？
+public static void main(String[] args) &#123;        Integer a = 128;        Integer b = 128;        Integer c = 1;        Integer d = 1;        System.out.println(a==b);        System.out.println(a.equals(b));        System.out.println(c==d);        System.out.println(c.equals(d))&#125;
+//输出：falsetruetruetrue
+1、equals()首先我们看比较容易理解的a.equals(b)和c.equals(d)，我们看下源码，主要涉及代码如下：
+private final int value;public boolean equals(Object obj) &#123;       if (obj instanceof Integer) &#123;           return value == ((Integer)obj).intValue();       &#125;       return false;   &#125;   public int intValue() &#123;       return value;   &#125;
+
+可以看到Integer中重写了equals方法，其中就是对于int类型值的比较，所以自然返回true
+System.out.println(a.equals(b));//等价于128==128System.out.println(c.equals(d));//等价于1==1
+
+2、&#x3D;&#x3D;下面的==比较就比较麻烦了，其实也不麻烦，只是涉及到自动拆箱和Integer对象缓存，我们先来看一下字节码：javap -v 反编译一下，找到main方法对用的字节码如下：
+public static void main(java.lang.String[]);    descriptor: ([Ljava/lang/String;)V    flags: ACC_PUBLIC, ACC_STATIC    Code:      stack=3, locals=5, args_size=1         0: sipush        128         3: invokestatic  #2                  // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;         6: astore_1         7: sipush        128        10: invokestatic  #2                  // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;        13: astore_2        14: iconst_1        15: invokestatic  #2                  // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;        18: astore_3        19: iconst_1        20: invokestatic  #2                  // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;        23: astore        4        25: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;        28: aload_1        29: aload_2        30: if_acmpne     37        33: iconst_1        34: goto          38        37: iconst_0        38: invokevirtual #4                  // Method java/io/PrintStream.println:(Z)V        41: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;        44: aload_1        45: aload_2        46: invokevirtual #5                  // Method java/lang/Integer.equals:(Ljava/lang/Object;)Z        49: invokevirtual #4                  // Method java/io/PrintStream.println:(Z)V        52: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;        55: aload_3        56: aload         4        58: if_acmpne     65        61: iconst_1        62: goto          66        65: iconst_0        66: invokevirtual #4                  // Method java/io/PrintStream.println:(Z)V        69: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;        72: aload_3        73: aload         4        75: invokevirtual #5                  // Method java/lang/Integer.equals:(Ljava/lang/Object;)Z        78: invokevirtual #4                  // Method java/io/PrintStream.println:(Z)V        81: return
+通过字节码可以看到，从0-23是在初始化了4个变量，同时存储之前自动调用了java/lang/Integer.valueOf:(I)Ljava/lang/Integer;进行装箱，25-38对应代码System.out.println(a==b);
+25: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;28: aload_1							//加载12829: aload_2							//加载12830: if_acmpne     37					//比较两个Integer引用是否是!=，成立执行33行，将1写入操作数栈，不成立跳转到37，将0写入操作数栈33: iconst_134: goto          3837: iconst_038: invokevirtual #4                  // Method java/io/PrintStream.println:(Z)V//打印30行执行后的结果0或1对应false或true
+问题就出现这里，通过输出的结果我们可以看到a和b引用的是不同的Integer，这个可以理解，因为我们就是定义了两个Integer；但是c和d引用的却是同一个Integer，那为什么会这样呢？
+public static void main(String[] args) &#123;        Integer a = 128;        Integer b = 128;        Integer c = 1;        Integer d = 1;        System.out.println(a==b);        System.out.println(a.equals(b));        System.out.println(c==d);        System.out.println(c.equals(d))&#125;//输出：falsetruetruetrue
+
+玄机应该是在创建对象的时候，编译器悄悄的干了点什么，干了什么呢？其实就是自动装箱，我们找到自动装箱执行的方法Integer.valueOf的源代码如下：
+public static Integer valueOf(int i) &#123;    if (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)        return IntegerCache.cache[i + (-IntegerCache.low)];    return new Integer(i);&#125;
+可以看到，当i在[IntegerCache.low, IntegerCache.high]中时，没有new新的Integer对象，所以我们在找到IntegerCache一探究竟，源代码如下：
+/**  * 缓存以支持自动装箱的对象标识语义  * JLS 要求的 -128 和 127（含）。  *  * 缓存在第一次使用时初始化。 缓存大小  * 可以由 &#123;@code -XX:AutoBoxCacheMax=&lt;size&gt;&#125; 选项控制。  * 在 VM 初始化期间，java.lang.Integer.IntegerCache.high 属性  * 可以在私有系统属性中设置和保存  * sun.misc.VM 类。  */private static class IntegerCache &#123;        static final int low = -128;//缓存的最小值        static final int high;        static final Integer cache[];        static &#123;            // high value may be configured by property            int h = 127;            String integerCacheHighPropValue =                sun.misc.VM.getSavedProperty(&quot;java.lang.Integer.IntegerCache.high&quot;);//可以自己配置缓存的最大值            if (integerCacheHighPropValue != null) &#123;//如果自己配置了就用自己配置的，同时下面代码保证了，自己配置的值要大于127才生效                try &#123;                    int i = parseInt(integerCacheHighPropValue);                    i = Math.max(i, 127);//大于127才生效                    // Maximum array size is Integer.MAX_VALUE                    h = Math.min(i, Integer.MAX_VALUE - (-low) -1);                &#125; catch( NumberFormatException nfe) &#123;                    // If the property cannot be parsed into an int, ignore it.                &#125;            &#125;            high = h;//没有自己配置就用默认128			//创建缓存数组            cache = new Integer[(high - low) + 1];            int j = low;            //缓存数组中全部填充值Integer对象            for(int k = 0; k &lt; cache.length; k++)                cache[k] = new Integer(j++);            // range [-128, 127] must be interned (JLS7 5.1.7)            assert IntegerCache.high &gt;= 127;//最大值必须大于127，否则报错。防止自己配置错误        &#125;        private IntegerCache() &#123;&#125;    &#125;
+代码中都加了注解，应该很好理解。看到这里应该就很明白了：得出结论（1）System.out.println(a==b);中，因为128&gt;127所以，在自动装箱执行valueOf方法时时并没有进入if语句，而是创建的新的Integer对象，所以显示a、b是两个对象的引用，所以输出false。（2）同理 System.out.println(c==d);中，1&lt;127，所以进入if语句块，c、d对象都是IntegerCache.cache[1]引用的对象，所以自然是相等的！输出true。
+public static Integer valueOf(int i) &#123;    if (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)        return IntegerCache.cache[i + (-IntegerCache.low)];    return new Integer(i);&#125;
+public static void main(String[] args) &#123;        Integer a = 128;        Integer b = 128;        Integer c = 1;        Integer d = 1;        System.out.println(a==b);        System.out.println(a.equals(b));        System.out.println(c==d);        System.out.println(c.equals(d))&#125;//输出：falsetruetruetrue
+
+到了这里其实还没有完：如下代码会输出什么呢？
+public static void main(String[] args) &#123;        Integer e = new Integer(128);        Integer f = new Integer(128);        Integer g = new Integer(1);        Integer h = new Integer(1);                System.out.println(e==f);        System.out.println(e.equals(f));        System.out.println(g==h);        System.out.println(g.equals(h));     &#125;
+使用new创建对象是不会触发自动装箱操作的，所以预测会打印false、true、false、true，执行结果如下，和预料的一样。
+falsetruefalsetrue
+
+到这里所有关于Integer对象的比较问题就都说清楚了，但是还会有a与e比较、c与g比较的问题，这些衍生问题就很容易了。
+最后再总结一下：&#x3D;&#x3D;比较的地址，equals方法得看代码怎么写（一般是值的比较）
+that is all！！！
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>integer</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>JRebel安装使用教程</title>
+    <url>/2023/11/20/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/</url>
+    <content><![CDATA[1、下载插件
+版本列表：https://plugins.jetbrains.com/plugin/4441-jrebel-and-xrebel/versions下载：JRebel and XRebel 2022.4.1
+
+这里下载2022.4.1版本，因为后续新版本获取凭证会比较麻烦。下载完成会是一个压缩包。
+
+
+2、安装选择第一步下载的插件zip文件，在下列面板中安装
+3、获取凭证安装完成后在setting面板中会出现jRebel的设置项。可以采用两种方式获取：在线获取和本地获取，在线获取比较省事并且mac或者windows都可以。点击上图的 change license 按钮，打开jRebel激活面板：
+3.1 在线获取凭证打开 Welcome to JetBrains License Server!:) (qekang.com)，复制下图中红色链接，粘贴到jRebel激活面板的 Team URL中，下面的邮件随便
+3.2 本地获取凭证待续…..
+4、设置使用4.1 设置自动编译
+4.2 使用jRebel启动项目首先通过：View &gt; Tool Windows &gt; JRebel，打开JRebel工具栏如下，勾选相应的模块。然后通过Rebel Run 或 Rebel Debug启动项目，如果控制台打印JRebel的日志信息，则JRebel使用成功。
+2016-11-15 12:19:20 JRebel:  #############################################################2016-11-15 12:19:20 JRebel:  2016-11-15 12:19:20 JRebel:  JRebel Agent 7.0.0 (201611081555)2016-11-15 12:19:20 JRebel:  (c) Copyright ZeroTurnaround AS, Estonia, Tartu.2016-11-15 12:19:20 JRebel:  2016-11-15 12:19:20 JRebel:  Over the last 1 days JRebel prevented2016-11-15 12:19:20 JRebel:  at least 0 redeploys/restarts saving you about 0 hours.2016-11-15 12:19:20 JRebel:  2016-11-15 12:19:20 JRebel:  Licensed to ZeroTurnaround.2016-11-15 12:19:20 JRebel:  2016-11-15 12:19:20 JRebel:  #############################################################
+
+修改代码后执行重新编译，代码即可实现热部署，win的快捷键是 Ctrl + Shift + F9，mac的快捷键是 Command + Shift + F9。如果是使用 Rebel Debug启动，因为4.1中的设置，原则上项目代码更新后自动的Rebuild，所以不需要手动重新编译，但是这个 Rebuild是有时间的间隔，所以修改该之后手动重新编译即可。注意：如果是maven项目，最好添加JRebel的maven构建插件：
+&lt;plugin&gt;  &lt;groupId&gt;org.zeroturnaround&lt;/groupId&gt;  &lt;artifactId&gt;jrebel-maven-plugin&lt;/artifactId&gt;  &lt;version&gt;1.2.0&lt;/version&gt;  &lt;executions&gt;    &lt;execution&gt;      &lt;id&gt;generate-rebel-xml&lt;/id&gt;      &lt;phase&gt;process-resources&lt;/phase&gt;      &lt;goals&gt;        &lt;goal&gt;generate&lt;/goal&gt;      &lt;/goals&gt;    &lt;/execution&gt;  &lt;/executions&gt;&lt;/plugin&gt;
+
+5、示例
+6、参考
+JRebel2023.3 插件使用详解_jrebel使用教程-CSDN博客JRebel Quick Start Guide for IntelliJ IDEA | JRebel &amp; XRebel by Perforce
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>JRebel</tag>
+        <tag>插件</tag>
+        <tag>IDEA</tag>
+        <tag>编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>SpringCloudAlibaba微服务环境搭建版本冲突避坑指南</title>
+    <url>/2021/07/25/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/</url>
+    <content><![CDATA[
+使用SpringCloudAlibaba方案进行微服务开发时，虽说SpringCloudAlibaba在SpringCloud的基础上更进了一步，但核心还是SpringCloud，只是采用了几个阿里自己的中间件，也就是说SpringCloudAlibaba也是基于SpringBoot的，并且例如网关等中间件阿里仍然采用的是SpringCloud方案中的Gateway网关，在项目中就又会引入SpringCloud的的组件，所以就涉及到三者版本兼容性的问题。
+
+
+
+1、三者关系
+spring boot：一个为简化spring应用开发而出现的框架，比如spring MVC应用的开发等。
+spring cloud：一套全家桶的微服务解决框架，理念就是解决我们在微服务架构中遇到的任何问题，包括解决微服务开发中各种问题问题的组件，微服务是一个理念。spring cloud就提供了工具在应用实现这个理念。由于springcloud的组件基于spring boot开发的，所以springcloud是基于springboot。
+spring cloud alibaba：实现对SpringCloud组件进行扩展
+
+2、版本对应关系（摘自SpringCloudAlibaba的github的wiki）
+SpringCloud的版本：我们对上边图片内容做一些说明。首先是SpringCloud的版本号，最初采用的伦敦地铁站的名称作为版本号，因为SpringCloud包含众多子项目，为了避免与子项目的版本号产生冲突，也为了更好的管理，故而采用了这种版本描述方式。但是最新的版本已经开始使用时间的版本描述方式了。比如SpringCloud Hoxton.SR3：Hoxton就是版本名称，SR3又是只什么呢？这与官方的版本发布计划有关，其实就是对版本的进一步描述。SpringBoot和SpringCloudAlibaba：由于 Spring Boot 1 和 Spring Boot 2 在 Actuator 模块的接口和注解有很大的变更，且 spring-cloud-commons 从 1.x.x 版本升级到 2.0.0 版本也有较大的变更，因此SpringClouAlibaba采取跟 SpringBoot 版本号一致的版本:
+
+1.5.x 版本适用于 Spring Boot 1.5.x
+2.0.x 版本适用于 Spring Boot 2.0.x
+2.1.x 版本适用于 Spring Boot 2.1.x
+2.2.x 版本适用于 Spring Boot 2.2.x
+2021.x 版本适用于 Spring Boot 2.4.x
+
+3、在项目中如何实现依赖项目的版本管理因为都是Maven项目，所以首先要明白Maven是如何实现依赖项目版本管理的
+3.1 Maven的&lt;dependencyManagement&gt;标签&lt;dependencyManagement标签是一个和&lt;dependencies&gt;标签同级的一个标签，作用就是描述依赖的版本，&lt;dependencyManagement&gt;标签内部又会包含一个&lt;dependencies&gt;标签，&lt;dependencies&gt;标签又会包含依赖&lt;dependencie&gt;，&lt;dependencyManagement&gt;标签管理版本依赖，但不会真正的引入依赖。例如：
+&lt;dependencyManagement&gt;        &lt;dependencies&gt;            &lt;dependency&gt;	            &lt;groupId&gt;mysql&lt;/groupId&gt;	            &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;	            &lt;version&gt;8.0.25&lt;/version&gt;            &lt;/dependency&gt;        &lt;/dependencies&gt;&lt;/dependencyManagement&gt;
+在真正引入时我就可以这样：
+&lt;dependencies&gt;          &lt;dependency&gt;           &lt;groupId&gt;mysql&lt;/groupId&gt;           &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;           &lt;!-- 不加版本号 --&gt;          &lt;/dependency&gt;      &lt;/dependencies&gt;
+
+有小伙伴看到就说了，你这不多此一举，版本号直接写依赖下面不就行了。NoNoNo，我们知道Maven的pom是可以继承的，微服务项目都会有众多模块，有些模块就会有相同的依赖，而这个依赖其他模块就不需要，所以这些依赖不能放在公共模块中，那怎么让各模块依赖的版本号一致呢？就是&lt;dependencyManagement&gt;，在父项目中加入依赖的版本管理，子项目就可以全部不用加版本号了，因为子项目会继承它，并且修改版本的时候只需要在父项目修改即可。
+3.2 SpringCloud的版本管理SpringCloud项目中包含了众多的组件，组件也都会有自己的版本，那我们引入多个SpringCloud的组件时（例如：gateway，feign），怎么保证这些个组件都是属于同一个SpringCloud的版本呢？
+答案就是spring-cloud-dependencies项目，在这个项目的中就写了大量的&lt;/dependencyManagement&gt;，管理着spring-cloud中各个组件的版本，并且这个项目的版本号是和SpringCloud的版本号一致的，比如Hoxton.SR3，每一个版本的spring-cloud-dependencies项目，管理的组件的版本都是不同的，所以通过spring-cloud-dependencies项目的版本就可以确定组件的版本。
+所以我们在项目中就要把它继承过来，继承到当前项目中，并且给他指定版本号，这样我们就不用自己写版本号了。
+所以又出现了一个问题，pom是单继承的，父项目只能有一个，SpringCloud的个组件版本有spring-cloud-dependencies项目管理，那SpringCloudAlibaba的依赖项目版本也有spring-cloud-alibaba-dependencies项目管理，如果我们项同时继承两个pom怎么办呢？
+Maven采用的是单继承的方式，所以使用&lt;parent&gt;标签是不行的，因为不能又两个&lt;parent&gt;标签。
+这时候老朋友&lt;dependencyManagement&gt;标签又登场了。比如想要继承spring-cloud-dependencies和spring-cloud-alibaba-dependencies项目，就可以这么写：
+&lt;dependencyManagement&gt;        &lt;dependencies&gt;            &lt;dependency&gt;                &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;                &lt;artifactId&gt;spring-cloud-alibaba-dependencies&lt;/artifactId&gt;                &lt;version&gt;2.2.1.RELEASE&lt;/version&gt;                &lt;type&gt;pom&lt;/type&gt;                &lt;scope&gt;import&lt;/scope&gt;            &lt;/dependency&gt;            &lt;dependency&gt;                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;                &lt;version&gt;Hoxton.SR3&lt;/version&gt;                &lt;type&gt;pom&lt;/type&gt;                &lt;scope&gt;import&lt;/scope&gt;            &lt;/dependency&gt;        &lt;/dependencies&gt;    &lt;/dependencyManagement&gt;
+这里解释一下&lt;type&gt;和&lt;scop&gt;：
+
+type表示项目类型，这里是涉及到Maven的打包方式，&lt;packaging&gt;标签，我们常用的是jar包(默认就是jar)和war包，就是让maven执行打包命令时，将项目压缩为指定格式的包，除了这两种也可以是&lt;packaging&gt;pom&lt;/packaging&gt;，表示打包成pom文件，执行maven的packaging命令结果就是一个pom文件。
+
+scop是核心，表示把引入当前项目，scope为import只能在dependencyManagement中使用，且type为pom类型。关于作用范围scop的详细可以参考  maven中scope标签详解。
+
+
+4、版本管理实现综上，要使SpringBoot，SpringCloud，SpringCloudAlibaba版本一致对用，只需要在父项目中加入如下的项，只是要注意这里写的SpringBoot的版本和项目中使用的SpringBoot（SpringBoot项目pom的parent标签）的版本要一致：
+&lt;dependencyManagement&gt;       &lt;dependencies&gt;           &lt;dependency&gt;               &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;               &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;               &lt;version&gt;2.2.5.RELEASE&lt;/version&gt;               &lt;type&gt;pom&lt;/type&gt;               &lt;scope&gt;import&lt;/scope&gt;           &lt;/dependency&gt;           &lt;dependency&gt;               &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;               &lt;artifactId&gt;spring-cloud-alibaba-dependencies&lt;/artifactId&gt;               &lt;version&gt;2.2.1.RELEASE&lt;/version&gt;               &lt;type&gt;pom&lt;/type&gt;               &lt;scope&gt;import&lt;/scope&gt;           &lt;/dependency&gt;           &lt;dependency&gt;               &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;               &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;               &lt;version&gt;Hoxton.SR3&lt;/version&gt;               &lt;type&gt;pom&lt;/type&gt;               &lt;scope&gt;import&lt;/scope&gt;           &lt;/dependency&gt;       &lt;/dependencies&gt;   &lt;/dependencyManagement&gt;
+有的小伙伴说了，我这没有父项目啊，只有一个聚合项目。其实任意模块都可以引入上述代码来实现版本的管理。
+比你你要在一个SpringBoot项目中做SpringCloud、SpringCloudAlibaba和SpringBoot的版本的管理，只需要写如下项：
+&lt;dependencyManagement&gt;       &lt;dependencies&gt;           &lt;dependency&gt;               &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;               &lt;artifactId&gt;spring-cloud-alibaba-dependencies&lt;/artifactId&gt;               &lt;version&gt;2.2.1.RELEASE&lt;/version&gt;               &lt;type&gt;pom&lt;/type&gt;               &lt;scope&gt;import&lt;/scope&gt;           &lt;/dependency&gt;           &lt;dependency&gt;               &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;               &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;               &lt;version&gt;Hoxton.SR3&lt;/version&gt;               &lt;type&gt;pom&lt;/type&gt;               &lt;scope&gt;import&lt;/scope&gt;           &lt;/dependency&gt;       &lt;/dependencies&gt;   &lt;/dependencyManagement&gt;
+
+因为你的项目是SpringBoot项目，该项目的pom已经继承了spring-boot-starter-parent项目的pom，而spring-boot-starter-parent又继承了spring-boot-dependencies，所以SpringBoot的版本在parent标签中指定就行了。
+（查看spring-boot-starter-aprent的pom：点这里）
+5、总结：用一个实例&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&lt;project xmlns=&quot;http://maven.apache.org/POM/4.0.0&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;         xsi:schemaLocation=&quot;http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd&quot;&gt;    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;    &lt;parent&gt;        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;        &lt;version&gt;2.2.5.RELEASE&lt;/version&gt;        &lt;relativePath/&gt; &lt;!-- lookup parent from repository --&gt;    &lt;/parent&gt;    &lt;groupId&gt;com.atguigu.gulimall&lt;/groupId&gt;    &lt;artifactId&gt;gulimall-gateway&lt;/artifactId&gt;    &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;    &lt;name&gt;gulimall-gateway&lt;/name&gt;    &lt;description&gt;API网关&lt;/description&gt;    &lt;properties&gt;        &lt;java.version&gt;1.8&lt;/java.version&gt;        &lt;spring-cloud.version&gt;Hoxton.SR3&lt;/spring-cloud.version&gt;    &lt;/properties&gt;    &lt;dependencies&gt;        &lt;dependency&gt;            &lt;groupId&gt;com.atguigu&lt;/groupId&gt;            &lt;artifactId&gt;gulimall-common&lt;/artifactId&gt;            &lt;version&gt;0.0.1-SNAPSHOT&lt;/version&gt;            &lt;exclusions&gt;                &lt;exclusion&gt;                    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;                &lt;/exclusion&gt;            &lt;/exclusions&gt;        &lt;/dependency&gt;        &lt;dependency&gt;            &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;            &lt;artifactId&gt;spring-cloud-starter-gateway&lt;/artifactId&gt;        &lt;/dependency&gt;    &lt;/dependencies&gt;    &lt;dependencyManagement&gt;        &lt;dependencies&gt;            &lt;dependency&gt;                &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;                &lt;artifactId&gt;spring-cloud-dependencies&lt;/artifactId&gt;                &lt;version&gt;$&#123;spring-cloud.version&#125;&lt;/version&gt;                &lt;type&gt;pom&lt;/type&gt;                &lt;scope&gt;import&lt;/scope&gt;            &lt;/dependency&gt;        &lt;/dependencies&gt;    &lt;/dependencyManagement&gt;    &lt;build&gt;        &lt;plugins&gt;            &lt;plugin&gt;                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;            &lt;/plugin&gt;        &lt;/plugins&gt;    &lt;/build&gt;&lt;/project&gt;
+实例描述：
+
+这是一个网关模块，继承了spring-boot-starter-parent，所以这是一个SpringBoot项目，在parent标签中指定了使用的SpringBoot的版本为2.2.5.RELEASE。
+网关组件使用的是SpringCloud的gateway，所以需要用spring-cloud-dependencies指定SpringCloud的版本为Hoxton.SR3。
+项目使用nacos作为注册中心和配置中心，所以在基础模块gulimall-common（该模块引入了它）中用spring-cloud-alibaba-dependencies指定了SpringCloudAlibaba的版本为2.2.1.RELEASE。
+
+
+至此关于maven中进行项目依赖的版本管理就说完了，如有不足，评论里讨论！
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>spring alibaba</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ThreadLocal浅析</title>
+    <url>/2023/03/09/ThreadLocal%E6%B5%85%E6%9E%90/</url>
+    <content><![CDATA[ThreadLocal是一个存储线程本地变量的对象，在ThreadLocal中存储的对象在其他线程中是不可见的，本文介绍ThreadLocal的原理。
+1、threadLocal使用1.1 案例一多个线程中使用1个threadLocal：
+@Slf4jpublic class TestThreadLocal &#123;    public static void main(String[] args) &#123;        ThreadLocal&lt;Integer&gt; threadLocal = new ThreadLocal&lt;&gt;();        threadLocal.set(999);        log.info(threadLocal.get().toString());		//使用线程池创建一个线程        ExecutorService service = Executors.newSingleThreadExecutor();        service.execute(()-&gt;&#123;            log.info(threadLocal.get().toString());//threadLocal.get()将为null            threadLocal.set(888);            log.info(threadLocal.get().toString());        &#125;);        log.info(threadLocal.get().toString());    &#125;&#125;输出：2023-03-09 09:03:40.572 [main] INFO -- 9992023-03-09 09:03:40.598 [main] INFO -- 999Exception in thread &quot;pool-1-thread-1&quot; java.lang.NullPointerException	at com.iwat.arithmetic.thread.TestThreadLocal.lambda$main$0(TestThreadLocal.java:24)	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)	at java.lang.Thread.run(Thread.java:748)
+从结果中可以看到，在新线程中无法获取到999，主线程中set的数，只有祝线程能get到，这就保证了变量的线程唯一。
+
+
+1.2 案例二一个线程中使用多个threadLocal：
+public static void main(String[] args) &#123;     ThreadLocal&lt;String&gt; t1 = new ThreadLocal&lt;&gt;();     t1.set(&quot;123&quot;);     System.out.println(t1.get());     m2(); &#125; public static void m2()&#123;     ThreadLocal&lt;String&gt; t2 = new ThreadLocal&lt;&gt;();     System.out.println(&quot;m2: &quot;+t2.get());     t2.remove(); &#125;//输出：123m2: null
+可以看到两个threadLocal中的值不共享。
+2、原理2.1 ThreadLocal.set(T value)首先看threadLocal.set(999);的源码
+//ThreadLocal类中   public void set(T value) &#123;   	//1.获取当前线程       Thread t = Thread.currentThread();       //2. 获取线程中的ThreadLocalMap对象       ThreadLocalMap map = getMap(t);       if (map != null)       	//线程中的ThreadLocalMap对象不为空，直接set值，this就是当前ThreadLocal对象没，值就是值           map.set(this, value);       else       	//线程中的ThreadLocalMap对象为空，创建并set值           createMap(t, value);   &#125;
+很简单，获取当前线程，然后获取当前线程的ThreadLocalMap对象，这里的ThreadLocalMap可以就当做一个Map处理，但是这个Map不一样的地方在于key只能是ThreadLocal对象。现在我们就可以分析一下了。
+2.2 ThreadLocalMap
+&#x3D;&#x3D;每一线程都有一个ThreadLocalMap对象&#x3D;&#x3D;，在Thread类中有一个ThreadLocal.ThreadLocalMap threadLocals = null;，对于每一个ThreadLocal对象来说它可以在每一个线程中ThreadLocalMap中存一个以它为key的值。例如：
+
+在线程1中，ThreadLocal对象1执行set方法，实际上就是在线程1中的ThreadLocalMap中添加一个k-v（1号红色箭头），k就是ThreadLocal对象1。
+在线程1中，ThreadLocal对象2执行get方法，就是在线程1的ThreadLocalMap中获取以ThreadLocal对象2为key的值（2号红色箭头）
+
+每个ThreadLocal在某个线程中只能有一个对应value，因为Map中key不能重复，这就实现了线程唯一变量的功能。
+下面看一下ThreadLocal中的get方法验证一下分析：
+//ThreadLocal类中 public T get() &#123;     Thread t = Thread.currentThread();     ThreadLocalMap map = getMap(t);     if (map != null) &#123;         ThreadLocalMap.Entry e = map.getEntry(this);//在ThreadLocal类中，this就是一个ThreadLocal对象         if (e != null) &#123;             @SuppressWarnings(&quot;unchecked&quot;)             T result = (T)e.value;             return result;         &#125;     &#125;     return setInitialValue(); &#125;
+
+同时这也解释了，为什么上面代码中出现Exception in thread &quot;pool-1-thread-1&quot; java.lang.NullPointerException，原因就是在新创建的线程中的ThreadLocalMap中没有以当前ThreadLocal对象为key的值。
+2.3 Entry上面源码中ThreadLocalMap.Entry e = map.getEntry(this);，出现了一个Entry，Entry是ThreadLocalMap的一个内部类，Entry继承自WeakReference&lt;ThreadLocal&lt;?&gt;&gt;，素以相当于一个Entry对象会引用一个ThreadLocal对象同时存储一个值，就类似一个k-v的结构（和HashMap中的Entry类似），&#x3D;&#x3D;ThreadLocalMap中有一个Entry数组&#x3D;&#x3D;，这就是ThreadLocalMap的实现原理（一个Entry是一个k-v，一个Entry数组就是多个k-v，也就是一个Map），这也是为什么称之为Map。
+static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; &#123;     /** The value associated with this ThreadLocal. */     Object value;     Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;         super(k);         value = v;     &#125; &#125;
+接着看一下 ThreadLocalMap.Entry e = map.getEntry(this);//this就是threadLoacl对像的 map.getEntry(this)源码
+private Entry getEntry(ThreadLocal&lt;?&gt; key) &#123;     int i = key.threadLocalHashCode &amp; (table.length - 1);     Entry e = table[i];     if (e != null &amp;&amp; e.get() == key)         return e;     else         return getEntryAfterMiss(key, i, e); &#125;
+前面说了，ThreadLocalMap中有一个Entry数组，getEntry中就是找到当前ThreadLocal所对应Entry。
+2.4 小结每一个线程有一个：ThreadLocalMap threadLocals，其中有一个Entry数组，一个Entry可以保存一个kv。在一个线程中每创建一个ThreadLocal，就会在threadLocals中创建一个Entry，key就是刚刚创建的ThreadLocal，v可以任意设置。
+ThreadLocal&lt;String&gt; t1 = new ThreadLocal&lt;&gt;();t1.set(&quot;123&quot;);
+上述代码的执行逻辑：ThreadLocal&lt;String&gt; t1 = new ThreadLocal&lt;&gt;();：创建一个ThreadLocal t1，在ThreadLocalMap threadLocals中添加一个Entry对象，k为t1，v为nullt1.set(&quot;123&quot;);：在threadLocals的Entry[ ]里，为key为t1的Entry中添加v&#x3D;123
+3、java引用类型3.1 GC回收对象java垃圾回收器多采用可达性分析算法来确定一个java对象需不需要回收，过程是这样的：
+
+首先确定一些一定不能回收的对象，叫做GCRoot对象
+查找GCRoot对象引用的对象
+然后沿着引用链一直找（注意：引用有多种类型）
+
+最终根据对象被引用的类型、有没有被引用，来决定是不是回收这个对象。
+3.2 引用类型那么引用类型有哪些呢？总体而言分为四种：
+
+强引用沿着GC Root引用链可以找到的对象就是强引用对象
+软引用 (SoftReference)垃圾回收后仍内存不足，就会回收掉
+弱引用 (WeakReference)垃圾回收就将其回收掉
+虚引用 (PhantomReference)必须配合引用队列使用，主要配合 ByteButfer 使用，被引用对象回收时，会将虛引用入队，由Reference Handler 线程调用虚引用相关方法释放直接内存
+
+
+3.3 弱引用上面说到了弱引用，弱引用的作用是：当一个对象A引用了另一个对象B的弱引用，如果对象B在系统不存在其他引用了，垃圾回收时就会回收掉对象B。例如在下列的缓存实现中，Map&lt;K, WeakReference&gt; cache中的V是一个对象的弱引用，当对象V不再被除了缓存的其他对象引用了，执行垃圾回收时就会将V回收掉（垃圾回收也不一定什么时候，所以V即使不被其他对象引用了也不会立刻被回收），这样就防止了无用对象一直占用缓存，造成内存泄漏。什么是内存泄漏？就是指一部分对象一直占用内存，也清不掉，就好像这块内存空间没了，漏掉了。接着继续查看下面的get方法，缓存没有命中时要清理掉Key cache.remove(key);，否则也会导致内存泄漏。
+import java.lang.ref.WeakReference;import java.util.HashMap;import java.util.Map;class Cache&lt;K, V&gt; &#123;    private final Map&lt;K, WeakReference&lt;V&gt;&gt; cache = new HashMap&lt;&gt;();    public V get(K key) &#123;        WeakReference&lt;V&gt; weakRef = cache.get(key);        if (weakRef != null) &#123;            V value = weakRef.get();            if (value != null) &#123;                // 缓存命中，返回缓存的对象                return value;            &#125; else &#123;                // 对象已经被垃圾回收，从缓存中移除                cache.remove(key);            &#125;        &#125;        // 缓存未命中，返回null或执行加载操作        return null;    &#125;    public void put(K key, V value) &#123;        // 使用WeakReference封装value并放入缓存        cache.put(key, new WeakReference&lt;&gt;(value));    &#125;    public void remove(K key) &#123;        cache.remove(key);    &#125;    public void clear() &#123;        cache.clear();    &#125;&#125;public class CacheExample &#123;    public static void main(String[] args) &#123;        // 创建一个缓存        Cache&lt;String, String&gt; cache = new Cache&lt;&gt;();        // 向缓存中放入对象        cache.put(&quot;key1&quot;, &quot;value1&quot;);        cache.put(&quot;key2&quot;, &quot;value2&quot;);        // 从缓存中获取对象        String value1 = cache.get(&quot;key1&quot;);        String value2 = cache.get(&quot;key2&quot;);        String value3 = cache.get(&quot;key3&quot;); // 返回null，因为key3不在缓存中或已被回收        System.out.println(&quot;Value1: &quot; + value1);        System.out.println(&quot;Value2: &quot; + value2);        System.out.println(&quot;Value3: &quot; + value3);        // 清空缓存        cache.clear();    &#125;&#125;
+
+4、内存泄漏问题在看了java中几种引用类型、弱引用、内存泄漏之后在回头看一下Entry的实现，在ThreadLocalMap的内部使用的是Entry类存储k-v。
+static class ThreadLocalMap &#123;        static class Entry extends WeakReference&lt;ThreadLocal&lt;?&gt;&gt; &#123;            /** The value associated with this ThreadLocal. */            Object value;            Entry(ThreadLocal&lt;?&gt; k, Object v) &#123;                super(k);                value = v;            &#125;        &#125;        /**         * The initial capacity -- MUST be a power of two.         */        private static final int INITIAL_CAPACITY = 16;        		//省略若干代码&#125;
+在ThreadLocal的使用时，线程的ThreadLocalMap中都存储了以ThreadLocal为key的值，如果ThreadLocal被清理了，那么ThreadLocalMap中对应的数据会被清理吗？例如：下列的m2方法执行完毕，局部变量t1就会被回收，此时线程的ThreadLocalMap中的某个Entry仍然引用这t1对象，但是Entry中是t1的一个弱引用，因此在下次垃圾回收时，这个Entry中的t1就会被回收。
+public static void m2()&#123;     ThreadLocal&lt;String&gt; t1 = new ThreadLocal&lt;&gt;();     t1.set(&quot;value&quot;);     System.out.println(&quot;m2: &quot;+t1.get()); &#125;
+但是！！！！！！！！此处任然会有内存泄漏的问题，因为t1.set(“value”);中的”value”还被Entry引用着，只是key变成了null，所以Entry和其中的value还会一直占用内存，这也导致了内存泄漏，那应该怎么做呢？很简单，使用完毕之后将Entry中value手动移除就行了。
+public static void m2()&#123;    ThreadLocal&lt;String&gt; t1 = new ThreadLocal&lt;&gt;();    System.out.println(&quot;m2: &quot;+t1.get());    t1.remove();&#125;
+
+索引使用ThreadLocal一定要记着remove。
+
+
+以上就是ThreadLocal的全部内容，如有不足欢迎指正！
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>ThreadLocal</tag>
+        <tag>线程</tag>
+        <tag>并发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RFID工作原理浅析</title>
+    <url>/2023/12/06/RFID%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/</url>
+    <content><![CDATA[rfid（Radio Frequency Identification，射频识别）本质上是一种无线通信方式，可以以非接触的方式与特定器械进行数据交换。一个rfid系统至少需要3个方面组成：
+
+rfid标签：标签内部可以存储数据。
+读写器：读写器可以向标签中读取或写入数据。
+软件系统：软件从读写器中获取从标标签中获取的数据进行处理。
+
+
+
+例如：高铁检票口的闸机，身份证是rfid标签，闸机是读写器，还有就是对应的软件。身份证放到指定区域后，读写器读取个人信息，软件根据个人信息查询行程信息，行程无误，闸机开放通道。
+既然是无线通信方式，以当前人类科技来说，本质上必然使用电磁波进行数据传输，因此rfid的底层通信原理仍然是电磁耦合。想象手机信号的传输方式：电子信号从发射器到达天线，然后天线将信号作为一系列电磁波发射到空气中。信号通过空气传播，通过基站定向转发，直到它到达指定目标位置为止。在目标位置，另一个天线接收信号，一个接收器将它转换回电流。
+rfid的如今的使用已经非常广泛，最常见一个就是手机的nfc，nfc本质就是一种rfid技术。本文主要介绍rfid标签的组成、rfid标签和读写器通信过程、通信原理等。
+0、名词解释电磁耦合电磁耦合就是指电磁场中两个或多个电路元件之间相互影响的现象，同时是一种通过电磁场相互作用来传递信息的技术，其中电路元件之间通过电磁场的相互作用来便可以传递能量或信息。
+1、rfid标签简介1.1 构成rfid标签主要由两部分构成：耦合原件和微芯片。
+（1）耦合元件
+耦合元件本质上就是天线或线圈，作用就是建立电磁耦合，去完成在RFID标签和读写器之间传递能量和数据。
+简单说耦合元件负责和读写器传递能量和数据。
+（2）微芯片
+微芯片通常包含一个微处理器和存储器，负责存储和简单的处理数据。此外还有一个转换器（调制解调器）负责对读写器和rfid标签间传递的数据进行转换。
+1.2 分类根据不同的标准可将rfid标签分为多类，其中常见的是通过标签的能量源和通信信道频率进行划分：
+（1）根据标签的能量源
+
+有源rfid标签：自身有电池，可主动发出信息。例如：高速公路ECT收费系统。
+无源rfid标签：自身没有能量来源，必须配合其他设备来使用。例如：身份证、银行卡、门禁卡。
+半有源&#x2F;半无源rfid标签：既可以主动发出信息，也可以像无源rfid标签一样，配合其他设备被动的发出标签中存储的信息。
+
+（2）根据频率
+低频、高频、超高频和微波电子标签
+1.3 数据存储形式rfid标签存储器中存储的数据和普通存储器没有区别，一般都是二进制的形式。
+2、通信过程以无源rfid标签与读写器的通信过程为例：
+（1）激活标签
+读写器靠近rfid标签后通过天线发送一个射频信号，形成一个高频电磁场。rfid标签的耦合原件在电磁场中通过电磁感应原理产生电流，为标签中的微芯片提供能量，从而激活标签。
+（2）数据传输
+标签被激活以后，内部的微芯片便可以工作。收到读写器的读取命令后，经过微芯片内部的信号解调器，将数据转换为模拟信号或者数字信号，这里的信号本质上就是电流（也没有其他东西了），电流经过耦合原件（天线或线圈）后就会产生特定频率的电磁场，电磁场通过空气等介质传播就产生电磁波。这样信号就通过耦合原件发射出去了。
+至于电磁波如何承载信息，有兴趣的读者可自行深入研究。
+（3）信号解析
+接收器上的耦合原件会感知到标签产生的电磁波，然后将其转为电信号，解析后得到可用的数据。
+通过了解无源rfid标签与读写器的通信过程，对于rfid标签与读写器的通信过程应该可以略窥一二。
+3、数据传输方式数据传输是通过电磁耦合来完成，RFID系统中常见的两种电磁耦合方式是感应偶合（Inductive Coupling）和后向散射偶合（Backscatter Coupling）。
+（1）感应偶合（Inductive Coupling）
+在感应偶合中，电磁感应是通过相邻的线圈或天线之间的磁场耦合实现的。当RFID标签的天线靠近读写器的天线时，两者之间的磁场感应导致能量传输和数据传递。
+（2）后向散射偶合（Backscatter Coupling）
+后向散射偶合是一种被动的无源通信方式。RFID标签通过调制自身的阻抗，使得接收到的射频信号发生相位或振幅的变化，然后反射回读写器。这种方式中，标签不直接产生射频信号，而是利用读写器的射频信号进行通信，就像雷达一样。
+
+
+
+
+]]></content>
+      <categories>
+        <category>技术</category>
+      </categories>
+      <tags>
+        <tag>RFID</tag>
+        <tag>原理</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>https的证书机制</title>
+    <url>/2022/07/14/https%E7%9A%84%E8%AF%81%E4%B9%A6%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[
+参考：（1）HTTPS的加密方式超详细解读_渔火愁眠__CSDN （2）通俗易懂的带你了解HTTPS的原理_IT烂笔头_CSDN（3）网站向CA申请的数字安全证书可能被盗用吗？（4）rsa公钥和私钥到底哪个才是用来加密，哪个用来解密？
+
+
+
+1、对称加密1.1、定义需要对加密和解密使用相同密钥的加密算法。所谓对称，就是采用这种加密方法的双方使用方式用同样的密钥进行加密和解密。密钥是控制加密及解密过程的指令。算法是一组规则，规定如何进行加密和解密。
+1.2、密钥形式采用单钥密码系统的加密方法，同一个密钥可以同时用作信息的加密和解密，这种加密方法称为对称加密，也称为单密钥加密。
+1.3、优缺点优点：对称加密算法的优点是算法公开、计算量小、加密速度快、加密效率高。 缺点：对称加密，密钥管理的安全性很低，因为加密和解密都使用同一个密钥，在密钥的发送过程中，密钥可能被第三方截取，导致第三方也可以破解密文。
+1.4、 http通信中的使用及存在的问题在每次发送真实数据之前，客户端先生成一把密钥，然后先把密钥传输给服务端。之后客户端给服务端发送真实数据的时候，会用这把密钥对数据进行加密，服务端收到加密数据之后，用刚才收到的密钥进行解密。问题：中间人攻击如下图所示
+2、非对称加密2.1、定义非对称加密算法需要两个密钥：公开密钥（publickey:简称公钥）和私有密钥（privatekey:简称私钥）。公钥与私钥是一对，如果用公钥对数据进行加密，只有用对应的私钥才能解密。因为加密和解密使用的是两个不同的密钥，所以这种算法叫作非对称加密算法。
+2.2、密钥形式公钥与私钥是一对。传输双方均有自己的一对密钥（也就是双方每方均有：公、私密钥一把，双方加起来共4把）
+例子:传输双方比如是甲乙双方，甲方有配对的公、私密钥一对，且公钥负责加密，私钥负责解对应的公钥加的密。乙方同理。
+2.3、优缺点非对称密钥的算法强度复杂（是优点也是缺点），安全性依赖于算法与密钥。 优点：安全性较高，比对称密钥安全性高很多。 非对称加密算法的保密性比较好，它消除了最终用户交换密钥的需要。 缺点：由于其算法复杂，而使得加密解密速度没有对称加密解密的速度快。
+2.4、http通信中的使用及存在的问题1.客户端要向服务器发送信息，客户端和服务器都要产生一对用于加密和解密的公钥和私钥。2.客户端的私钥保密，客户端的公钥告诉服务器；服务器的私钥保密，服务器的公钥告诉客户端。3.客户端要给服务器发送信息时，客户端用服务器的公钥加密信息，因为服务器的公钥是公开的，客户端可以得到。4.客户端将这个消息发给服务器（已经用服务器的公钥加密消息）。5.服务器收到这个消息后，服务器用自己的私钥解密客户端的消息。其他所有收到这个报文的人都无法解密，因为只有服务器才有服务器的私钥。问题：由于其算法复杂，而使得加密解密速度较慢
+注意：公钥和私钥都可用于加密和解密公钥和私钥都可以用于加解密操作，用公钥加密的数据只能由对应的私钥解密，反之亦然。虽说两者都可用于加密，但是不同场景使用不同的密钥来加密，规则如下：1、私钥用于签名、公钥用于验签签名和加密作用不同，签名并不是为了保密，而是为了保证这个签名是由特定的某个人签名的，而不是被其它人伪造的签名，所以私钥的私有性就适合用在签名用途上。私钥签名后，只能由对应的公钥解密，公钥又是公开的（很多人可持有，但私钥只有创建者有，这就可以用于判断是不是私钥持有者加密的数据），所以这些人拿着公钥来解密，解密成功后就能判断出是持有私钥的人做的签名，验证了身份合法性。2、公钥用于加密、私钥用于解密，这才能起到加密作用因为公钥是公开的，很多人可以持有公钥。若用私钥加密，那所有持有公钥的人都可以进行解密，这是不安全的！若用公钥加密，那只能由私钥解密，而私钥是私有不公开的，只能由特定的私钥持有人解密，保证的数据的安全性。
+3、对称加密与非对称加密的混合加密方法和存在的问题黑色字迹：加密及传输过程橙色字迹：安全问题
+4、结合证书机制的非对称加密注意：关于证书的验证，即客户端如何知道证书有效？首先网站会想CA机构申请证书，CA机构有了网站信息；CA将网站信息通过hash散列得到hashcode，将hashcode使用CA机构的私钥加密（即所谓的签名）后与网站信息放在一起，构成了CA证书；用于非对称加密的公钥也是放在证书中。因为私钥的私有的，并不会在互联网传播，所以无人能够伪造；又因为私钥对应的公钥有很多，所以公钥持有者可以通过解密被私钥加密的数据（这里是hashcode），判断数据是不是属于私钥持有者，也就是CA机构，从而知道证书的真伪。
+5、思考既然中间人可以截取密钥（3中），那么为什么不能截取证书呢？（中间人可以修改其中的公钥，在发给客户端）答案是可以截取到证书，但截取到证书后还需要修改其中的公钥。但是如果A、B互发的公钥是带有签名，且验签所用的证书是CA颁发、可公开查询的，那么这种改变公钥的中间人攻击不被发现的可能性很小。
+另外，如果没有别的附加手段，比如时间戳等保证会话匹配(matching conversation)的技术，单独的签名也防不住中间人的重放攻击。
+
+
+
+
+]]></content>
+      <categories>
+        <category>网络</category>
+      </categories>
+      <tags>
+        <tag>https</tag>
+        <tag>证书</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java中List集合常用初始化方式</title>
+    <url>/2022/08/23/java%E4%B8%ADList%E9%9B%86%E5%90%88%E5%B8%B8%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E5%BC%8F/</url>
+    <content><![CDATA[
+List容器的常用初始化方式，参考：1、Java 中初始化 List 集合的 8 种方式!；2、Java 中初始化 List 集合的 6 种方式!
+
+
+
+public class ListInit &#123;    public static void main(String[] args) &#123;        /* 1 常规方式 */        List&lt;String&gt; list1 = new ArrayList&lt;&gt;();        list1.add(&quot;1&quot;);        list1.add(&quot;2&quot;);        list1.add(&quot;3&quot;);        System.out.println(&quot;getList1: &quot; + list1);        //输出：getList1: [1, 2, 3]        /* 2 Arrays工具类 */        List&lt;Integer&gt; list21 = Arrays.asList(1, 2, 3);        List&lt;String&gt; list22 = Arrays.asList(&quot;1&quot;, null, &quot;3&quot;);        System.out.println(&quot;getList21: &quot; + list21);        System.out.println(&quot;getList22: &quot; + list22);        //输出：        //getList21: [1, 2, 3]        //getList22: [1, null, 3]        //注意：上述方式生成的list不可变        //list22.add(&quot;4&quot;);//会报错        //如果要可以修改的，可以在用List包装一下        List&lt;String&gt; list23 = new LinkedList&lt;&gt;(Arrays.asList(&quot;1&quot;, null, &quot;3&quot;));        list23.add(&quot;4&quot;);//不报错        /* 3 Lists工具类 */        List&lt;String&gt; list3 = Lists.newArrayList(&quot;1&quot;, null, &quot;3&quot;);        System.out.println(&quot;getList3: &quot; + list3);        //输出：getList3: [1, null, 3]        /* 4 匿名内部类 */        ArrayList&lt;String&gt; list4 = new ArrayList&lt;String&gt;() &#123;&#123;            add(&quot;1&quot;);            add(null);            add(&quot;3&quot;);        &#125;&#125;;        System.out.println(&quot;getList4: &quot; + list4);        //输出：getList4: [1, null, 3]        /* 5 java8的stream */        List&lt;String&gt; list5 = Stream.of(&quot;1&quot;, null, &quot;3&quot;).collect(Collectors.toList());        System.out.println(&quot;getList4: &quot; + list4);        //输出：getList5: [1, null, 3]    &#125;&#125;
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>List</tag>
+        <tag>集合</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java中的CAS</title>
+    <url>/2022/03/15/java%E4%B8%AD%E7%9A%84CAS/</url>
+    <content><![CDATA[1、java内存模型是什么?java内存模型（JMM）
+
+用于屏蔽硬件和操作系统的内存访问差异
+实现java程序在各个平台都能达到一致的并发效果
+
+
+
+
+2、什么是线程安全？当多个线程访问一个类时，不管线程的调度方式是怎么样的，同时调用时不需要额外的同步代码，这个类都能能表现成正确的行为，那么就称这个类类是线程安全的。
+
+多线程不安全的例子：
+public class JMMDemo &#123;    long count = 0;//放在祝线程中    public void access() &#123;//多个线程执行这个方法        count++;    &#125;    public static void main(String[] args) throws InterruptedException &#123;        JMMDemo jmmDemo = new JMMDemo();        for (int i = 0; i &lt; 10; i++) &#123;            new Thread(() -&gt; &#123;                for (int j = 0; j &lt; 1000; j++) &#123;                    jmmDemo.access();                &#125;            &#125;).start();        &#125;        Thread.sleep(1000);//等待所有自线程执行完毕        System.out.println(&quot;接口访问次数: &quot; + jmmDemo.count);    &#125;&#125;
+
+Q: 为什么出现线程不安全的情况？
+A: count是存在于主内存中，每个线程操作count时都是将count从主内存读取到线程的工作内存，修改完成后在写入到主内存，在这个过程中，一个线程的写入操作可能会覆盖掉另一个线程的写入。
+Q：如何解决？
+A：可以使用基于CAS的原子操作类。
+3、什么事CAS操作，缺点是什么？ AtomicLong原子类的使用：
+public class JMMDemoCAS &#123;    AtomicLong count = new AtomicLong(0);    public void access()&#123;        count.incrementAndGet();//等于i++，线程安全的    &#125;    public static void main(String[] args) throws InterruptedException &#123;        JMMDemoCAS jmmDemo = new JMMDemoCAS();        for (int i = 0; i &lt; 10; i++) &#123;            new Thread(() -&gt; &#123;                for (int j = 0; j &lt; 10000; j++) &#123;                    jmmDemo.access();                &#125;            &#125;).start();        &#125;        Thread.sleep(1000);//等待所有自线程执行完毕        System.out.println(&quot;接口访问次数: &quot; + jmmDemo.count);    &#125;&#125;
+
+原理解析：
+
+缺点：
+
+只能解决一个简单的共享变量的原子操作，CAS只能操作一个共享变量，如果一个操作涉及多个变量那么CAS就不能使用了，如：JMMDemo类中有count、count0，access方法中count &#x3D; count+count0
+cpu开销问题：CAS会伴随着一个自旋，运气不好会一直自旋
+ABA问题：
+针对的是对象类型，原子类除了可以保存八大基本类型意外，还可以保存对象（对象的引用）。
+问题描述：
+从内存中获取对象的引用，
+进行CAS操作，此时在对比的时候其实内存中对象内部某个数据域已经被修改了，但是由比较的是对象的引用，所以当前线程就认为对象没有改变，CAS成功将主内存中数据修改了，也就是将其他线程的修改覆盖了。
+
+
+
+
+
+如何解决ABA问题？
+使用AtomicStampedReference对象引用需要原子操作的对象（作为对比的是AtomicReference）。
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>CAS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java反射入门及其使用案例</title>
+    <url>/2022/02/21/java%E5%8F%8D%E5%B0%84%E5%85%A5%E9%97%A8%E5%8F%8A%E5%85%B6%E4%BD%BF%E7%94%A8%E6%A1%88%E4%BE%8B/</url>
+    <content><![CDATA[
+反射库提供了一个非常丰富且精心设计的工具集，以便编写能够动态操纵java代码的程序。
+
+
+
+@TOC
+1、Class对象1.1 是什么在程序运行期间，Java运行时系统为所有的对象维护一个被称作运行时的类型标识。这个信息追踪着每个对象所属的类。而此时，可以通过专门的类访问这些信息，保存这些信息的类称为Class。换句话说，在程序运行期间，我们在代码定义的每一个类都会对应一个Class对象，该对象保存了这个类的所有信息，其中包括类名、父类、实现的接口、属性、方法、构造方法等。&#x3D;&#x3D;需要注意，一个Class对象实际上表示的是一种类型，而这个类型未必一定是累，也可以是int等原始类型。&#x3D;&#x3D;
+1.2如何获取Class对象获取Class对象有三种方式：
+
+Class.forName()，例： Class c = Class.forName(&quot;java.util.List&quot;);
+类名.class，例：  Class c = Random.class
+对象.getClass()，例： Random r = new Random(); Class c = r.getClass();
+
+2、反射常用API2.1 Class中常用API上边我们知道Class对象保存的是java类运行时信息，因此Class中的API就是获取、修改java类的运行时信息
+
+关于类本身信息的api//=================Class对象中的方法======================//获取类名（全路径类名）public String getName()//获取父类public native Class&lt;? super T&gt; getSuperclass();//获取实现的接口public Class&lt;?&gt;[] getInterfaces()//判断类型是否为原始类型：java.lang.Boolean#TYPE，java.lang.Character#TYPE，java.lang.Byte#TYPE，java.lang.Short#TYPE，java.lang.Integer#TYPE，java.lang.Long#TYPE，java.lang.Float#TYPE，java.lang.Double#TYPE，java.lang.Void#TYPEpublic native boolean isPrimitive();
+类中字段类中的字段在Class对象中对应一个Field对象//=================Class对象中的方法======================//根据字段名获取字段public Field getField(String name)//获取类中所有共有字段，包括父类public Field[] getFields() throws SecurityException//获取本类中所有字段public Field[] getDeclaredFields() throws SecurityException//=================Field对象中的方法======================//获取字段类型public Class&lt;?&gt; getType()//获取字段名称public String getName()//获取某个对象中某个字段的值(obj为拥有字段的某个对象)public Object get(Object obj)        throws IllegalArgumentException, IllegalAccessException//给某个对象的某个字段设置值public void set(Object obj, Object value)        throws IllegalArgumentException, IllegalAccessException
+类的构造函数类中的构造方法在Class对象中对应一个Constructor对象//=================Class对象中的方法======================//调用默认构造函数创建创建对象public T newInstance()        throws InstantiationException, IllegalAccessException//根据参数获取构造函数public Constructor&lt;T&gt; getConstructor(Class&lt;?&gt;... parameterTypes)//获取类中所有的共有构造器public Constructor&lt;?&gt;[] getConstructors() throws SecurityException//获取本类中所有构造器（包括私有构造函数）public Constructor&lt;?&gt;[] getDeclaredConstructors() throws SecurityException//=================Constructor对象中的方法======================//调用构造函数创建对象public T newInstance(Object ... initargs)
+类中普通方法类中的普通方法在Class对象中对应一个Method对象//=================Class对象中的方法======================//根据方法名称获取方法对象public Method getMethod(String name, Class&lt;?&gt;... parameterTypes)        throws NoSuchMethodException, SecurityException//获取类中所有共有方法（包括父类中的）public Method[] getMethods() throws SecurityException//获取类中所有方法（包括私有成员）public Method[] getDeclaredMethods() throws SecurityException//=================Method对象中的方法======================//获取方法名public String getName()//获取方法返回类型public Class&lt;?&gt; getReturnType()//获取参数public Parameter[] getParameters()//调用方法public Object invoke(Object obj, Object... args)
+公共API//获取方法、类、字段修饰符整数public int getModifiers()//转换StringModifier.toString(modifiers)//注：int modifiers = med.getModifiers();//设置私有成员的反射访问权限AccessibleObject.setAccessible(declaredFields,true);//注：Field[] declaredFields = objClass.getDeclaredFields();public void setAccessible(boolean flag)
+2.2 反射中关于数组操作的API//判断是否是数组：Class类中public native boolean isArray();//获取数组元素的类型：Class类中public native Class&lt;?&gt; getComponentType();//创建数组Array.newInstancenewInstance(Class&lt;?&gt; componentType, int length)//获取数组长度public static native int getLength(Object array)        throws IllegalArgumentException;
+上面介绍了反射的基本API，其实除了上述的这些常用的API，反射中关于注解的API也很常用。
+
+3、反射的作用反射机制可以用来：
+
+在运行时分析类；
+在运行时查看对象，例如编写一个所有对象（包括数组）和非对象（基本类型）都可以使用的toString方法；
+实现通用的数组操作代码；
+利用Method对象实现类似C++指针的功能 。
+
+上述四个作用我们分别用四个案例说明。
+例一：在运行时分析类，打印一个类的所有信息public class Reflection01 &#123;    public static void main(String[] args) &#123;        StringBuffer sb = new StringBuffer();        Class&lt;Double&gt; doubleClass = Double.class;        //获取类修饰符        int modifiers = doubleClass.getModifiers();        String cd = Modifier.toString(modifiers);        sb.append(cd + &quot; &quot;);        //获取类名        String className = doubleClass.getName();        sb.append(className + &quot; &quot;);        //获取继承的类        Class&lt;? super Double&gt; superclass = doubleClass.getSuperclass();        if (superclass!=null) &#123;            sb.append(&quot;extend &quot;+superclass.getName()+&quot; &quot;);        &#125;        Class&lt;?&gt;[] interfaces = doubleClass.getInterfaces();        //获取实现的接口        if (interfaces.length&gt;0)&#123;            sb.append(&quot;implements &quot;);            for (Class&lt;?&gt; anInterface : interfaces) &#123;                sb.append(anInterface.getName()+&quot; &quot;);            &#125;        &#125;        sb.append(&quot;\n&#123;&quot;);        System.out.print(sb);        printConstructors(doubleClass);        System.out.println();        printFields(doubleClass);        System.out.println();        printMethods(doubleClass);        System.out.println(&quot;&#125;&quot;);    &#125;    //打印构造方法    public static void printConstructors(Class c) &#123;        //获取类中所有的构造方法（私有的和公有的）        Constructor[] constructor = c.getDeclaredConstructors();        for (Constructor cons : constructor) &#123;            StringBuffer sb = new StringBuffer();            sb.append(&quot;\t&quot;);            //获取修饰符            int modifiers = cons.getModifiers();            String d = Modifier.toString(modifiers);            sb.append(d+&quot; &quot;);            //获取参数方法名            sb.append(cons.getName()+&quot;(&quot;);            //获取参数            Parameter[] parameters = cons.getParameters();            if (parameters.length&gt;0)&#123;                for (int i = 0; i &lt; parameters.length; i++) &#123;                    Class&lt;?&gt; type = parameters[i].getType();                    String cName = type.getName();                    sb.append(cName);                    if (i&lt;parameters.length-1)&#123;                        sb.append(&quot;, &quot;);                    &#125;                &#125;            &#125;            sb.append(&quot;);&quot;);            System.out.println(sb);        &#125;    &#125;    //打印属性    public static void printMethods(Class c) &#123;        //获取类中的共有方法（包括父类中的共有方法）        Method[] methods = c.getMethods();        for (Method med : methods) &#123;            StringBuffer sb = new StringBuffer();            sb.append(&quot;\t&quot;);            //获取修饰符            int modifiers = med.getModifiers();            String d = Modifier.toString(modifiers);            sb.append(d+&quot; &quot;);            //获取返回类型            Class&lt;?&gt; returnType = med.getReturnType();            sb.append(returnType.getName()+&quot; &quot;);            //获取参数方法名            sb.append(med.getName()+&quot;(&quot;);            //获取参数            Parameter[] parameters = med.getParameters();            if (parameters.length&gt;0)&#123;                for (int i = 0; i &lt; parameters.length; i++) &#123;                    Class&lt;?&gt; type = parameters[i].getType();                    String cName = type.getName();                    sb.append(cName);                    if (i&lt;parameters.length-1)&#123;                        sb.append(&quot;, &quot;);                    &#125;                &#125;            &#125;            sb.append(&quot;);&quot;);            System.out.println(sb);        &#125;    &#125;    //打印普通方法    public static void printFields(Class c) &#123;        Field[] fields = c.getFields();        for (Field field : fields) &#123;            StringBuffer sb = new StringBuffer(&quot;\t&quot;);            //获取修饰符            int modifiers = field.getModifiers();            String d = Modifier.toString(modifiers);            sb.append(d+&quot; &quot;);            //获取字段类型            Class&lt;?&gt; type = field.getType();            sb.append(type.getName()+&quot; &quot;);            //获取字段名            sb.append(field.getName()+&quot;;&quot;);            System.out.println(sb);        &#125;        //获取父类中共有方法        Class superclass = c.getSuperclass();        if (superclass!=null)&#123;            printFields(superclass);        &#125;    &#125;&#125;
+输出：&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;
+public final java.lang.Double extend java.lang.Number implements java.lang.Comparable &#123;	public java.lang.Double(double);	public java.lang.Double(java.lang.String);	public static final double POSITIVE_INFINITY;	public static final double NEGATIVE_INFINITY;	public static final double NaN;	public static final double MAX_VALUE;	public static final double MIN_NORMAL;	public static final double MIN_VALUE;	public static final int MAX_EXPONENT;	public static final int MIN_EXPONENT;	public static final int SIZE;	public static final int BYTES;	public static final java.lang.Class TYPE;	public boolean equals(java.lang.Object);	public static java.lang.String toString(double);	public java.lang.String toString();	public int hashCode();	public static int hashCode(double);	public static double min(double, double);	public static double max(double, double);	public static native long doubleToRawLongBits(double);	public static long doubleToLongBits(double);	public static native double longBitsToDouble(long);	public volatile int compareTo(java.lang.Object);	public int compareTo(java.lang.Double);	public byte byteValue();	public short shortValue();	public int intValue();	public long longValue();	public float floatValue();	public double doubleValue();	public static java.lang.Double valueOf(java.lang.String);	public static java.lang.Double valueOf(double);	public static java.lang.String toHexString(double);	public static int compare(double, double);	public static boolean isNaN(double);	public boolean isNaN();	public static boolean isInfinite(double);	public boolean isInfinite();	public static boolean isFinite(double);	public static double sum(double, double);	public static double parseDouble(java.lang.String);	public final void wait(long, int);	public final native void wait(long);	public final void wait();	public final native java.lang.Class getClass();	public final native void notify();	public final native void notifyAll();&#125;
+
+例二：通用toString方法public class Reflection02 &#123;    public static void main(String[] args) throws IllegalAccessException &#123;        List&lt;Integer&gt; list = new ArrayList&lt;&gt;();        list.add(1);        list.add(11);        list.add(111);        System.out.println(new Reflection02().toString(list));    &#125;    private static List&lt;Object&gt; visited = new ArrayList&lt;&gt;();    public String toString(Object obj) throws IllegalAccessException &#123;        if (obj==null)            return null;        if (visited.contains(obj))            return &quot;...&quot;;        visited.add(obj);        Class&lt;?&gt; objClass = obj.getClass();        if (objClass.isArray())&#123;            //获取数组类型            StringBuffer sb = new StringBuffer();            String s = objClass.getComponentType() + &quot;[]&#123;&quot;;            sb.append(s);            //遍历数组元素            for (int i = 0; i &lt; Array.getLength(obj); i++) &#123;                if (i&gt;0)&#123;                    sb.append(&quot;,&quot;);                &#125;                Object val = Array.get(obj, i);                if (objClass.getComponentType().isPrimitive())                    sb.append(val);                else                    sb.append(toString(val));            &#125;            sb.append(&quot;&#125;&quot;);            return sb.toString();        &#125;        String className = objClass.getName();        StringBuffer sb = new StringBuffer(className);        do &#123;            sb.append(&quot;[&quot;);            Field[] declaredFields = objClass.getDeclaredFields();            AccessibleObject.setAccessible(declaredFields,true);            for (Field field : declaredFields) &#123;                if (!Modifier.isStatic(field.getModifiers()))&#123;                    if (!sb.toString().endsWith(&quot;[&quot;))&#123;                        sb.append(&quot;,&quot;);                    &#125;                    sb.append(field.getName()+&quot;=&quot;);                    Object val = field.get(obj);                    Class&lt;?&gt; fieldType = field.getType();                    if (fieldType.isPrimitive())&#123;                        sb.append(val);                    &#125;else &#123;                        sb.append(toString(val));                    &#125;                &#125;            &#125;            sb.append(&quot;]&quot;);            objClass = objClass.getSuperclass();        &#125;while (objClass!=null);        return sb.toString();    &#125;&#125;
+输出：&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;
+java.util.ArrayList[elementData=class java.lang.Object[]&#123;java.lang.Integer[value=1][][],java.lang.Integer[value=11][][],java.lang.Integer[value=111][][],null,null,null,null,null,null,null&#125;,size=3][modCount=3][][]
+
+例三：实现数组扩容public class Reflection03 &#123;    public static void main(String[] args) &#123;        int[] arr = &#123;1,1,11,22,12,21,2&#125;;        int[] newArr = (int[]) new Reflection03().copyArray(arr, 10);        System.out.println(newArr.length);        System.out.println(Arrays.toString(arr));    &#125;    /**     * 复制数组到指定长度的新数组     * @param obj     * @param length     * @return     */    public Object copyArray(Object obj,int length)&#123;        Class&lt;?&gt; objClass = obj.getClass();        if(!objClass.isArray()) return null;        Class&lt;?&gt; componentType = objClass.getComponentType();        int objLength = Array.getLength(obj);        Object arr = Array.newInstance(componentType, length);        System.arraycopy(obj,0,arr,0,Math.min(objLength,length));        return arr;    &#125;&#125;
+输出：&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt;
+10[1, 1, 11, 22, 12, 21, 2]
+
+例四：通过Method的invoke方法执行某个类中的某个方法public class Reflection04 &#123;    public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException &#123;        Method sqrt = Math.class.getMethod(&quot;sqrt&quot;, double.class);        Object val = sqrt.invoke(null, 36);        System.out.println(val);    &#125;&#125;
+输出：&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&gt; 6.0
+
+参考：《Java核心卷》卷1 ，5.7反射
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>反射</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java正则表达式稍微高级一点的用法</title>
+    <url>/2022/10/05/java%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%A8%8D%E5%BE%AE%E9%AB%98%E7%BA%A7%E4%B8%80%E7%82%B9%E7%9A%84%E7%94%A8%E6%B3%95/</url>
+    <content><![CDATA[1、基础语法回顾
+
+
+符号
+含义
+示例
+示例描述
+其他示例
+
+
+
+\\b
+匹配目标字符串的边界，边界指的是串的最后或者空格之前
+wang\\b
+匹配边界的wang
+
+
+
+\\B
+匹配目标字符串的非边界
+wang\\B
+匹配非边界的wang
+
+
+
+\\d和\\D,\\w和\\W
+\\d和\\D表示[0-9]和[^0-9]，\\w和\\W表示[0-9a-zA-Z]和[^0-9a-zA-Z]
+
+
+
+
+
+&#96;
+&#96;
+匹配｜前或者后面的表达式
+ab|cd
+匹配ab或者cd
+
+
+？
+
+
+
+？只是作用于离它最近的字符生效。
+
+
+(?!)
+
+a(?i)bc
+匹配abc字符,abc不区分大小写，只有b不区分大小写
+
+
+
+&#96;&#96;
+
+
+
+
+
+
+&#96;&#96;
+
+
+
+
+
+
+&#96;&#96;
+
+
+
+
+
+
+&#96;&#96;
+
+
+
+
+
+
+
+
+基本语法测试：
+public static void main(String[] args) &#123;        String content = &quot;a1_2\n1c_8挖&quot;;//        String regStr = &quot;[a-z]&quot;;//匹配a-z之间任意一个字符//        String regStr = &quot;[^a-z]&quot;;//匹配不在a-z之间任意一个字符//        String regStr = &quot;//D&quot;;//匹配不是数字的任意一个字符//        String regStr = &quot;\\w&quot;;//匹配数字、字母（大小写）、下划线的任意一个字符;等价于[a-zA-z0-9_]//         String regStr = &quot;[a-zA-z0-9.]&quot;;//        String regStr = &quot;.&quot;;//匹配除\n之外的所有任意一个字符//        String regStr = &quot;\\s&quot;;//匹配空白字符（包括空格、制表、回车）//        String regStr = &quot;[abcd]&quot;;//匹配在abcd中的任意一个字符//        String regStr = &quot;&quot;;//匹配abc字符,abc不区分大小写，只有b不区分大小写：&quot;a((?i)b)c&quot;                //String regStr = &quot;\\d|挖&quot;; //选择匹配符        //String regStr = &quot;_(?!.*_)&quot;; //选择匹配符        String regStr = &quot;(_)(\\d)&quot;; //选择匹配符                 //创建pattern是制定大小写不敏感        Pattern pattern = Pattern.compile(regStr/*,Pattern.CASE_INSENSITIVE*/);        Matcher matcher = pattern.matcher(content);        while (matcher.find())&#123;            System.out.println(&quot;找到字符串【&quot;+matcher.group(0)+&quot;】符合条件&quot;);//输出匹配到的整个字符串            System.out.println(&quot;找到字符串【&quot;+matcher.group(1)+&quot;】符合条件&quot;);//输出匹配到的第一个分组            System.out.println(&quot;找到字符串【&quot;+matcher.group(2)+&quot;】符合条件&quot;);//输出匹配到的第二个分组            System.out.println(&quot;起始位置：&quot;+matcher.start());            System.out.println(&quot;结束位置：&quot;+matcher.end());        &#125;    &#125;//输出找到字符串【_2】符合条件找到字符串【_】符合条件找到字符串【2】符合条件起始位置：2结束位置：4找到字符串【_8】符合条件找到字符串【_】符合条件找到字符串【8】符合条件起始位置：7结束位置：9
+
+
+
+2、分组分组分为捕获分组和非捕获分组，不捕获的话会更经济些，所以如果不需要捕获就不用捕获
+
+
+（1）捕获分组示例
+    public static void main(String[] args) &#123;        String content = &quot;industry1551jkh4546askindustriesldsk4444&quot;;        String regStr = &quot;(?&lt;thisaname&gt;\\d\\d)\\d\\d&quot;;        //创建pattern是制定大小写不敏感        Pattern pattern = Pattern.compile(regStr/*,Pattern.CASE_INSENSITIVE*/);        Matcher matcher = pattern.matcher(content);        while (matcher.find())&#123;            System.out.println(&quot;找到：&quot;+matcher.group(0));            System.out.println(&quot;找到[通过索引]：&quot;+matcher.group(1));            System.out.println(&quot;找到[通过组名]：&quot;+matcher.group(&quot;thisaname&quot;));        &#125;    &#125;//输出找到：1551找到[通过索引]：15找到[通过组名]：15找到：4546找到[通过索引]：45找到[通过组名]：45找到：4444找到[通过索引]：44找到[通过组名]：44
+
+（2）非捕获分组
+    public static void main(String[] args) &#123;        String content = &quot;industry1551jkh4546askindustriesldsk4444wwq你好，wwqhello，wwqisagunis&quot;;            //（1）        String regStr = &quot;industr(y|ies)&quot;;//分组会被捕获      //（2）        //String regStr = &quot;industr(?:y|ies)&quot;;//分组不被捕获,效果和「industr(y|ies)」一样只是不捕获      //（3）        //String regStr = &quot;wwq(?=hello|is)&quot;;//分组不被捕获。只匹配包含分组条件的前面的匹配字符，此处为匹配后面为hello或者is的wwq      //（4）        //String regStr = &quot;wwq(?!hello|is)&quot;;//分组不被捕获。只匹配包含分组条件的前面的匹配字符，此处为匹配后面不为hello或者is的wwq        //创建pattern是制定大小写不敏感        Pattern pattern = Pattern.compile(regStr/*,Pattern.CASE_INSENSITIVE*/);        Matcher matcher = pattern.matcher(content);        while (matcher.find())&#123;            System.out.println(&quot;找到：&quot;+matcher.group(0));        &#125;    &#125;//输出（1）对应输出：matcher.group(1)输出y或ies  找到：industry  找到：industries（2）对应输出：matcher.group(1)异常  找到：industry  找到：industries（3）对应输出：matcher.group(1)异常  找到：wwq  找到：wwq（4）对应输出：matcher.group(1)异常  找到：wwq
+
+
+
+
+
+3、贪婪匹配String str=&quot;abcaxc&quot;;Patter p=&quot;ab.*c&quot;;默认是贪婪匹配，匹配到的字符是abcaxc若p改为ab.*c?则改为非贪婪匹配，匹配到的字符是abc
+
+
+
+4、反向引用括号中的内容被捕获后，在括号的后面可以使用，称为反向引用。这种引用既可以在表达式的内部，也可以在表达式的外部，内部的反向引用使用\\分组号，外部的反向引用使用$分组号
+	public static void main(String[] args) &#123;								String content = &quot;我..........我要要....要....学学学....编程!&quot;;        String regStr = &quot;\\.&quot;;        //创建pattern是制定大小写不敏感        Pattern pattern = Pattern.compile(regStr/*,Pattern.CASE_INSENSITIVE*/);        //将...去掉        //Matcher matcher = pattern.matcher(content);        //content = matcher.replaceAll(&quot;&quot;);        content = content.replaceAll(regStr, &quot;&quot;);        System.out.println(content);        /*            1. &quot;(.)\\1+&quot;，首先匹配出重复的字：(我)我，(要)要要，(学)学学            2. 将其替换为分组中的字，即 我我--&gt;我，要要要--&gt;要，学学学--&gt;学         */        String res = Pattern.compile(&quot;(.)\\1+&quot;/*内部反向引用*/).matcher(content).replaceAll(&quot;$1&quot;/*外部反向引用*/);        System.out.println(res);	&#125;//输出我我要要要学学学编程!我要学编程!
+
+
+
+5、0宽断言零宽断言是用来判断是否符合继续匹配的条件，本身并不会匹配字符串
+
+
+
+符号
+说明
+示例
+示例描述
+
+
+
+
+?=exp
+匹配到exp就停止
+
+
+
+
+
+?!exp
+匹配不到exp才停止
+
+
+
+
+
+?&lt;=exp
+匹配到exp则继续
+
+
+
+
+
+?&lt;!exp
+匹配不到exp则继续
+
+
+
+
+
+（1）?=exp
+例如，要匹配 cooking ，singing ，doing中除了ing之外的内容，只取cook, sing, do的内容，这时候的增则表达式可以用 [a-z]*(?=ing) 来匹配
+注意：先行断言的执行步骤是这样的先从要匹配的字符串中的最右端找到第一个 ing (也就是先行断言中的表达式)然后 再匹配其前面的表达式，若无法匹配则继续查找第二个 ing 再匹配第二个 ing 前面的字符串，若能匹配则匹配，符合正则的贪婪性。
+public static void main(String[] args) &#123;        String str = &quot;755iwat888iwat&quot;;        String regexp = &quot;\\d*(?=iwat)&quot;;//匹配到exp就停止        Matcher matcher = Pattern.compile(regexp).matcher(str);        while (matcher.find())&#123;            System.out.println(matcher.group(0));        &#125;    &#125;//输出755//解析，遇到第一个iwat就不再继续往下匹配了
+
+
+
+（2）?&lt;=exp
+例如 (?&lt;=abc).* 可以匹配 abcdefg 中的 defg
+注意：后发断言跟先行断言恰恰相反 它的执行步骤是这样的：先从要匹配的字符串中的最左端找到第一个abc(也就是先行断言中的表达式)然后 再匹配其后面的表达式，若无法匹配则继续查找第二个 abc 再匹配第二个 abc 后面的字符串，若能匹配则匹配。
+public static void main(String[] args) &#123;        String str = &quot;755iwat888iwat999&quot;;        String regexp = &quot;(?&lt;=iwat)\\d*&quot;.trim();//只匹配iwat后面的连续数字        Matcher matcher = Pattern.compile(regexp).matcher(str);        while (matcher.find())&#123;            System.out.println(matcher.group(0).trim());        &#125;    &#125;//输出888999
+
+
+
+（3）?!exp（和?=exp相反）
+例如 (?!exp) 表示 “exp” 前面的位置，如果 “exp” 不成立 ，匹配这个位置；如果 “exp” 成立，则不匹配。
+例1：
+		public static void main(String[] args) &#123;        String str = &quot;755iwat888iwat888999&quot;;        String regexp = &quot;888(?!.*888)&quot;.trim();//最后一次出现的888        Matcher matcher = Pattern.compile(regexp).matcher(str);        while (matcher.find())&#123;            System.out.println(matcher.group(0));            System.out.println(matcher.start());        &#125;    &#125;//输出88814
+
+例2：
+public static void main(String[] args) &#123;        String str = &quot;755iwat888iwat888999&quot;;        String regexp = &quot;[0-9]*(?!iwat)&quot;.trim();//匹配后面不是iwat的连续数字        Matcher matcher = Pattern.compile(regexp).matcher(str);        while (matcher.find())&#123;            System.out.println(matcher.group(0));            //System.out.println(matcher.start());        &#125;    &#125;//输出7588888999
+
+（4）?&lt;!exp
+和?&lt;=exp相反，放在前面使用
+public static void main(String[] args) &#123;        String str = &quot;755iwat888iwat888999&quot;;        String regexp = &quot;(?&lt;!iwat)[0-9]*&quot;.trim();//匹配前面不是iwat的连续数字，应是755，88，88999        Matcher matcher = Pattern.compile(regexp).matcher(str);        while (matcher.find())&#123;            System.out.println(matcher.group(0));            //System.out.println(matcher.start());        &#125;    &#125;//输出7558888999
+
+
+
+
+
+6、常用API//  Pattern类的方法0. Pattern.compile(regStr/*,Pattern.CASE_INSENSITIVE*/)//返回一个Pattern1. Pattern.matches(regStr,str)//判断模式能否将字符串整体匹配出来，返回一个boolean		System.out.println(Pattern.matches(regStr,content));2. Pattern.matcher(content)//返回一个Matcher//  Matcher类的方法3. Matcher.group(0)//返回匹配到的第0个分组4. matcher.start()//返回匹配到字符串的开始位置5. matcher.end()6. matcher.find()//是否有匹配到的字符串的部分序列7. matcher.matches()//字符串是否从头到尾完全匹配了(matches方法会吞掉一个matcher匹配的分组)8. matcher.replaceAll(str)//将匹配到的字符串全部替换为str，返回替换后的字符串  //String9. str.replaceAll(regex,replacement)//使用replacement替换str中匹配的regex部分，返回替换后的字符串10. str.matches(regex)//等价于Pattern.matches(regex, str)，返回boolean11. str.split(regex)//按照匹配的regex部分对str进行分割，返回一个字符数组，返回的数组中不包括匹配到的部分
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>正则表达式</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>jvm指令重排</title>
+    <url>/2022/05/09/jvm%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92/</url>
+    <content><![CDATA[
+JVM会在不影响正确性的前提下调整语句（指令）的顺序。
+
+
+
+例如下代码：
+static int i;static int j;// 在某个线程内执行如下赋值操作i = ...; j = ...; //可以看到，至于是先执行 i 还是 先执行 j ，对最终的结果不会产生影响。所以，上面代码真正执行时，既可以是i = ...; j = ...; //也可以是j = ...;    i = ...; 
+
+这种特性被称为指令重排，多线程的某些情况下指令重排会影响正确性。
+1、为什么会有指令重排这项优化呢？一个cpu执行指令是逐条执行的，但是如果我们把指令在进行划分，比如划分为：取指令 - 指令译码 - 执行指令 - 内存访问 - 数据 写回 五个阶段，那么Cpu实际执行过程是这样的
+
+每个CPU中有不同的执行单元（位移单元、运算单元等），对应指令执行的不同步骤，在并行指令集引入之前，一个CPU只能同时执行一条指令，所以CPU中各个单元同一时间只有一个单元在工作。
+并行指令集引入之后，同一时间CPU的各个单元可以同时运行，实现了真正意义上的指令级的并行操作。这意味着CPU同一时刻能够执行多条指令。
+虽然CPU能够并行执行指令了，但是，有一些指令需要依赖前面指令的执行结果，所以不能并行执行，这时候就可以通过指令重排优化来实现CPU并行指令的目的，例如：
+
+重新排序以后就af就可以并行执行。
+2、CPU如何实现指令并行执行。在研究指令重排是如何影响并发正确性之前，先额外看一下cpu如何实现指令并发执行
+答案是流水线作业！
+现代 CPU 支持多级指令流水线，例如支持同时执行 取指令 - 指令译码 - 执行指令 - 内存访问 - 数据写回 的处理 器，就可以称之为五级指令流水线。这时 CPU 可以在一个时钟周期内，同时运行五条指令的不同阶段（相当于一 条执行时间最长的复杂指令），IPC &#x3D; 1（IPC是每个时钟周期能运行的指令数），本质上，流水线技术并不能缩短单条指令的执行时间，但它变相地提高了 指令地吞吐率。
+
+3、指令重排是如何影响并发正确性的如下代码可能的执行结果 有：4，1和0
+int num = 0;boolean ready = false;// 线程1 执行此方法public void actor1(I_Result r) &#123; if(ready) &#123; r.r1 = num + num; &#125; else &#123; r.r1 = 1; &#125;&#125;// 线程2 执行此方法public void actor2(I_Result r) &#123;  num = 2; ready = true; &#125;
+
+4和1恒容易理解，0就 有一些不可思议。而结果0出现的原因就是对actor2方法中的两行代码进行了重排序，交换了他们的执行次序。
+但是在单线程的情形下，两个方法顺次执行，永远不会出现0这个结果。
+4、如何解决多线程下的指令重排带来的问题使用volatile的内存屏障功能。
+使用volatile修饰的变量，在读或写之后会形成内存读写屏障的效果。
+（1）写屏障
+对volatile修饰的变量进行写操作之后（该操作被称为写屏障），该变量之前的代码执行结果会被写入到主存。同时会保证，写屏障之前的代码不会被重排序到写屏障之后。
+（2）读屏障
+对volatile修饰的变量进行读操作之后（该操作被称为读屏障），该变量之后的代码读取共享变量时会直接从主存中读取。同时，保证读屏障之后的代码不会被重排序到读屏障之前。
+通过读写屏障也就解释了为什么volatile能够保证可见性和有序性：
+
+可见性 ：无论在哪个线程金星了修改都会立刻同步主存，同时从主存读。
+
+写屏障（sfence）保证在该屏障之前的，对共享变量的改动，都同步到主存当中 
+而读屏障（lfence）保证在该屏障之后，对共享变量的读取，加载的是主存中最新数据
+
+
+有序性 
+
+写屏障会确保指令重排序时，不会将写屏障之前的代码排在写屏障之后 
+读屏障会确保指令重排序时，不会将读屏障之后的代码排在读屏障之前
+
+
+
+所以解决上述问题只需要在ready变量前用volatile修饰即可：这样就保证ready=true（写屏障）之前的代码（num&#x3D;2）不会被重排序ready=true（写屏障）之后。
+int num = 0;volatile boolean ready = false;// 线程1 执行此方法public void actor1(I_Result r) &#123; if(ready) &#123; r.r1 = num + num; &#125; else &#123; r.r1 = 1; &#125;&#125;// 线程2 执行此方法public void actor2(I_Result r) &#123;  num = 2; ready = true; &#125;
+
+
+注意：
+
+同步代码块越短越好
+
+synchronized能解决有序、可见、原子性问题，但是不能防止重排序现象的发生。对于重排序这一点，如果共享变量的所有操作均在synchronized代码块内，是不会出现重排序导致的程序结果错误。
+
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>jvm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mybatis动态sql一对多查询</title>
+    <url>/2023/10/21/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/</url>
+    <content><![CDATA[
+在数据库设计中，一对多关系是非常多的，例如消息通知和附件，一个消息通知中往往会包含多个附件，这种情况下使用mybatis动态sql可以很方便的查询出来。
+
+
+
+1、数据库设计消息表：sys_message
+CREATE TABLE `sys_message` (  `id` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,  `title` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT &#x27;标题&#x27;,  `content` mediumtext COLLATE utf8mb4_unicode_ci COMMENT &#x27;内容&#x27;,  `message_fk` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT &#x27;附件fk&#x27;  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT=&#x27;消息管理&#x27;;
+
+附件表：sys_attachment 
+CREATE TABLE `sys_attachment` (  `id` varchar(40) NOT NULL COMMENT &#x27;主键&#x27;,  `file_name` varchar(50) NOT NULL COMMENT &#x27;原文件名&#x27;,  `storing_name` varchar(100) NOT NULL COMMENT &#x27;存储文件名&#x27;,  `size` bigint(20) NOT NULL COMMENT &#x27;大小&#x27;,  `fk` varchar(40) NOT NULL COMMENT &#x27;业务主键&#x27;,  `suffix_type` tinyint(4) DEFAULT NULL COMMENT &#x27;类型（后缀）&#x27;,  `file_type` tinyint(4) DEFAULT &#x27;0&#x27; COMMENT &#x27;文件类型：0其他 1图片 2视频&#x27;,  `url` varchar(200) NOT NULL COMMENT &#x27;访问地址&#x27;,  `absolute_path` varchar(200) NOT NULL COMMENT &#x27;绝对路径&#x27;,  PRIMARY KEY (`id`))
+
+一条消息对应多个附件，附件表中的 fk引用消息表的message_fk。
+
+2、实现返回类型是Message对象，其中有一个 List&lt;SysAttachment&gt; fileList，存储附件信息。
+public class SysMessage extends LaboratoryBaseModel&lt;SysMessage&gt; &#123;    private static final long serialVersionUID=1L;               @TableField(&quot;id&quot;)    private String id;        @TableField(&quot;title&quot;)    private String title;            @TableField(&quot;content&quot;)    private String content;                    @TableField(&quot;message_fk&quot;)    private String messageFk;            @TableField(exist = false)    private List&lt;SysAttachment&gt; fileList;                &#125;
+
+这种情况下，在动态sql的标签中，返回值只能使用resultMap属性接收：
+ &lt;select id=&quot;selectMessagePage&quot; resultMap=&quot;sysMessageMap&quot;&gt;        SELECT            *        FROM            sys_message a&lt;/select&gt;
+
+resultMap是一个外部结果映射关系的引用，描述了结果数据的映射关系，在resultMap中有一个 collection标签，分别是：
+
+column：message表的message_fk，即一对多的一中被引用的字段名
+property：SysMessage中fileList属性，属性名是fileList
+javaType：SysMessage中fileList属性的对应的java类型Arraylist
+ofType：javaType的数据类型SysAttachment
+select：需要引用的select标签的名字，&lt;select id=&quot;selectFileByFk&quot;&gt;
+
+实际上， collection标签的含义是：对于每一条【消息查询】的结果，都要根据message_fk去到执行select属性中的查询语句，将查询结果封装到fileList属性。其中column属性会当作参数传递&lt;select id=&quot;selectFileByFk&quot;&gt;标签中。
+&lt;resultMap id=&quot;sysMessageMap&quot; type=&quot;cn.xxx.model.SysMessage&quot;&gt;       &lt;result property=&quot;id&quot; column=&quot;id&quot;/&gt;       &lt;result property=&quot;title&quot; column=&quot;title&quot;/&gt;       &lt;result property=&quot;content&quot; column=&quot;content&quot;/&gt;       &lt;result property=&quot;messageFk&quot; column=&quot;message_fk&quot;/&gt;       &lt;collection column=&quot;message_fk&quot;                   property=&quot;fileList&quot;                   javaType=&quot;Arraylist&quot;                   ofType=&quot;cn.yibiao163.laboratory.model.SysAttachment&quot;                   select=&quot;selectFileByFk&quot;&gt;       &lt;/collection&gt;   &lt;/resultMap&gt;
+
+&lt;select id=&quot;selectFileByFk&quot; resultMap=&quot;cn.xxx.repository.SysAttachmentMapper.sysAttachmentMap&quot;&gt;        select * from sys_attachment where is_deleted = 0 and fk = #&#123;message_fk&#125;&lt;/select&gt;
+
+&lt;select id=&quot;selectFileByFk&quot; 标签中，使用了resultMap=&quot;cn.yibiao163.laboratory.repository.SysAttachmentMapper.sysAttachmentMap&quot;，除了resultMap还有一个 resultType属性，可以配置一个java类，用来转换sql语句执行的结果。应用如下：
+&lt;select id=&quot;selectFileByFk&quot; resultType=&quot;cn.xxx.model.SysAttachment&quot;&gt;        select * from sys_attachment where is_deleted = 0 and fk = #&#123;message_fk&#125;&lt;/select&gt;
+
+public class SysAttachment extends LaboratoryBaseModel&lt;SysAttachment&gt; &#123;    private static final long serialVersionUID=1L;    @TableField(&quot;file_name&quot;)    private String fileName;            @TableField(&quot;storing_name&quot;)    private String storingName;    @TableField(&quot;size&quot;)    private Long size;    @TableField(&quot;fk&quot;)    private String fk;    @TableField(&quot;suffix_type&quot;)    private String suffixType;    @TableField(&quot;file_type&quot;)    private Integer fileType;    @TableField(&quot;url&quot;)    private String url;    @TableField(&quot;absolute_path&quot;)    private String absolutePath;        &#125;
+
+
+
+
+3、完整mapper.xml&lt;resultMap id=&quot;sysMessageMap&quot; type=&quot;cn.yibiao163.laboratory.model.SysMessage&quot;&gt;    &lt;result property=&quot;id&quot; column=&quot;id&quot;/&gt;    &lt;result property=&quot;title&quot; column=&quot;title&quot;/&gt;    &lt;result property=&quot;content&quot; column=&quot;content&quot;/&gt;    &lt;result property=&quot;messageFk&quot; column=&quot;message_fk&quot;/&gt;    &lt;collection column=&quot;message_fk&quot;                property=&quot;fileList&quot;                javaType=&quot;Arraylist&quot;                ofType=&quot;cn.yibiao163.laboratory.model.SysAttachment&quot;                select=&quot;selectFileByFk&quot;&gt;    &lt;/collection&gt;&lt;/resultMap&gt; &lt;select id=&quot;selectMessagePage&quot; resultMap=&quot;sysMessageMap&quot;&gt;        SELECT            *        FROM            sys_message a&lt;/select&gt;&lt;select id=&quot;selectFileByFk&quot; resultType=&quot;cn.xxx.model.SysAttachment&quot;&gt;        select * from sys_attachment where is_deleted = 0 and fk = #&#123;message_fk&#125;&lt;/select&gt;
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>java</tag>
+        <tag>mybatis</tag>
+        <tag>sql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>linux常用命令-查询手册</title>
+    <url>/2021/06/19/linux%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4-%E6%9F%A5%E8%AF%A2%E6%89%8B%E5%86%8C/</url>
+    <content><![CDATA[
+
+@TOC
+linux常用命令
+注意：1、&lt;&gt;代表是必填项，[]表示是选填项。真正填入的时候不需要加&lt;&gt;和[]；2、本文命令以cenos7为例进行测试。
+
+〇、连接远程linux主机
+使用ssh命令（linux主机需要开启ssh服务）：ssh &lt;用户名&gt;@&lt;主机IP&gt;，例：ssh &#x72;&#x6f;&#111;&#x74;&#x40;&#x31;&#48;&#49;&#46;&#51;&#x32;&#x2e;&#49;&#x35;&#x35;&#46;&#49;&#x30;&#48;之后会提示输入用户密码，正确输入密码即可进入。
+
+
+一、日常使用命令1、开关机命令
+shutdown -h now：现在关机
+shutdown -r now：现在重启
+reboot：现在重启计算机
+su [用户名]：切换用户，不加用户名的话默认切换到root用户
+password ：修改密码 # 未成功
+logout：用户注销
+
+2、常用快捷键命令
+tab：补全
+ctrl+l：清屏
+ctrl+r：查找历史命令
+ctrl+c：终止
+ctrl+k：删除此处至末尾的所有内容
+ctrl+u：删除此处至开始的所有内容
+
+3、常用工具命令
+man
+
+wc（wordcount）：文本统计
+
+常见参数
+-l：只查看行数
+-w：只查看单词数
+-c：只查看字符数
+
+
+
+
+du：文件大小统计
+
+常用参数：
+-s：只统计该文件目录的大小，不递归
+-h：人性化显示单位
+
+
+
+
+find：文件检索命令
+语法：	find	path	[-option]	[-exec|-ok	command]	&#123;&#125; \;	注意：		&lt;&gt;中的内容是必填项，[]中的内容是选填项；		-exec command是对查找出来的文件执行command命令；		&#123;&#125; 花括号代表前面find查找出来的文件名，就是对他们执行command；		然后是一个空格；		语句必须以分号结束，因为不同系统对分号解析可能有区别，所以前面价格转义符。		-ok和-exec作用相似，不同的是-ok在执行内一个命令之前都会提示用户确认	参数说明：		find：find之后，第一个命令参数之前的内容是搜索路径，默认为当前路径，命令参数默认位[-print]（. 表示当前目录及其子目录）		命令参数[-option]众多：			-amin n：在过去n分钟内被读取过			-atime n：在过去n天内被读取过			-anewer file：比file文件更晚被读取过的文件						-cmin n：在过去n分钟内被修改过			-ctime n：在过去n天内被修改过			-cnewer file：比file文件更晚被读修改的文件						-empty：空的文件			-path p 和 -ipath p：路径名符合p的文件，ipath会忽略大小写			-name fileName 和 -iname fileName：文件名符合p的文件，iname会忽略大小写			-type c：文件类型是c的文件（c的取值：目录d，一般文件f，符号链接l，socket s，）			-size n单位：文件大小是n单位，例：10k	例子：		查找/var/log 目录中更改时间在7日以前的普通文件，并在删除他们以前询问用户：		find /var/log -ctime +7 -type f -ok rm &#123;&#125; \;		
+
+
+
+grep命令：
+Grep 是 Global Regular Expression Print 的缩写，它搜索指定文件的内容，匹配指定的模式，默认情况下输出匹配内容所在的行。注意，grep 只支持匹配而不能替换匹配到的内容。
+
+#### 常见用法# 1、在当前目录中递归查询所有文件中包含username字符的行grep -r &quot;username&quot; ./# 2、在指定文件中查找某字符串所在行的内容grep &quot;被查找的字符串&quot; 文件名# 3、在制定文件查找符合某正则表达式的文本所在的行grep –e &quot;正则表达式&quot; 文件名# 4、忽略大小写grep –i &quot;被查找的字符串&quot; 文件名# 5、在指定文件中查找某不匹配该字符串的行的内容grep –v &quot;被查找的字符串&quot; 文件名# 6、从根目录开始查找所有扩展名为 .log 的文本文件，并找出包含 &quot;ERROR&quot; 的行：find / -type f -name &quot;*.log&quot; | xargs grep &quot;ERROR&quot;# 7、find . -name &quot;*.in&quot; | xargs grep &quot;thermcontact&quot;
+
+I&#x2F;O重定向：&gt;， 覆盖输出 ；&gt;&gt;，追加输出
+
+管道：管道是将前一个命令的输出作为后一个命令的输入
+
+xargs：是给其他命令传递参数的一个过滤器，它擅长将标准输入数据转换成命令行参数
+cat test.txt | xargs # 多行数据单行输出
+
+
+二、常用目录或文件操作命令1、展示目录列表命令ls（list）
+ls；ls -a；ls -l；ll；ll -a；ll -h，友好的显示当前目录下的文件信息；pwd
+
+2、切换目录命令cd（change directory）
+cd test；cd ..；cd ～；cd -；
+
+3、目录的创建和删除
+mkdir test：在当前目录创建test目录
+mkdir -p test&#x2F;a&#x2F;b：在test目录下的a目录下创建b目录，如果a目录不存在一并创建
+rmdir test：删除当前目录下的test目录
+
+4、文件的创建和删除
+touch test.txt：创建text.txt文件
+rm test.txt：删除test.txt文件，删除前询问用户
+rm -f test.txt：直接删除，不询问
+rm -r test.txt：递归删除，test目录及其子目录，删除前询问用户
+rm -rf test.txt：递归直接删除
+
+5、文件打包或者解压命令
+打包并压缩文件（打包文件.tag，压缩文件.gz），一般情况下，打包和压缩是在一起的，打包压缩后文件后缀为.tag.gz。
+命令：tar -zcvf &lt;指定打包压缩后的文件名&gt; &lt;要打包的文件&gt;
+z：压缩
+c：打包
+v：显示运行过程
+f：指定文件名
+
+
+注意：指定新文件名要自己加后缀，如tar -zcvf test.txt.tag.gz aa
+
+
+解压压缩包
+命令：tar [-xvf] &lt;压缩文件&gt;
+x：解压缩
+v、f和打包压缩的时候用法一致
+
+
+主要：要解压的压缩文件名要写全，如tar -xvf test.txt.tag.gz
+
+
+zip类型：unzip &lt;文件名&gt;
+rar类型#1.安装rar解压工具wget http://www.rarlab.com/rar/rarlinux-x64-5.0.0.tar.gztar -zxvf rarlinux-x64-5.0.0.tar.gzmv rar /opt/cd /opt/rar/make &amp;&amp; make install#2. 使用：#2.1、rar命令rar a test.rar file1 file2　　#压缩#2.2、unrar命令unrar e test.rar DestPath　　#解压（会在把当前压缩包内容解压到当前目录内，容易造成解压内容和当前目录原文件混合，不容易区分，不建议使用）unrar x test.rar DestPath　　#解压（会在当前解压目录内产生一个以压缩包名字命名的目录，目录内是解压内容，推荐使用）
+
+
+三、linux中的权限问题文件详情：
+
+因此可以得出，文件的权限问题就是：所有者、同组用户、无关用户对文件的读、写、执行操作的管理。 
+注意：读权限用数字4表示，写权限用数字2表示，执行权限用数字1表示，同时拥有读写权限则为数字6
+
+修改文件&#x2F;或目录的权限：chmod
+例：修改文件test.txt文件的权限为，所有者拥有读写执行权限、同组用户可读可执行，其他用户没有权限，chmod 730 test.txt
+
+
+修改文件的所属用户和所属组
+chown userName:groupName fileName，修改文件所属用户和所属用户组
+chown userName: fileName，修改文件所属用户
+chown :groupName fileName，修改文件所属用户组
+
+
+用户管理
+查看所有用户：users，或者查看etc/password
+添加用户：useradd &lt;用户名&gt;，useradd -d &lt;指定家目录&gt; &lt;用户名&gt;，useradd -g &lt;组名&gt; &lt;用户名&gt;
+删除用户：userdel &lt;用户名&gt;，userdel -r &lt;用户名&gt;
+查询用户信息：id &lt;用户名&gt;
+修改用户所在组：usermod -g &lt;新组名&gt; &lt;用户名&gt;
+
+
+用户组管理
+查看所有：groups，或者查看etc&#x2F;group
+添加组：groupadd &lt;组名&gt;
+删除组：groupdel &lt;组名&gt;
+usermod -aG wheel username.       #centos将用户添加到wheel组即可执行sudo
+
+
+
+四、文件&#x2F;文件夹的复制、移动、查看
+复制命令：cp
+语法
+cp [-option] source destination
+cp [options] source1 source2 .... directory
+
+
+选项和参数
+-d	若来源档为连结档属性，则复制结档属性而非文件本身
+-p 连同文件的属性一起复制过去
+-r 递归连续复制，用于目录
+-a 相当于-pdr
+-f 强制
+-i 若目标档已存在，询问用户
+-l 复制文件的硬式链接，而不是文件
+-s 复制成为符号链接档，快捷方式
+-u destination比source旧才升级
+
+
+
+
+删除命令：rm
+语法
+rm [-option] 文件或者目录
+
+
+选项与参数
+-r -f -i
+
+
+
+
+移动或改名：mv
+语法
+mv [-option] source destination
+mv [options] source1 source2 .. directory
+
+
+参数
+-rfi
+
+
+
+
+
+
+五、文件内容查看
+cat 有第一行开始显示文件
+-b 显示行号
+-n 显示行号 包括空行
+-A  &#x3D;  -vET
+-T tab显示为见 I
+-v 列出一些看不出来的特殊字符
+-E 结尾的断行字节$显示出来
+
+
+tac 从最后一行开始显示，cat倒过来写
+nl 显示行号
+-b 制定行号显示方式：-b a 忽略空行，-b t 不忽略空行
+-n 行号的表示方法：-n ln 左边显示，-n rn 右边显示且不加0 ，-n rz 右边显示且加0
+-w 行号占用的位数
+
+
+more 一页一页的看
+enter：下一行
+空格：下一页
+b：上一页
+:f 显示文档名和目前的行数
+
+
+less 一页一页的看，可以翻页
+B上一页
+空格下一页
+&#x2F;字串 向上搜索字串
+?字串 向下搜索字串
+n 重复前一个搜索（&#x2F; or ?）
+N反向重复前一个搜索（&#x2F; or ?）
+
+
+head 只看头几行
+tail只看尾几行：tail -n number；-f：表示持续侦测后面所接收的文档名，ctrl+c结束侦测
+
+
+
+
+
+
+六、系统常用操作命令
+编辑sudo命令的配置：visudo
+Linux sudo命令以系统管理者的身份执行指令，也就是说，经由 sudo 所执行的指令就好像是 root 亲自执行。
+使用权限：在 &#x2F;etc&#x2F;sudoers 中有出现的使用者。
+#用户名 登陆的主机= (以什么样的身份运行) 可以执行什么样的命令# eg：lyx ALL=(root) NOPASSWD:ALL # allow lyx to run all commands anywhere
+
+网络管理：ping、ifconfig
+
+服务管理：
+
+服务启动｜关闭｜状态查看｜重启： service service_name start|stop|status|restart
+linux自带的所有服务名称在：&#x2F;etc&#x2F;init.d&#x2F; 下
+如：network（网络）、iptables（防火墙）、mysql（mysql5.5之前叫mysqld）
+
+
+设置某服务是否开机自启
+检查：chkconfig iptables --list
+设置：chkconfig iptables on|off
+
+
+
+
+进程管理：ps
+
+查看某进程：ps -ef | grep java（如安装了JDK可用jps代替这条命令）
+杀死某个进程：kill -9 pid
+
+
+端口管理
+
+netstat：netstat 是网络状态查看命令，既可以查看到本机开启的端口，也可以查看有哪些客户端连接。netstat 命令的基本信息如下。
+参数
+-a：列出所有网络状态，包括 Socket 程序；
+
+-c秒数：指定每隔几秒刷新一次网络状态；
+
+-n：使用 IP 地址和端口号显示，不使用域名与服务名；
+
+-p：显示 PID 和程序名；
+
+-t：显示使用 TCP 协议端口的连接状况；
+
+-u：显示使用 UDP 协议端口的连接状况；
+
+-I：仅显示监听状态的连接；
+
+-r：显示路由表；
+
+
+
+常用：netstat -atunlp
+
+
+
+七、磁盘及分区管理1、Linux磁盘类型
+
+IDE类型：  - 个人电脑常用磁盘类型，缺点是在读写操作时都大量消耗CPU资源 ，优点是性价比高适用面广。  - 磁盘在系统中的标识：sd，例如第一块IDE类型磁盘的第一个分区为sda1
+SCSI类型：  - 服务器常用磁盘类型，缺点是贵，优点是在大量数据读写时，自己的处理器会处理，占用CPU很少的资源；同时扩充性好、稳定、可靠。  - 磁盘在系统中的标识：hx，例如第一块SCSI类型磁盘的第三个分区为hxa3
+
+2、常用分区类型及特点
+
+mbr分区：
+最多支持4个主分区
+系统只能安装在主分区
+扩展分区站一个主分区（扩展分区可有多个逻辑分区）
+最大支持2TB，但拥有较好的兼容性
+
+
+gtp分区：
+支持无限多个主分区
+最大支持18EB的分区1024*1024TB
+win7 64为以后支持
+
+
+
+3、查看磁盘分区及挂载信息
+lsblk -f
+
+案例：给linux增加一块新的硬盘并且挂载到 &#x2F;home&#x2F;newdisk
+
+步骤：虚拟机添加硬盘；设置分区；格式化分区；挂载目录
+操作：（1）虚拟机设置中添加一块磁盘，重启虚拟机生效。（2）lsblk -f命令查看新添加的磁盘名称（3）对磁盘进行分区： 1）fdisk &#x2F;dev&#x2F;sdb	# 对第二块mbr磁盘分区 2）n 3）p 4）默认 5）默认 6）w		#写入
+
+（4）格式化刚才的分区：
+mkfs -t ext4 /dev/sdb1		#mkfs = make file system
+（5）设置挂载目录
+mount sdb1 /home/newdisk		#卸载：unmount sdb1 /home/newdisk
+（6）设置永久在动挂载
+vim /etc/fstab
+
+4、磁盘状态查询
+
+df –lh：查新磁盘整体使用情况
+du -h 目录：查询某个目录的磁盘使用情况 -s：指定目录占用大小汇总 -h：带计量单位 -a：含文件 -max-depth&#x3D;1：子目录深度 -c：列出明细的同时增加汇总值
+
+八、常用的功能性复合命令汇总# 统计某个目录下面某种类型（或多种类型）的文件内容的行数。可用来统计代码行数# 例：统计当前所在目录下 .java文件和,xml文件的行数 注意：统计多种类型的文件用 -or 连接，同时&quot;(&quot;和&quot;)&quot;不能缺，只统计一种类型的话&quot;(&quot;和&quot;)&quot;可以省略。find ./ &quot;(&quot; -name &quot;*.java&quot; -or -name &quot;*.xml&quot; &quot;)&quot; -print | xargs wc -l#统计某目录下文件的个数：ls –l /etc | grep     “^-” |wc -l#统计某目录下目录的个数：ls –l /etc | grep     “^d” |wc -l#统计某目录下文件的个数：ls –lR /etc | grep     “^-” |wc -l#统计某目录下目录的个数：ls –lR /etc | grep     “^-” |wc –l#以树状展示目录结构：#Yam安装tree：yam  instal treetree#查看某个文件夹的大小du -sh 文件夹名称 #查看nginx配置文件位置nginx -t#scp使用#将当前路径下的pn-acess-0.0.1-SNAPSHOT.jar文件上传到101.132.155.132服务器的root用户的/home目录下，命名为pn.jarscp ./pn-acess-0.0.1-SNAPSHOT.jar root@101.132.155.132:/home/pn.jar#查看内存使用情况：free -m#查看内存占用排行前10的进程：ps aux --sort -rss | head# 修改该时间为2024年4月9日11点sudo date 040911002024.00
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>Linux</tag>
+        <tag>命令</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>mysql8安装---Windows</title>
+    <url>/2023/10/21/mysql8%E5%AE%89%E8%A3%85-Windows/</url>
+    <content><![CDATA[
+本教程适用Windows64位系统压缩包方式安装Mysql8版本。安装过程中遇到错误往下翻查看  &#x3D;&#x3D;8、碰到的问题及解决&#x3D;&#x3D;
+
+
+
+1、下载资源csdn下载，不需要积分： https://download.csdn.net/download/baidu_40120883&#x2F;20020533
+2、解压解压后目录如图所示：
+3、添加配置文件在解压目录（如上图）新建my.ini文件，文件内容如下所示
+[client]# 设置mysql客户端默认字符集default-character-set=utf8 [mysqld]# 设置3306端口port = 3306# 设置mysql的安装目录，就是解压后bin目录所在的文件目录basedir=D:\\mysql-8.0.19-winx64	# 设置 mysql数据库的数据的存放目录，MySQL 8+ 不需要以下配置，系统自己生成即可，否则有可能报错# datadir=C:\\web\\sqldata# 允许最大连接数max_connections=20# 服务端使用的字符集默认为8比特编码的latin1字符集character-set-server=utf8# 创建新表时将使用的默认存储引擎default-storage-engine=INNODB
+完成后如下图：
+4、初始化
+管理员方式运行命令提示符（CMD窗口）
+
+在cmd窗口中切换目录到mysql解压目录下的bin目录下
+使用  盘符+英文冒号  命令切换磁盘，如：进入D盘---&gt;D:使用cd命令进入目录
+
+执行初始化命令，初始化完成后会显示默认密码，先保存
+mysqld --initialize --console
+
+
+
+5、安装并启动
+继续接着上边的命令，执行安装数据库服务的命令：
+mysqld install mysql
+
+
+安装完成就可以启动mysql服务了
+
+
+net start mysql			#开启mysql服务net stop mysql			#关闭mysql服务
+
+6、修改密码并配置Navicat连接
+mysql服务启动后，使用mysql -uroot -p&lt;密码&gt;命令登录mysql，密码是之前执行初始化命令时得到的
+此时密码为初始密码，必须修改，否则无法执行命令ALTER USER USER() IDENTIFIED BY &#x27;root&#x27;;		# 修改密码为root
+3、把mysql用户登录密码加密规则还原成mysql_native_password，执行命令ALTER USER &#x27;root&#x27;@&#x27;&lt;host_address&gt;&#x27; IDENTIFIED WITH mysql_native_password BY &#x27;root&#x27;;		#host_address为主机地址，本地为localhost，FLUSH PRIVILEGES;					#刷新
+
+3.1 查看用户和主机地址映射
+use mysql;select user,host from user;
+可以看到为，用户user对应的host为localhost
+3.2 修改密码并刷新4、navicat创建连接5、测试连接测试成功，确定即可。
+
+——————————————————————-完成 ，碰到的问题还是比较多的，都一一解决了，详情看第八节
+
+7、卸载
+停止服务
+
+移除服务
+
+删除目录（这种下载方式的优点就是卸载容易）
+
+
+8、碰到的问题及解决1、初始化时报如下错误推测原因：mysql目录中的data目录不为空解决：删除data文件夹，重新创建空的data文件夹
+2、Install&#x2F;Remove of the Service Denied!推测原因：没有使用管理员身份运行cmd解决：重新用管理员身份运行cmd
+3、启动MySQL时，报发生系统错误2推测原因：之前安装过mysql服务，没有移除解决：执行mysqld -remove命令后，重新执行mysqld install mysql，之后在执行net start mysql命令启动4、登录mysql时，显示 ‘系统找不到指定的文件’。尝试解决：不要将用户名和密码一起输入，而是使用如下方式
+D:\mysql-8.0.19-winx64\bin&gt;mysql -uroot -p			# 不输入密码，回车Enter password: ************									#单独输入密码
+
+5、You must reset your password using ALTER USER statement before executing this statement.推测原因：当前密码为初始密码，mysql拒绝执行所有命令解决：使用提示的命令修改密码6、使用tomcat连接时报如下错误原因推测：mysql8 之前的版本中加密规则是mysql_native_password,而在mysql8之后,加密规则是caching_sha2_password解决：    1.  一种是升级navicat驱动    2. 一种是把mysql用户登录密码加密规则还原成mysql_native_password。（采用此种方法）参考第六节—–&gt;6、修改密码并配置Navicat连接
+7、ERROR 1396 (HY000): Operation ALTER USER failed for ‘root‘@’%’原因推测：用户和主机对应关系错误解决： 参考第六节—–&gt;6、修改密码并配置Navicat连接
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>sql</tag>
+        <tag>mysql</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PDF功能测试</title>
+    <url>/2024/03/21/pdf-test/</url>
+    <content><![CDATA[这是一个PDF测试页面。推荐使用 HTML iframe 标签来嵌入 PDF。
+使用 HTML iframe 标签 (推荐)
+
+
+
+
+
+]]></content>
+      <tags>
+        <tag>测试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>vue项目前端解决跨域问题</title>
+    <url>/2023/05/05/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[
+在前后端分离项目中，跨域是一定会出现的问题，本文主要介绍跨域问题的解决思路，以及在vue项目中如何使用代理的方式在前端解决跨域问题，同时提供一个后段解决的方案。
+
+1、产生原因跨域问题产生的原因是浏览器的同源策略。浏览器同源策略是浏览器中的一种安全机制，用于防止一个域下的文档或脚本访问另一个域下的文档或脚本。同源指的是两个URL的协议、主机名和端口号都相同，只有这些都相同的情况下，两个文档之间才满足同源条件。
+也就是指，当&#x3D;&#x3D;浏览器地址栏的地址（页面访问地址）&#x3D;&#x3D;和&#x3D;&#x3D;接口访问地址&#x3D;&#x3D;不一样时就会出现跨域问题，浏览器会拦截服务器返回的数据，并报CROS错误。
+
+例如浏览器地址是：localhost:8080/xxx，访问的接口地址是：http://23.43.222.12:8080/xxx，这时候就会出现跨域问题。所以在前后端分离的项目，跨域问题是必然出现的。注意：
+
+如果主机一样，但是端口不一样也会产生跨域问题，例如浏览器地址栏：localhost:8080/xxx，接口地址：http://localhost:8081/xxx，也是跨域。
+
+2、解决思路从原因中可以看到，问题产生主要是浏览器的锅，两个服务（后段）之间进行接口调用是不会产生跨域的，因此我们可以使用一个代理，通过代理服务器去调用server，代理服务器返回数据到浏览器，如下图所示此处的代理，本质就是一个后端服务，通过代理（后端服务）去调用server，拿到数据后在返回给浏览器，同时非常重要的一点，&#x3D;&#x3D;代理服务的访问地址必须和浏览器地址栏中的端口地址一样（localhost:8080）&#x3D;&#x3D;，在Vue中提供了这个功能，只需要进行简单的配置即可实现。
+3、问题解决3.1 前端解决1、找到vue项目中的vue.config.js，在其中的module.exports中添加如下代码，来配置一个代理proxy，作用见注释。
+devServer: &#123;    proxy: &#123;      //配置跨域      &quot;/api&quot;: &#123; //url识别符        target: &quot;http://23.43.222.12:8080/&quot;, // server地址        changOrigin: true, //允许跨域        pathRewrite: &#123;          /* 重写路径，当我们在浏览器中(f12-&gt;network中)看到请求的地址为：http://localhost:8080/api/core/getData/userInfo 时            实际上访问的地址是：http://23.43.222.12:8080/core/getData/userInfo,因为重写了 /api           */          &quot;^/api&quot;: &quot;&quot;,        &#125;,      &#125;,    &#125;,  &#125;,
+
+2、在使用axios等进行接口调用时，不是调用http://23.43.222.12:8080/core/getData/userInfo，而是调用http://localhost:8080/api/core/getData/userInfo
+3.2 后端解决前后端分离，java的话一般使用springboot项目，以springboot为例，添加如下配置：
+@Configurationpublic class GlobalCorsConfig &#123;    @Bean    public CorsFilter corsFilter() &#123;        //1.添加CORS配置信息        CorsConfiguration config = new CorsConfiguration();        //放行哪些原始域        config.addAllowedOrigin(&quot;*&quot;);        //是否发送Cookie信息        config.setAllowCredentials(true);        //放行哪些原始域(请求方式)        config.addAllowedMethod(&quot;*&quot;);        //放行哪些原始域(头部信息)        config.addAllowedHeader(&quot;*&quot;);        //暴露哪些头部信息（因为跨域访问默认不能获取全部头部信息）        // config.addExposedHeader(&quot;*&quot;);        config.addExposedHeader(&quot;Content-Type&quot;);        config.addExposedHeader( &quot;X-Requested-With&quot;);        config.addExposedHeader(&quot;accept&quot;);        config.addExposedHeader(&quot;Origin&quot;);        config.addExposedHeader( &quot;Access-Control-Request-Method&quot;);        config.addExposedHeader(&quot;Access-Control-Request-Headers&quot;);        //2.添加映射路径        UrlBasedCorsConfigurationSource configSource = new UrlBasedCorsConfigurationSource();        configSource.registerCorsConfiguration(&quot;/**&quot;, config);        //3.返回新的CorsFilter.        return new CorsFilter(configSource);    &#125;&#125;
+
+3.3 微服务项目在微服务项目中可以在网关中对跨域问题进行配置。
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>vue</tag>
+        <tag>跨域</tag>
+        <tag>前端</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>地质时代简单梳理</title>
+    <url>/2023/01/30/%E5%9C%B0%E8%B4%A8%E6%97%B6%E4%BB%A3%E7%AE%80%E5%8D%95%E6%A2%B3%E7%90%86/</url>
+    <content><![CDATA[
+
+地质时代是指地球上各种地质事件发生的时代。
+
+从大到小分为宙、代、纪、世、期。比如我们常说的侏罗纪，就是属于显生宙中生代侏罗纪；寒武纪属于显生宙古生代。
+冥古宙、太古宙、元古宙、显生宙，从距今5.41亿年开始就是显生宙了（现在也是），显生宙的标志就是古生代寒武纪生物大爆发。其中前三个时期又称为隐生宙，因为当时生命还很原始。
+将显生宙细看开来，分为古生代-中生代-新生代
+古生代：距今2.25亿年-约6亿年前，脊椎海洋生物开始繁盛，藻类、鱼类繁盛，两栖类登录，蕨类植物登录。
+寒武纪：5-6亿年前
+奥陶纪：4.4-5亿年前
+志留纪
+泥盆纪
+石炭纪
+二叠纪
+
+
+中生代：0.7亿-2.25亿年前，爬行动物的时代，裸子植物
+三叠纪
+侏罗纪：1.35-1.8亿年前
+白垩纪：0.7-1.35亿年前，恐龙灭绝，白垩纪结束，地质进入新生代。
+
+
+新生代：从7000万年前开始，哺乳动物的时代，被子植物繁盛。
+第三纪
+第四纪：它从约260万年前开始，一直延续。
+更新世
+全新世：开始于1.2-1万年前，直到现在。
+
+
+
+
+
+
+每个纪的生物都不太一样，而化石是识别地层的头号指标，因此纪是最常用的地址单位。
+
+简单了解后期在补充。
+
+
+
+
+]]></content>
+      <categories>
+        <category>求知</category>
+      </categories>
+      <tags>
+        <tag>知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>大工业用电计费及其相关知识</title>
+    <url>/2022/11/07/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/</url>
+    <content><![CDATA[
+ 电费计算方法主要分为大工业用电和一般工商业用电、农业生产用电用电、居民生活用电。
+
+
+
+
+1、概念大工业用电指受电变压器（含不通过受电变压器的高压电动机）容量在315千伏安及以上的下列用电：
+（1）以电为原动力，或以电冶炼、烘焙、熔焊、电解、电化、电热的工业生产用电。
+（2）铁路（包括地下铁路、城铁）、航运、电车及石油（天然气、热力）加压站生产用电。
+（3）自来水、工业实验、电子计算中心、垃圾处理、污水处理生产用电。
+（4）农副产品加工业用电：是指直接以农、林、牧、渔产品为原料进行的谷物磨制、饲料加工、植物油和制糖加工、屠宰及肉类加工、水产品加工，以及蔬菜、水果、坚果等食品的加工用电。
+
+基础知识：
+
+变压器：用来改变交流电电压大小的电气设备。例如：在进行远距离输电时（电阻很大），如果电流较大，那么就会电阻功率就会很大，这样会导致损耗较大。所以在功率不变的情况下，为了降低损耗就需要增大电压以减少电流，这时候就需要用到变压器，这也就是变压器的作用了。变压器的使用场景见下图:
+
+注意：理想变压器两端的功率比是1:1
+
+电阻：R&#x3D;ρL&#x2F;S (其中，ρ表示电阻的电阻率，是由其本身性质决定，L表示电阻的长度，S表示电阻的横截面积) 
+
+阻力功率公式：P&#x3D;UI&#x3D;U²&#x2F;R&#x3D;I²R，其中P为功率，U为电阻两端的电压，I为流经电阻的电流，R为电阻的电阻值。
+
+变压器容量：其额定电压与额定电流的乘积，其单位是VA，容量大了也可以是KVA或者MVA，即视在功率。
+
+变压器容量和功率的异同：
+
+相同点：变压器容量或视在功率&#x3D;额定电压*额定电流，功率&#x3D;电压*电流，两个都是电压和电流相乘。
+区别：发电机发电输出的是有功功率，有功功率的单位就是W(瓦)，而发电机除了产生有功电能用于输出外，还可以产生无功功率，输出无功电流用于为变压器、电动机建立磁场。所以发电机输出的功率包含有功功率和无功功率。有功功率(P)用W做单位，无功功率(Q)用VA表示，它们之间的关系是：S²&#x3D;P²+Q²，S：视在功率。
+有功功率： 有功功率是保持用电设备正常运行所需的电功率，也就是将电能转换为其他形式能量(机械能、光能、热能)的电功率。比如：5.5千瓦的电动机就是把5.5千瓦的电能转换为机械能，带动水泵抽水或脱粒机脱粒；各种照明设备将电能转换为光能，供人们生活和工作照明
+无功功率：它不对外作功，而是转变为其他形式的能量。凡是有电磁线圈的电气设备，要建立磁场，就要消耗无功功率。比如40瓦的日光灯，除需40多瓦有功功率(镇流器也需消耗一部分有功功率)来发光外，还需80乏左右的无功功率供镇流器的线圈建立交变磁场用
+
+
+功率因数：有功电流和无功电流之间存在相位差，所以使得系统的电压和电流之间有相位差，也就是系统的功率因数（cosφ）产生的原因。P&#x3D;S×cosφ，Q&#x3D;S×sinφ。cosφ越大，系统的kVA中包含的kW就越大，这就是系统提高功率因数的原因。
+
+
+
+科普1：为什么电器开多了可能诱发火灾？
+电源适配器的作用是变压器兼整流器，家用电为220v交流电，电器设备一般所需要的电压都会在设备上标定，通常不需要这么大的电压，也不一定需要交流电，所以需要使用电源适配器来提供稳定的电压和电流。对于电流的大小，就取决于电器的功率了，电压一定后，功率越大那么电流越大，电流大了，电线的电阻功率就变大，所以电线过热就可能引起火灾。
+注意⚠️：家用电电流和用电器的功率成正比，$电流&#x3D;功率&#x2F;电压$，也就是说你家里开的电器越多，电流就越大。例如电热水壶：额定功率1800W，工作电流8A，每小时耗电1.8度。最大容量烧水时间4~6分钟，预计耗电0.18度。就是说电流是一个变化的参数。
+科普2：一度电的概念
+我们用电的本质是使用电做功，用来转换成其他能量。所以度是对电所做功的度量，$1度 &#x3D; 1千瓦时$，这里的千瓦时是指，功率为一千瓦的电器工作一小时电所做的功。
+科普3：为什么有的电器设备需要大电压？
+这要从电器设备的功率考虑，大型电器设备的运行功率都是非常大的，如果电压太小需要要超大的电流，这是十分不安全的！所以有的工厂会有自己的变压器。
+2、工厂用电的类型工业用电是指主要从事大规模生产加工行业的企业用电。大多使用三相电压，如三相380VAC，三相660VAC等，或者直接高压电线进户。作为对比，而民用电采用的是单相220VAC。
+注意：VAC中的V指的电压单位福特，AC指交流电。
+因此现在的工厂车间安装的智能电表会有Ua、Ub、Uc、Ia、Ib、Ic、有功电度、无功电度的示数，他们就是三项电压中每一项的示数。
+3、工厂电力的接入方式电从发电厂出来，到工厂或者到你家，是经历了如下过程：发电—变电（升压）—输电—变电（降压）—配电—用电
+
+当电被输送到用电地方后，变电所会将高压电使用变压器将为低压电，然后将电力输送到配电厂，配电厂根据不用的电力使用需求，负责一个区域内的所有用电分配，例如：普通家庭用电的电压为220V，而工业用电却是380V，所以要按需分配，将家庭、工厂、商业用电分开处理。
+而工业设备对电压的需求并不相同，也会自己安装变压器。选择变压器就会涉及到一个容量问题，即要选择容量为多大的变压器。
+4、工业电费的计算方法公式：
+$电费=基本电费+电度电费+力调电费。$
+
+（1）$基本电费&#x3D;用电容量×基本电价$
+
+用电容量：变压器容量或最大需量（按何种方式计费由用户选择，两种选择方式基本电价不一致）
+
+基本电价：各地区电价不一致，总之是一个价格数值。
+
+注意：
+
+一般工商业和农业用电无此部分；
+最大需量是指计量在一定结算期内(一般为一个月)某一段时间(我国现执行15 min)客户用电的平均功率，保留其最大一次指示值作为这一结算期的最大需量。
+基本电价反映电力工业企业成本中的容量成本，即固定费用部分。计算基本电费时，以用户设备容量（千伏·安）或用户最大需量（千瓦）为单位，用户每月所付的基本电费仅与其容量或需量有关，与实际使用点来那个无关。
+
+
+
+（2）$电度电费&#x3D;电度电量×电量电价×倍率$
+
+电度电量：电度表计量的电量（尖峰平谷不同时间分别计量），每月按表读数。
+
+电量电价：参照下表两部制电价部分（山东省电网销售电价表、山东省电网输配电价表）：
+
+
+
+
+注意⚠️：途中两部制电价，就是在大工业中使用的计费方式，也就是现在我们正在讨论的。两部就是两部分，即电度电费和基本电费。在单一制电价中没有基本电费，
+
+（3）力调电费
+力调电费：根据功率因数调整电费。这里的功率因数就是上文中基础知识中的功率因数。
+$功率因数&#x3D;有功用电量&#x2F;√（有功用电量的平方+无功用电量的平方）$
+功率因数和电费调整因数的关系如下表：
+$力调电费 &#x3D;（基本电费+电度电费）×力调电费调整因数$
+例如：工厂实际功率因数为0.91，则力调电调整因数为-0.15%，力调电费这一项就相当于是电费减免了。
+但是整体来讲，奖低罚高，并且功率因数越低罚款越高，最高能达到总电费的145%。
+
+5、案例：
+来自知乎用户鸣乔节能环保 - 知乎 (zhihu.com)对于问题《工厂一年电费几百万，要想节省电费，从哪里做起呢？》的回答
+
+
+山东某企业2022年1月电费单据
+
+其中整体分为三部分：1、电度电费部分
+计算方式为：
+$（计量表内本月抄表数 - 上月抄表数）×  倍率 × 电费单价$
+$抄见电量总抄见电量(总)&#x3D;(1895.5−1750.86)×2000&#x3D;289280kwh$
+2、基本电费部分（一般工商业和农业用电无此部分）
+基本电费的计费方式分为三种：按容量、按合同最大需量和按实际最大需量。
+$这里收费方式为按容量：变压器容量×山东省容量单价$
+$基本电费元元基本电费&#x3D;1500×28元&#x2F;KVA&#x3D;42000元$
+3、电价附加费
+各水利基金附加费等不做分析。
+其中大家比较关心的部分就是力调电费的考核，这里就要说一下关于功率因数的计算方式。
+$功率因数=有功用电量/√（有功用电量的平方+无功用电量的平方）$
+
+功率因数功率因数=284594/√(2845942^2+1269002^2)=0.913$
+
+注：最后一位3的取值各地方标准不同
+
+
+ 参考：
+ 各种类别电费计算方法及电费单解读 - 知乎 (zhihu.com)
+ 变压器容量什么意思 变压器容量的解释 (haocat.cn)
+ 变压器容量单位KVA和KW的区别与换算 - 知乎 (zhihu.com)
+ 变压器容量单位KVA和KW的区别与换算 - 知乎 (zhihu.com)
+ 智能电表显示Ua、Ub、Uc代表什么呢？-江苏森维电子智能电表厂家 (senwei88.com)
+ 天天用电，电是怎么一步步到你家的？_科普中国网 (kepuchina.cn)
+ 工厂一年电费几百万，要想节省电费，从哪里做起呢？ - 知乎 (zhihu.com)
+
+
+
+
+
+]]></content>
+      <categories>
+        <category>求知</category>
+      </categories>
+      <tags>
+        <tag>知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>时间序列数据预测的类型</title>
+    <url>/2023/02/21/%E6%97%B6%E9%97%B4%E5%BA%8F%E5%88%97%E6%95%B0%E6%8D%AE%E9%A2%84%E6%B5%8B%E7%9A%84%E7%B1%BB%E5%9E%8B/</url>
+    <content><![CDATA[
+本文主要内容是使用LSTM网络进行不同类型的时间序列预测任务，不涉及代码，仅仅就不同类型的预测任务和数据划分进行说明。参考文章：https://machinelearningmastery.com/how-to-develop-lstm-models-for-time-series-forecasting/
+
+
+
+注：所涉及的概念在数据案例会说明
+时间序列数据预测本质就是利用先前的值预测后面的值，在得到一组数据后，需要将数据处理为一个个样本，每个样本中包括先前的数据和要预测的数据，将其作为训练集
+1 单变量时间序列数据预测单变量时间序列数据指的是，&#x3D;&#x3D;除了时间属性数据&#x3D;&#x3D;，只有单一属性的一组数据，比如2010一年间黄金的价格，按天统计，也就是一天一个数据。数据中只有价格这一个属性，共365个数据。同时单变量也是指数据只有一个序列，一个变量也就是一个特征（feature）。
+1.1 单步预测单步预测中的单步是指一个时间步长（time step），比如上述黄金价格数据中，每一天就是一个时间步长，即在时间序列数据中每获取一次数据就是一个时间步。
+单步预测就是仅仅预测一个时间步长的数据。
+单变量时间序列数据的单步预测（单变量单步预测，Univariate Step）：利于前边几个时间步长的数据预测下一个时间步长的数据
+数据处理：
+数据集dateset[10, 20, 30, 40, 50, 60, 70, 80, 90]
+上面的少量数据中，只是单一属性的一组数据。在进行预测前要将数据处理为样本（假设使用3个时间步长的数据预测下一个时间步长的数据），样本结构如下：以下数据共有6个样本，每个样本中都是前三个时间步长的数据为一组作为输入，下一个时间步长的数据为另一组作为输出。
+[10 20 30] 40[20 30 40] 50[30 40 50] 60[40 50 60] 70[50 60 70] 80[60 70 80] 90即：	输入			输出[[10, 20, 30],		[40,[20, 30, 40].		50,……			]			]
+
+
+使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。
+最后我们在看一下样本中输入数据和输出数据的维度：输入：两个维度，样本总数、用于预测的时间步长，这里分别是6、3输出：一个维度，样本数量，这里是6
+1.2 多步预测单变量时间序列数据的多步预测（单变量多步预测，Univariate Multi-Step）：利于前边几个时间步长的数据预测下面多个时间步长的数据。
+本例：使用3个时间步长的数据预测后2个时间步长的数据，
+数据处理：
+数据集dateset[10, 20, 30, 40, 50, 60, 70, 80, 90]
+样本结构如下：以下数据共有6个样本，每个样本中都是前三个时间步长的数据为一组作为输入，后两个时间步长的数据为另一组作为输出。
+[10 20 30] [40 50][20 30 40] [50 60][30 40 50] [60 70][40 50 60] [70 80][50 60 70] [80 90]即：	输入			输出[[10, 20, 30],		[[40,50],[20, 30, 40],		[50,60],……]					……		]说明：后面的输入输出也都是这样分析，只是不再表明输入输出和完整的数组结构。
+使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。
+使用这样的数据训练一个模型后，我们就可以使用前连续三个时间步长的数据预测下一个时间步长的数据。
+输入数据和输出数据的维度：输入：两个维度，样本总数、用于预测的时间步长，这里分别是6、3输出：两个维度，样本数据、预测的时间步长，这里分别是6、2
+2 多变量时间序列数据预测多变量时间序列数据是指，除了时间属性外，还有多个属性或者说特征的一组数据。
+2.1 单步预测2.1.1 多变量预测多时间变量数据的单步预测（多变量单步预测，Multivariate Input Series）：利用前面的多个时间步的部分属性数据，预测下一个时间步的某个属性数据，与单变量不同，这里每个时间步都有多个数据。以上边电耗数据为例。一种预测方式是：使用三个时间步的平均电流、平均电压的数据，预测一个时间步平均功率。
+数据集处理：
+[[ 10  15  25] [ 20  25  45] [ 30  35  65] [ 40  45  85] [ 50  55 105] [ 60  65 125] [ 70  75 145] [ 80  85 165] [ 90  95 185]]
+划分样本以下数据共有6个样本，每个样本中都是前三个时间步长的数据是平均电流和平均电压作为输入，后一个时间步长的平均功率作为输出。
+[[10 15] [20 25] [30 35]] 65[[20 25] [30 35] [40 45]] 85[[30 35] [40 45] [50 55]] 105[[40 45] [50 55] [60 65]] 125[[50 55] [60 65] [70 75]] 145[[60 65] [70 75] [80 85]] 165[[70 75] [80 85] [90 95]] 185
+使用这样的方式可以利用前三个时间步的电流、电压数据，预测当前功率（只给电流、电压信息）。
+输入数据和输出数据的维度：输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2输出：两个维度，样本数据、预测的特征数，这里分别是6、1
+2.1.2 并行预测 （全变量预测）多变量时间序列数据单步并行预测（多变量单步并行预测，Multivariate Multi-Step Parallel Series）：使用前面几个时间步的所有属性数据，预测下一个时间步的所有属性数据。以上面的电耗数据为例，使用前3个时间步的平均电流、平均电压、平均功率预测下&#x3D;&#x3D;一个&#x3D;&#x3D;时间的平均电流、平均电压、平均功率。
+数据集：
+[[ 10  15  25] [ 20  25  45] [ 30  35  65] [ 40  45  85] [ 50  55 105] [ 60  65 125] [ 70  75 145] [ 80  85 165] [ 90  95 185]]
+样本处理：
+[[10 15 25] [20 25 45] [30 35 65]] [40 45 85][[20 25 45] [30 35 65] [40 45 85]] [ 50  55 105][[ 30  35  65] [ 40  45  85] [ 50  55 105]] [ 60  65 125][[ 40  45  85] [ 50  55 105] [ 60  65 125]] [ 70  75 145][[ 50  55 105] [ 60  65 125] [ 70  75 145]] [ 80  85 165][[ 60  65 125] [ 70  75 145] [ 80  85 165]] [ 90  95 185]
+使用这样的方式可以利用前三个时间步的电流、电压、功率数据，预测时预测后面1个时间步长的电流、电压、功率。
+输入数据和输出数据的维度：输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、3输出：两个维度，样本数据、预测的特征数，这里分别是6、3
+2.2 多步预测2.2.1 多变量预测多时间变量数据的多步预测（多变量多步预测，Multiple Input Multi-Step Output）：利用前面的多个时间步的部分属性数据，预测后面多个时间步的某个属性数据。以上面的电耗数据为例，一中预测方式是，使用前3个时间步的平均电流、平均电压预测后面&#x3D;&#x3D;2个&#x3D;&#x3D;时间步长的平均功率。数据集：
+[[ 10  15  25] [ 20  25  45] [ 30  35  65] [ 40  45  85] [ 50  55 105] [ 60  65 125] [ 70  75 145] [ 80  85 165] [ 90  95 185]]
+样本处理：
+[[10 15] [20 25] [30 35]] [65 85][[20 25] [30 35] [40 45]] [ 85 105][[30 35] [40 45] [50 55]] [105 125][[40 45] [50 55] [60 65]] [125 145][[50 55] [60 65] [70 75]] [145 165][[60 65] [70 75] [80 85]] [165 185]
+
+使用这样的方式可以利用前三个时间步的电流、电压数据，预测时预测后面2个时间步长的平均功率。
+输入数据和输出数据的维度：输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2输出：两个维度，样本数据、预测的时间步长，这里分别是6、2
+2.2.2 并行预测 （全变量预测）多变量时间序列数据的多步并行预测（多变量多步并行预测，Multiple Parallel Input and Multi-Step Output）：使用前面几个时间步的所有属性数据，预测下一个时间步的所有属性数据。以上面的电耗数据为例，使用前3个时间步的平均电流、平均电压、平均功率预测后面&#x3D;&#x3D;多个&#x3D;&#x3D;时间的平均电流、平均电压、平均功率。
+数据集：
+[[ 10  15  25] [ 20  25  45] [ 30  35  65] [ 40  45  85] [ 50  55 105] [ 60  65 125] [ 70  75 145] [ 80  85 165] [ 90  95 185]]
+样本处理：
+(5, 3, 3) (5, 2, 3)[[10 15 25] [20 25 45] [30 35 65]] [[ 40  45  85] [ 50  55 105]][[20 25 45] [30 35 65] [40 45 85]] [[ 50  55 105] [ 60  65 125]][[ 30  35  65] [ 40  45  85] [ 50  55 105]] [[ 60  65 125] [ 70  75 145]][[ 40  45  85] [ 50  55 105] [ 60  65 125]] [[ 70  75 145] [ 80  85 165]][[ 50  55 105] [ 60  65 125] [ 70  75 145]] [[ 80  85 165] [ 90  95 185]]
+
+使用这样的方式可以利用前三个时间步的电流、电压、功率数据，预测时预测后面2个时间步长的电流、电压、功率。
+输入数据和输出数据的维度：输入：三个维度，样本总数、用于预测的时间步长、用于预测的特征数，这里分别是6、3、2输出：三个维度，样本数据、预测的时间步长、预测的特征数，这里分别是6、2、3
+
+
+
+
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>LSTM</tag>
+        <tag>时间序列</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>微信公众号开发简介</title>
+    <url>/2022/04/01/%E5%BE%AE%E4%BF%A1%E5%85%AC%E4%BC%97%E5%8F%B7%E5%BC%80%E5%8F%91%E7%AE%80%E4%BB%8B/</url>
+    <content><![CDATA[
+文末附源码，或可先将依赖复制到自己的项目，内容参考郑清的博客-CSDN博客
+
+1、微信中的几个概念想要进行微信相关的开发，首先是要弄明白几个概念，明确自己要干什么：
+（1）微信公众平台和微信开放平台
+
+开放平台：https://open.weixin.qq.com；公众平台：https://mp.weixin.qq.com
+
+
+
+我们可以分别看一两者的官网，首先看开放平台
+
+微信开放平台就是微信把自家的服务给其他人使用。比如你的网站要做网页授权登陆，就需要来到开放平台，在开放平台中将你的网站注册到其中；再比如想要自己开发的手机app实现微信分享、收藏，使用微信支付，也是需要到开放平台。这里的重点是&#x3D;&#x3D;你的应用要使用微信的服务&#x3D;&#x3D;。
+其实在开放平台中也包含公众平台的入口，那就是其中的公众账号开发，点进去就会进入公众平台，公众平台官网如下：
+
+公众平台要做的事是让所有人（普通人和开发者）更好的使用微信自己的产品，即服务号、订阅号、小程序、企业微信。所谓更好的使用就是帮助我们使用使用它们，让他们符合我们的需求，比如对于普通人，想使订阅号发布内容、设置自动回复等。比如对于开发者想使用公众号更有个性化的内容回复、进行网页授权等，网页授权也就是在公众号内打开网页，在网页中可以获取微信用户的信息，这与上边提到的第三方应用微信授权登录是不一样的，公众号内的授权只能在微信客户端中使用。但其实本质上差不多，都是去获取微信用户的信息。
+这里可以知道，使用订阅号、服务号、企业微信、小程序实现个性化业务就要到公众平台。这里的重点是你要直接使用微信的产品。
+（2）公众号
+公众号是一个统称，通常我们说的就是订阅号和服务号，订阅月就是我们微信中放在一起的公众号，服务号就是那些单独的、在聊天页面的公众号。但是还包括微信小程序和企业微信，比如想使用企业微信管理员工、进行小程序开发。
+（3）appID、appsecret、openID、unionID（来自微微信开放文档 ）
+
+
+
+ID名称
+说明
+
+
+
+AppID
+- AppID是不同类型的产品的帐号ID,是帐号的唯一标识符。 - 例如公众号的AppID、小程序的AppID、开放平台的AppID、第三方平台的AppID、移动应用的AppID、网站应用的AppID、小商店的AppID等等。
+
+
+openid
+- openid是微信用户在不同类型的产品的身份ID。 - 微信用户访问公众号、小程序、移动应用、网站应用、小商店等都会有唯一的openid，但同一个微信用户访问不同的产品生成的openid也是不一样的。 - 例如，对于不同公众号，同一用户的openid不同；同理，对于不同的小程序，同一用户的openid也是不同的
+
+
+unionid
+- unionid是微信用户在同一个开放平台下的产品的身份ID。 - 如果开发者拥有多个移动应用、网站应用、和公众帐号（即公众号和小程序），可通过 UnionID 来区分用户的唯一性，因为只要是同一个微信开放平台帐号下的移动应用、网站应用和公众帐号，用户的 UnionID 是唯一的。即，同一用户，对同一个微信开放平台下的不同应用，UnionID是相同的。
+
+
+（4）code、access_token：
+access_token是微信接口调用凭证，微信如何给我们提供功能和服务呢？自然是通过接口，微信的接口调用需要凭证，那就是access_token
+code：在某些场景下，主要是用户认证授权，如何确保用户真的授权了，那就是code，用户点了同意授权就会得到一个code，通过这个code就可以获取access_token，从而使用微信接口。
+2、微信公众号模式微信公众号有两种开发模式：(图片来自微信公众号开发 (1) 微信接入认证成为开发者)
+
+这位老哥的图里已经说的很清楚了。其实就是两种公众，普通人和开发者如何更好的使用公众号的两种模式。
+既然是微信公众号的开发，那么自然我们要讨论的是第二种模式了。
+3、开发前准备工作
+（1）获取一个公众号
+
+测试公众号申请地址https://mp.weixin.qq.com/debug/cgi-bin/sandbox?t=sandbox/login
+
+既然要做公众号的开发，自然首先需要有一个公众号了，当然如果嫌注册麻烦，或者已有公众号但是不能使用，也可申请一个测试公众号，随便折腾，如下图所示：
+
+（2）将你自己电脑的80端口映射出去
+也就说做内网穿透，让微信服务可以访问你电脑的服务。这里推荐使用ngrok (ngrok.cc)，关于ngrok使用很简单，注册登录之后选择隧道管理–开通隧道，免费的就行，但是需要2元钱的实名认证费用。填写配置，开通就行了，注意一定得是80端口。
+
+然后下载客户端，根据文档使用命令启动就行，启动后我们接可以看到如下界面：
+
+在外网访问http://iwat.free.idcfengye.com就会请求到本机的80端口。
+3、认证成为开发者对微信公众号开发又了一定的了解，做好了准备工作之后，就开始写代码了。这里我们使用java进行演示，创建spring-boot项目。
+根据上边的图我们知道，我们需要搭建一个自己的服务器，然后我们在自己的服务中通过微信服务器给用户发消息等，同时用户也是通过微信服务器请求我们服务器的服务，所以首先就要让微信认识我们的服务器，同时可以访问到我们的服务（所以要把80映射出去）。认证成为开发者这一步要做的就是让我们的服务和微信服务器相互认识。
+（1）创建springboot项目，新建一个controller
+
+添加如下代码：
+@RestController@RequestMapping(&quot;/api/weixin/index&quot;)@Api(tags = &quot;微信 - 接口&quot;)public class IndexController &#123;    // TODO 这里的token是微信公众平台上自己所配的！    private static final String token = &quot;zhengqing&quot;;    @Autowired    private MsgService msgService;    /**     * 处理微信认证：验证服务器地址的有效性，get提交     * signature: 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。     * timestamp 时间戳     * nonce: 随机数     * echostr: 随机字符串     */    @GetMapping    public void checkSignature(HttpServletRequest request, HttpServletResponse response) throws IOException &#123;        System.out.println(&quot;============= 处理微信认证 ===============&quot;);        // 拿到微信的请求参数        String signature = request.getParameter(&quot;signature&quot;);        String timestamp = request.getParameter(&quot;timestamp&quot;);        String nonce = request.getParameter(&quot;nonce&quot;);        String echostr = request.getParameter(&quot;echostr&quot;);        // ① 将token、timestamp、nonce三个参数进行字典序排序 b a d c h ==&gt;a b c d h        String[] strArr = &#123;token, timestamp, nonce&#125;;        // 字典排序        Arrays.sort(strArr);        // ② 将三个参数字符串拼接成一个字符串进行sha1加密        StringBuffer sb = new StringBuffer();        // 字符串拼接        for (String str : strArr) &#123;            sb.append(str);        &#125;        // 加密        String sha1Str = SecurityUtil.sha1(sb.toString());        // ③ 开发者获得加密后的字符串可与signature对比，标识该请求来源于微信        if (sha1Str.equals(signature)) &#123;            // 如果相等，就是来自微信请求            // 若确认此次GET请求来自微信服务器，原样返回echostr参数内容，则接入生效            response.getWriter().println(echostr);        &#125;    &#125;&#125;
+
+
+
+SecurityUtil代码
+public class SecurityUtil &#123;    public static String sha1(String str) &#123;        try &#123;            StringBuilder sb = new StringBuilder();            MessageDigest digest = MessageDigest.getInstance(&quot;sha1&quot;);            // 放入加密字符串            digest.update(str.getBytes());            // 进行加密            byte[] digestMsg = digest.digest();            // byte转换16进制            for (byte b : digestMsg) &#123;                sb.append(String.format(&quot;%02x&quot;, b));            &#125;            return sb.toString();        &#125; catch (NoSuchAlgorithmException e) &#123;            e.printStackTrace();        &#125;        return str;    &#125;&#125;
+
+（2）配置端口号
+
+
+（3）启动项目
+（4）在测试号页面填写公众号配置信息
+
+提交，显示配置成功就可以了。
+4、通过接口自定义微信公众号中的菜单有了测试公众号，点击关注以后进入发现，里面没有任何菜单。公众号的菜单可以在公众平台直接设置，也可以通过在我们的服务中调用微信的接口去设置。
+（1）第一步要看一下微信自定义菜单的文档：微信开放文档-自定义菜单 (qq.com)
+（2）第二步我们可以先在微信公众平台接口调试工具 (qq.com)	中使用接口感受一下
+首选获取access_token
+![image-20220401111312594](https://i-blog.csdnimg.cn/blog_migrate/8f4d11c5da5ce1b133ad15a2bb4fe75a.png)
+
+然后设置菜单：
+菜单项（注意微信文档中的测试菜单包含了小程序url，需要删除）
+&#123;     &quot;button&quot;:[     &#123;	          &quot;type&quot;:&quot;click&quot;,          &quot;name&quot;:&quot;今日歌曲&quot;,          &quot;key&quot;:&quot;V1001_TODAY_MUSIC&quot;      &#125;,      &#123;           &quot;name&quot;:&quot;菜单&quot;,           &quot;sub_button&quot;:[           &#123;	               &quot;type&quot;:&quot;view&quot;,               &quot;name&quot;:&quot;搜索&quot;,               &quot;url&quot;:&quot;http://www.soso.com/&quot;            &#125;,            &#123;                 &quot;type&quot;:&quot;miniprogram&quot;,                 &quot;name&quot;:&quot;wxa&quot;,                 &quot;url&quot;:&quot;http://mp.weixin.qq.com&quot;             &#125;,            &#123;               &quot;type&quot;:&quot;click&quot;,               &quot;name&quot;:&quot;赞一下我们&quot;,               &quot;key&quot;:&quot;V1001_GOOD&quot;            &#125;]       &#125;] &#125;
+
+
+
+
+如此取关测试公众号，然后重新关注就可以看到菜单的变化了。
+（3）自己写代码
+首先获取access_token，创建WeixinService接口及其实现类、MenuService及其实现类，如图
+
+WerixinServiceImpl实现类代码：
+@Servicepublic class WeixinServiceImpl implements WeixinService &#123;    @Autowired    private RestTemplate restTemplate;    @Override    public AccessTokenVO getAccessToken(String appId, String appSecret) &#123;        AccessTokenVO accessTokenVO = restTemplate.getForObject(Constants.GET_ACCESS_TOKEN_URL.replace(&quot;APPID&quot;, appId).replace(&quot;APPSECRET&quot;, appSecret), AccessTokenVO.class);        return accessTokenVO;    &#125;&#125;
+
+AccessTokenVO代码
+@Data//lombok注解public class AccessTokenVO &#123;    @ApiModelProperty(value = &quot;获取到的凭证&quot;)    private String access_token;    @ApiModelProperty(value = &quot;凭证有效时间，单位：秒(微信目前暂7200秒，即2小时，过期后需再次获取)&quot;)    private int expires_in;&#125;
+
+WeixinResponseResult代码
+@Datapublic class WeixinResponseResult &#123;    @ApiModelProperty(value = &quot;响应码&quot;)    private int errcode;    @ApiModelProperty(value = &quot;响应消息&quot;)    private String errmsg;&#125;
+
+Constants代码
+public class Constants &#123;    /**     * TODO 填写自己的 `appID` 和 `appsecret`     */    public static final String APP_ID = &quot;xxxx&quot;;    public static final String APP_SECRET = &quot;xxxx&quot;;    /**     * 通过 `GET请求方式` 获取 `access_token`     */    public static final String GET_ACCESS_TOKEN_URL = &quot;https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&amp;appid=APPID&amp;secret=APPSECRET&quot;;    /**     * TODO 只做临时方便测试使用     */    public static final String ACCESS_TOKEN = &quot;55_Nm9XUj_ZM-yHUt10mHEZ4BRMuXt-Dlm33pOWcycHy_EfAPlTB7Wd6-j01Hw0VwrqNARbm1jQzro4J1FGhpney0uu6H-7d3ajFM6Vd-85oJ7R6MgY29HlsRQ4cDB63yH1dTqbVrTBulzKnHhxGVAbAAANCH&quot;;    /**     * 查询菜单接口 - GET请求     */    public static final String GET_MENU_URL = &quot;https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN&quot;;    /**     * 删除菜单接口 - GET请求 （注意，在个性化菜单时，调用此接口会删除默认菜单及全部个性化菜单）     */    public static final String DELETE_MENU_URL = &quot;https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN&quot;;    /**     * 创建菜单接口 - POST请求     */    public static final String CREATE_MENU_URL = &quot;https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN&quot;;    /**     * 用户认证     */    public static final String AUTH_URL = &quot;https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&amp;redirect_uri=REDIRECT_URI&amp;response_type=code&amp;scope=SCOPE&amp;state=STATE#wechat_redirect&quot;;    /**     * 用户认证重定向url     */    public static final String AUTH_REDIRECT_URI = &quot;http://iwat.free.idcfengye.com/api/weixin/basic/getOpenId&quot;;    /**     * 获取用户openid和token     */    public static final String AUTH_GET_ACCESS_TOKEN_AND_OPENID = &quot;https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&amp;secret=SECRET&amp;code=CODE&amp;grant_type=authorization_code&quot;;    /**     * 根据token和openid获取用户信息     */    public static final String AUTH_GET_USER_INFO = &quot;https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&amp;openid=OPENID&amp;lang=zh_CN&quot;;    /**     * 刷新token     */    public static final String AUTH_REFRESH_ACCESS_TOKEN = &quot;https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&amp;grant_type=refresh_token&amp;refresh_token=REFRESH_TOKEN&quot;;    /**     * 检查token是否有效     */    public static final String AUTH_CHECK_ACCESS_TOKEN = &quot;https://api.weixin.qq.com/sns/auth?access_token=ACCESS_TOKEN&amp;openid=OPENID&quot;;    /**     *     */    public static final String CONTENT_TYPE = &quot;&quot;;&#125;
+
+下面开始测试，代码如下
+@Slf4j@RunWith(SpringRunner.class)@SpringBootTest(classes = HelloWechatDepApplication.class)class HelloWechatDepApplicationTests &#123;    @Autowired    private RestTemplate restTemplate;    @Autowired    private WeixinService weixinService;    @Test // 获取 `access_token`    public void getAccessToken() throws Exception &#123;        //AccessTokenVO accessTokenVO = weixinService.getAccessToken(Constants.APP_ID, Constants.APP_SECRET);        AccessTokenVO accessTokenVO = weixinService.getAccessToken(Constants.APP_ID, Constants.APP_SECRET);        log.info(&quot;======================================== \n&quot; + accessTokenVO.getAccess_token());    &#125;    @Test // 获取 创建菜单    public void createMenu() throws Exception &#123;        String menu = &quot;&#123;\n&quot; +                &quot;     \&quot;button\&quot;:[\n&quot; +                &quot;     &#123;\t\n&quot; +                &quot;          \&quot;type\&quot;:\&quot;click\&quot;,\n&quot; +                &quot;          \&quot;name\&quot;:\&quot;今日歌曲\&quot;,\n&quot; +                &quot;          \&quot;key\&quot;:\&quot;V1001_TODAY_MUSIC\&quot;\n&quot; +                &quot;      &#125;,\n&quot; +                &quot;      &#123;\n&quot; +                &quot;           \&quot;name\&quot;:\&quot;菜单\&quot;,\n&quot; +                &quot;           \&quot;sub_button\&quot;:[\n&quot; +                &quot;           &#123;\t\n&quot; +                &quot;               \&quot;type\&quot;:\&quot;view\&quot;,\n&quot; +                &quot;               \&quot;name\&quot;:\&quot;搜索\&quot;,\n&quot; +                &quot;               \&quot;url\&quot;:\&quot;http://www.soso.com/\&quot;\n&quot; +                &quot;            &#125;,\n&quot; +                &quot;            &#123;\n&quot; +                &quot;                 \&quot;type\&quot;:\&quot;miniprogram\&quot;,\n&quot; +                &quot;                 \&quot;name\&quot;:\&quot;wxa\&quot;,\n&quot; +                &quot;                 \&quot;url\&quot;:\&quot;http://mp.weixin.qq.com\&quot;\n&quot; +                &quot;             &#125;,\n&quot; +                &quot;            &#123;\n&quot; +                &quot;               \&quot;type\&quot;:\&quot;click\&quot;,\n&quot; +                &quot;               \&quot;name\&quot;:\&quot;赞一下我们\&quot;,\n&quot; +                &quot;               \&quot;key\&quot;:\&quot;V1001_GOOD\&quot;\n&quot; +                &quot;            &#125;]\n&quot; +                &quot;       &#125;]\n&quot; +                &quot; &#125;&quot;;        String jsonMenu = JSONUtil.toJsonStr(menu);        WeixinResponseResult result = restTemplate.postForObject(Constants.CREATE_MENU_URL.replace(&quot;ACCESS_TOKEN&quot;, &quot;上一步中获取的token&quot;), jsonMenu, WeixinResponseResult.class);        System.out.println(result);    &#125;&#125;
+
+
+
+5、微信模板消息
+微信模板消息文档：微信公众平台｜模板消息 (qq.com)
+
+所谓模版消息就是消息的一种，其中包含预留字段我们可以动态设置内容，主要用于业务通知，例如：我们微信中收到的这样的消息
+
+
+（1）在进行模板消息测试之前我们首先要定义一个模板，在测试号网页中的消息模板中添加一个消息模板
+
+模板说明：
+&#123;&#123;first.DATA&#125;&#125; 申请人：&#123;&#123;keyword1.DATA&#125;&#125; 申请进度：&#123;&#123;keyword2.DATA&#125;&#125; 申请时间：&#123;&#123;keyword3.DATA&#125;&#125; 提交人：&#123;&#123;keyword4.DATA&#125;&#125;&#123;&#123;remark.DATA&#125;&#125;
+
+中的内容就是预留字段，在接口中可以指定值，且必须以   开头，  结尾，中间也必须是xxx.DATA
+
+（2）测试
+首先例如创建菜单时的获取token方法获取access_token
+然后在postman进行测试，如下图
+
+URL：https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=xxx
+请求体内容：
+&#123;    &quot;touser&quot;: &quot;oC0So6FyAWhsDSzm80m2xrMzw98E&quot;, //用户的openID    &quot;template_id&quot;: &quot;sTLSPG7UgzYfhtWnGcFo5rE9QLZSuRU9FSN-xFYnKoM&quot;, //模板消息的模板id    &quot;url&quot;: &quot;https://www.bilibili.com/&quot;, //点击消息跳抓的url    &quot;data&quot;: &#123;        &quot;first&quot;: &#123;            &quot;value&quot;: &quot;您有一条新消息&quot;, //渲染到&#123;&#123;first.DATA&#125;&#125;             &quot;color&quot;: &quot;#173177&quot;        &#125;,         &quot;keyword1&quot;: &#123;            &quot;value&quot;: &quot;林一&quot;, //&#123;&#123;keyword1.DATA&#125;&#125;             &quot;color&quot;: &quot;#1731FF&quot;        &#125;,         &quot;keyword2&quot;: &#123;            &quot;value&quot;: &quot;待审批&quot;, //&#123;&#123;keyword2.DATA&#125;&#125;             &quot;color&quot;: &quot;#1731FF&quot;        &#125;,         &quot;keyword3&quot;: &#123;            &quot;value&quot;: &quot;2038-13-01 12:12:12&quot;, //&#123;&#123;keyword3.DATA&#125;&#125;             &quot;color&quot;: &quot;#1731FF&quot;        &#125;,         &quot;keyword4&quot;: &#123;            &quot;value&quot;: &quot;秦安&quot;, //&#123;&#123;keyword4.DATA&#125;&#125;             &quot;color&quot;: &quot;#1731FF&quot;        &#125;,         &quot;remark&quot;: &#123;            &quot;value&quot;: &quot;希望您尽快审批&quot;, //&#123;&#123;remark.DATA&#125;&#125;             &quot;color&quot;: &quot;#173177&quot;        &#125;    &#125;&#125;
+
+
+
+
+
+小结：看完创建菜单和消息模板，有的小伙伴可能有些困惑，创建菜单和消息模板和开始说的微信服务器认证没有任何关系，是的仅就这两点而言确实无关，但是如果你要实现用户在公众号发送一条消息，动态回复一条消息，这就需要了，所以忍不认证微信服服，主要是根据需求，这里只是演示使用。但是下面就会用到了。
+6、公众号内网页授权
+网页授权文档：微信开放文档 ｜公众号网页授权，结合微信文档看
+
+公众号网页授权就是在公众号内通过用户点击一个授权链接，用户同意后从而可以获取用户的微信的信息，例如微信的信息就可以完成一些特定的业务。比如在微信公众号菜单中进入某个网页，在网页里显示微信用户信息等等。
+（1）首先我们需要一个填写一个微信回调域名（在测试号可以填写IP+端口），从而是的认证后微信可以重定向我们的填写的回调地址
+在测试号网页中修改：
+
+填写：
+
+
+用户授权就是点击如下的微信链接，链接含义说明如下
+https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&amp;redirect_uri=REDIRECT_URI&amp;response_type=code&amp;scope=SCOPE&amp;state=STATE#wechat_redirect 解析：1、scope以snsapi_base为scope发起的网页授权，是用来获取进入页面的用户的openid的，并且是静默授权并自动跳转到回调页的。用户感知的就是直接进入了回调页（往往是业务页面）以snsapi_userinfo为scope发起的网页授权，是用来获取用户的基本信息的。但这种授权需要用户手动同意，并且由于用户同意过，所以无须关注，就可在授权后获取该用户的基本信息。2、appid公众号的appid3、redirect_uri	认证后微信回访问的地址，这里我们可以写接口地址，或者写一个页面地址都可以，因为用户认证之后微信就会访问它。	例如填写http://119.345.9.10:5500/sys/getopenid,认证成功后为微信就会调用http://119.345.9.10:5500/sys/getopenid?code=xxxxxx；	填写http://119.345.9.10:5500/show.html,认证成功后为微信就重定向到页面http://119.345.9.10:5500/show.html?code=xxxxxx，携带者code参数
+
+注意：这里的回调地址必须是外网能够访问的，因为微信服务器要访问这个地址，它必须能够访问到才行。所以这里就可以使用第一步微信授权时候做的内网穿透了，测试号页面的回调地址就可以写下面的域名。
+
+
+
+
+（2）正式开始我们的认证过程
+首先微信测试号页面填写回调地址域名
+
+
+（3）在WeixinService接口新增方法
+
+WeixinServiceImpl代码
+@Overridepublic void getOpenId(HttpServletRequest request, HttpServletResponse response) &#123;    String code = request.getParameter(&quot;code&quot;);    String state = request.getParameter(&quot;state&quot;);    log.debug(&quot;======================================= \n code值：&quot; + code);    String responseContent = restTemplate.getForObject(Constants.AUTH_GET_ACCESS_TOKEN_AND_OPENID            .replace(&quot;APPID&quot;, Constants.APP_ID)            .replace(&quot;SECRET&quot;, Constants.APP_SECRET)            .replace(&quot;CODE&quot;, code), String.class);    JSONObject result = JSONUtil.parseObj(responseContent);    String accessToken = result.getStr(&quot;access_token&quot;);    String openid = result.getStr(&quot;openid&quot;);    String refreshToken = result.getStr(&quot;refresh_token&quot;);    log.debug(&quot;======================================= \n access_token值：&quot; + accessToken + &quot;\n  openid值：&quot; + openid);  	//这里要修改为你自己的域名    String redirectUrl = &quot;http://iwat.free.idcfengye.com/api/weixin/basic/getUserInfo?openid=&quot; + openid + &quot;&amp;access_token=&quot; + accessToken;    try &#123;        // 授权之后重定向到指定URL（这里是跳转到获取用户基本信息接口）        response.sendRedirect(redirectUrl);    &#125; catch (IOException e) &#123;        e.printStackTrace();    &#125;&#125;		@Override    public WeixinUserInfoVO getUserInfo(String openId, String accessToken) &#123;        WeixinUserInfoVO weixinUserInfoVO = null;        String responseContent = restTemplate.getForObject(Constants.AUTH_GET_USER_INFO                .replace(&quot;ACCESS_TOKEN&quot;, accessToken)                .replace(&quot;OPENID&quot;, openId), String.class);        weixinUserInfoVO = JSONUtil.toBean(responseContent, WeixinUserInfoVO.class);        return weixinUserInfoVO;    &#125;
+
+
+
+新增WeixinController
+
+WeixinController代码如下
+@Slf4j@RestController@RequestMapping(&quot;/api/weixin/basic&quot;)@Api(tags = &quot;微信授权 - 接口&quot;)public class WeixinController extends BaseController &#123;    @Autowired    private WeixinService weixinService;    @GetMapping(value = &quot;/getOpenId&quot;/*, produces = Constants.CONTENT_TYPE*/)    @ApiOperation(value = &quot;回调地址获取code换取access_token和openid&quot;, httpMethod = &quot;GET&quot;, response = ApiResult.class, notes = &quot;回调地址获取code换取access_token和openid&quot;)    public ApiResult getOpenId(HttpServletRequest request, HttpServletResponse response) &#123;        weixinService.getOpenId(request, response);        return ApiResult.ok(&quot;回调地址获取code换取access_token和openid成功！&quot;);    &#125;    @GetMapping(value = &quot;/getUserInfo&quot;/*, produces = Constants.CONTENT_TYPE*/)    @ApiOperation(value = &quot;获取用户基础信息&quot;, httpMethod = &quot;GET&quot;, response = ApiResult.class, notes = &quot;获取用户基础信息&quot;)    public ApiResult getUserInfo(@RequestParam(&quot;openid&quot;) String openid, @RequestParam(value = &quot;access_token&quot;, required = false) String accessToken) &#123;        WeixinUserInfoVO result = weixinService.getUserInfo(openid, accessToken);        return ApiResult.ok(&quot;获取用户基础信息成功！&quot;, result);    &#125;&#125;
+
+（4）修改用户菜单
+在菜单测试那里，修改菜单内容如下。
+&#123;     &quot;button&quot;:[     &#123;	          &quot;type&quot;:&quot;click&quot;,          &quot;name&quot;:&quot;今日歌曲&quot;,          &quot;key&quot;:&quot;V1001_TODAY_MUSIC&quot;      &#125;,      &#123;           &quot;name&quot;:&quot;菜单&quot;,           &quot;sub_button&quot;:[           &#123;	               &quot;type&quot;:&quot;view&quot;,               &quot;name&quot;:&quot;测试网页授权&quot;,               &quot;url&quot;:&quot;https://open.weixin.qq.com/connect/oauth2/authorize?appid=你的APPID&amp;redirect_uri=iwat.free.idcfengye.com/api/weixin/basic/getOpenId&amp;response_type=code&amp;scope=snsapi_userinfo&amp;state=STATE#wechat_redirect &quot;            &#125;,            &#123;                 &quot;type&quot;:&quot;miniprogram&quot;,                 &quot;name&quot;:&quot;wxa&quot;,                 &quot;url&quot;:&quot;http://mp.weixin.qq.com&quot;             &#125;,            &#123;               &quot;type&quot;:&quot;click&quot;,               &quot;name&quot;:&quot;赞一下我们&quot;,               &quot;key&quot;:&quot;V1001_GOOD&quot;            &#125;]       &#125;] &#125;
+
+取关公众号，重新关注，菜单就会刷新，测试即可。
+
+源码：hello-wechat-dev: 学习微信公众号相关开发 (gitee.com)
+
+如有不足欢迎指正！
+
+
+
+
+]]></content>
+      <categories>
+        <category>编程</category>
+      </categories>
+      <tags>
+        <tag>微信</tag>
+        <tag>公众号</tag>
+        <tag>开发</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>时间是如何定义的</title>
+    <url>/2023/12/21/%E6%97%B6%E9%97%B4%E6%98%AF%E5%A6%82%E4%BD%95%E5%AE%9A%E4%B9%89%E7%9A%84/</url>
+    <content><![CDATA[
+每年365天，每天24小时，每小时60分钟，每分钟60s，这是我们习以为常的时间计量单位，那么在继续往下，1s是多少？几时几刻、几点几分是如何确定的？带着这些问题，展开本文。
+
+
+
+1、时间基准1.1 秒的定义在讨论时间之间，我们首先要有一个时间基准———1s是多久。如何定义1s的时间？
+在目前的时间体系钟，1s的时间是某些原子例如铯-133同位素，该原子的电子进行特定的能级跃迁（称为超精细能级跃迁）时释放出的电磁波的频率，这被称为原子钟。看着有些一头雾水，请看下面的解释。
+概念解释：
+
+同位素：原子的同位素和原子相比中子数不同，也是原子
+
+能级跃迁：原子的原子核周围有电子，处于游离态，电子能级用来描述游离态电子的能量。当电子吸收能量时会进行能级跃迁，由低能级跃迁到高能级；释放能量时也会进行能级跃迁，从高能级跃迁到低能级，此时会释放出电磁波。能级跃迁可以通过微波照射等方式控制。
+
+电磁波频率：电磁波可以使用正弦波表示，频率就是1s的时间内，电磁波的周期数。
+  
+
+所以1s的定义是：铯-133同位素的超精细结构跃迁，所释放的电磁波的9,192,631,770个周期的持续时间，即9,192,631,770Hz
+这种超精细能级跃迁所释放的电磁波的频率是非常稳定的。
+1.2 时间误差根据钟慢尺缩效应，时间流逝会受引力场的影响。简单来说就是，引力大地方时间流逝慢，引力小的地方时间流逝慢。例如在地面上的钟表和卫星上的钟表，一段时间以后，两者的读数就会有差异。在原子钟也考虑了这种相对效应，因为会进行校正。
+2、协调世界时确定了1s的时间，1分钟、1小时的便确定了。但是一天的时间并不是 60s*60min*24h，因为一天的时间是根据地球自转一周确定。而为什么选择 铯-133电子跃迁释放电磁波的 9,192,631,770个周期作为1s，只是因为 60s*60min*24h这样计算出来的时间和一天的时间非常接近。
+所以面临了一个问题，地球自转的速度收大气环流、其他天体等诸多因素的影响，并不是已成不变的。也就是说， 60s*60min*24h这个时间段并不精确等于一天的时间，二十经常会有误差。这要如何处理呢？
+其实也很简单，国际上由专门的机构来汇总每次地球自转一圈的时间和60s*60min*24h时间段的差异，每天差一点、每天差一点都被汇总出来，当累计的误差时间多了，该机构就会将这个误差发出来，这个误差被称为闰秒，世界各处的钟表就会做出改变。
+例如：某天国际校准机构公布了一个闰秒为+1s，当时间来到23:59:59时，此时始终会多停留1s，相当于23:59由61s。最终这个经过协调之后的时间在被发布出来，这就是协调世界时，我们一直在用的时间。
+目前全球大约有400台原子钟，分散在近70个国家的授时实验室里。 这些原子钟的数据被统一发送给位于法国的国际计量局，由国际计量局汇总处理成统一的时间，这就是“协调世界时”或叫做“国际原子时”，再发回给各个实验室。
+3、时间广播协调世界时是通过什么方式发送到世界各地呢？这就要说到卫星的另一个非常重要的功能，那就是授时（一个是导航）。卫星作为中介或者本身就作为一个时间源向全球发布时间信号。
+
+
+
+
+]]></content>
+      <categories>
+        <category>求知</category>
+      </categories>
+      <tags>
+        <tag>知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>浅显的谈一下相对论</title>
+    <url>/2021/03/16/%E6%B5%85%E6%98%BE%E7%9A%84%E8%B0%88%E4%B8%80%E4%B8%8B%E7%9B%B8%E5%AF%B9%E8%AE%BA/</url>
+    <content><![CDATA[
+相对论与经典物理、量子力学一起，三者一同构成了现代物理学体系。与经典物理学、量子力学不同的是，这两者都是有许多世界级的物理学大佬一起构建，而相对论则是由爱因斯坦一手创立，由此便可以看出爱因斯坦的智慧，阿尔伯特·爱因斯坦的聪明才智已经无法用言语形容了。
+
+
+
+相对论分为狭义相对论和广义相对论，这两者是不同的。
+1、狭义相对论背景：狭义相对论产生的原因是经过大量的实验观测发现，对于任何观察者来说，光速是不变的。这就与牛顿定律产生了矛盾，根据牛顿三定律，速度是可以叠加的，也就是说，如果一个人在火车上面向火车的行进方向开了一枪，那么子弹的速度&#x3D;子弹自身的速度+火车的速度，但是实验观测发现，光速不能叠加。这个问题是二十世纪初晴朗的物理学天空中的两朵乌云之一。为了解决这个问题，爱因斯坦创造性的将光速不变作为前提，创立了狭义相对论，从而使二十世纪初的物理学天空变得翻云覆雨起来。内容：狭义相对论的主要内容是以光速不变为前提描述了时间、空间、物质、运动、能量之间的关系，狭义相对论将时空看作一体，不再区分绝对时间和空间，时空的流逝分为空间流逝和时间流逝，时空流逝是固定的，所以如果空间流逝的多那么时间流逝的就少，因此，对于运动的物体来说，由于空间流逝变大，导致时间流逝减少，就会使得物体的时间走的慢，所以宇宙中任何物体都有自己的时间，时间不是固定的。此外还有大名鼎鼎的质能方程，原子弹的原理，描述了物质与能量的关系，质量与能量本就是一个硬币的正反面，本质是一个东西，只是表现方式不同而已。最后，光速是这个宇宙中的最快速度，并且不能叠加。
+关于光速不变且不可叠加：光是一种电磁波，它的传播是这样的：
+一个交变的电厂产生一个交变的磁场，然后一个交变的磁场在产生一个交变的电厂，如此反复。这有点类似于我们排队报数，报数的速度取决于每个人的反应速度，而不是这个队伍在哪，就算这个队伍在宇宙飞船上，报数的速度也不会因此而加快。
+关于光速是宇宙中的最大速度：给物体加速需要能量，当随着物体速度增大，继续加速该物体就需要更多的能量，当速度趋紧光速时，继续加速该物体就需要无限大的能量。
+关于物体的质量：物体的质量&#x3D;静质量+动质量，同样一物体，在加速时的质量要大于静止时自己的质量，这一点通过质能方程便可以得出。
+2、广义相对论背景：狭义相对论指出光速是宇宙中的速度上限，但是根据牛顿的万有引力定律，引力可以瞬间作用。此时爱因斯坦决定自创一套引力理论，于是不久之后，广义相对论横空出世。后来的科学实验也证明了，使用使用广义相对论原理进行计算得出的结果更接近真实情况。
+内容：广义相对论本质是一个引力理论。我们乘坐电梯的时候，会有超重和失重，超重其实相当于是引力变大了。同时，由圆盘思维实验我们可以知道，加速可以弯曲时空，所以得处结论：
+                                引力=时空弯曲
+
+想象宇宙是一个床单，上边有几个台球静止不动，突然一个质量比较大的物体，比如你，一屁股坐了上去，由于你在床单上坐了个坑，台球就会向这个坑里滚动。这就是引力作用，所以，引力不是力，是时空弯曲的一种效应。我们知道黑洞引力非常大，在视界（时空中不可逃逸区域的边界）内部，任何东西都出不来，即便是光也会被黑洞捕获。其实黑洞本质就是某处出现了一个质量极大的东西，使得该处的时空弯曲到极限。
+关于黑洞的形成：说白了，黑洞就是恒星的尸体，咱们的太阳有朝一日可能也会变成黑洞。恒星寿命到达后，部分会变成白矮星，但也有一些会自爆，叫做超新星爆发，爆发之后如果剩下的质量少就会变成中子星，剩的太多就会变成黑洞。
+关于引力波：引力波就是指的引力波动，或者说引力的传播形式，引力的传播速度和引力作用的影响效果，没有直接联系。一个有质量物体产生于时空中产生的引力波，类似于将一块石头扔到水中产生的涟漪，因此引力波也被称为时空涟漪或时空波动。其传播速度也是光速。上面指出，加速产生引力作用，引力产生就会向外传播，所以说，加速的物体会产生引力波，只是这样的引力波功率非常小，很难被探测到。
+
+
+
+
+]]></content>
+      <categories>
+        <category>求知</category>
+      </categories>
+      <tags>
+        <tag>知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>电动车选购</title>
+    <url>/2024/02/08/%E7%94%B5%E5%8A%A8%E8%BD%A6%E9%80%89%E8%B4%AD/</url>
+    <content><![CDATA[1 电池1.1 电池类型1、铅酸电池
+优点：价格便宜、电压稳定、稳定性高
+缺点：
+
+寿命短，以锂电池为标准，铅酸电池的循环充电次数约为锂电池的1&#x2F;3，后期要频繁更换电池（一年后衰减严重）。
+重量体积大，同等容量重量约为锂电池的1&#x2F;5。
+
+2、锂电池
+各指标介于铅酸电池和石墨烯电池之间。
+3、石墨烯电池
+优点：锂电池中使用石墨烯，电池寿命高（2倍于锂电池）和同等体积下的储电量都优于锂电池（3倍于锂电池）
+缺点：贵
+
+
+1.2 电池参数
+循环寿命：指电池可经历的重复充放电次数
+
+荷电保持能力：每放一天容量就减小2％左右，如果说减少的数值超过2%，那么电池不正常
+
+容量和电压：
+
+容量：电池在特定条件下可以持续供应的电流量
+电压：48V、60V、72V
+电动车标称电压电流：48V12Ah、48V20A
+电池储电量（额定功率）&#x3D;额定电压X额定电流
+
+
+
+注意：
+
+市面上一般48V的电池厂家都配350W、400W电机，最高行驶速度在25KM左右；60V电池厂家配800W电机，最高速度在40KM左右；72V厂家配1000W电机，最高速度在45KM左右。
+最低容量标准：
+
+
+理论续航里程计算
+  48V20A的电池，400W电机，最高速度25KM左右：$续航里程 &#x3D; 48V * 20A &#x2F; 400W * 25 &#x3D; 60$这就是理论续航。（时机肯定达不到）
+
+
+2 电机博世、全顺、金宇星、星伟电机、亨帝龙、安乃达电机是比较可靠的
+小结：续航保障：一般续航超过60KM的车，电池起码要 48V20A；满足骑行要求情况下电机功率越小越好，350W和400W区别很小；电动车的重量
+3、新国标
+4、电动车分类
+电动自行车  标准：时速≤25km&#x2F;h，有脚踏板、电机功率≤400W。
+  注意：目前存在很多超标车，挂临时牌照。
+
+电动轻便摩托车  标准：时速≤50km&#x2F;h，电机功率：400W～4KW  属于机动车，挂蓝牌，走机动车道
+
+电动普通摩托车  标准：时速＞50km&#x2F;h，电机功率：＞4KW
+
+轻便摩托车  标准：时速≤50km&#x2F;h，发动机排量≤50ml  属于机动车，挂蓝牌，走机动车道
+
+普通摩托车  标准：时速＞50km&#x2F;h，发动机排量＞50ml  属于机动车，挂黄牌，走机动车道
+
+
+5、牌照白色车牌是临时车牌，不符合新国标的车型会使用白色车牌；绿色车牌是永久车牌，只有符合新国标的车型才可以使用
+
+参考：
+[1] 电动自行车、电动轻便摩托、轻便摩托车如何区分 - 知乎 (zhihu.com)
+[2] 2023年618更新，新国标电动车（电动自行车）选购攻略【雅迪、绿源、爱玛、新日、小牛、台铃、小刀】 (zhihu.com)
+[3] 48V、60V、72V电动车续航怎么算？电池越大跑得越远？终于弄懂了 - 知乎 (zhihu.com)
+[4] 电动车电池怎么选？电动车老师傅教你几招 - 知乎 (zhihu.com)
+[5] [如何选择电动车（电池科普） (zhihu.com)](https://www.zhihu.com/tardis/zm/art/145582986?source_id=1005#:~:text=如何选择电动车（电池科普） 1 第一种：铅酸蓄电池 2 第二种：锂电池 3,第三种：石墨烯电池 4 第四种：镍氢电池 5 第五种：镍镉蓄电池 6 下面我介绍现在三大电池的主流电动车)
+
+
+
+
+]]></content>
+      <categories>
+        <category>消费指南</category>
+      </categories>
+      <tags>
+        <tag>电动车</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>逆变器</title>
+    <url>/2026/02/04/%E9%80%86%E5%8F%98%E5%99%A8/</url>
+    <content><![CDATA[
+ 直接作用：直流输入——纯正弦波电力输出
+
+基本原理方波逆变器：
+半导体开关IGBT控制线路开合，交替变换电流方向，形成交流电——方波交流电。
+方波交流电的电压一直在突变，影响电器件的寿命因此需要转化为正弦交流电
+
+
+正弦波逆变器在方波的基础上，一个朴素的想法是，让开关更快些进行开闭，同时控制开闭的速率，进而取平均值，这样尽可能去拟合正弦曲线。   这个过程一把使用脉冲进行调制。
+
+
+
+电容的作用：就像蓄水池，将电能存起来，在放出去，放出去的时候可以控制流速，从而达使得波形变平滑
+光伏逆变器光伏逆变器和普通逆变器有什么不同？
+光伏逆变器是讲光伏面板输出的直流电转化为交流电，但是发变功率会随电网变化，所有光逆需要具备宽范围的直流输入支持。
+此外光逆的两个独特支出分别是：
+（1）最大功率点跟踪（MPPT）
+本质是一个控制器模块，集成在了逆变器中 。什么是最大功率点呢，光伏面板的输出功率并不是随着输出电压的上升而不停上升的，符合一下曲线：
+
+而最大功率电就是图中微分等于0的点。最大功率点是变化的，随着环境变化和光伏组件自身的使用情况而变化。
+MPPT组件就是通过调节光伏组件的输出电压，从而使得光伏组件处在最高发电功率点。
+在一个光伏电站中，通常一个逆变器标配一个MPPT，因此无法跟踪每一块光伏组件的最大功率点。在集中式或组串式光伏系统中，MPPT的控制对象是光伏组串，而不是单个组件。多个光伏组件串联为一个组串，过个组串并联接入回流箱，回流箱向多路直流电汇总，接入逆变器的输入端。MPPT接着会以组串为点位进行采样并调节。
+（2）孤岛效应保护
+当电网断电时，光伏逆变器能迅速（毫秒级）自动切断与电网的连接，防止向电网继续供电，保障维修人员的安全
+逆变器削峰现象
+也被称为“削顶”或“限发”，是指光伏逆变器在特定条件下，无法将光伏组件产生的全部直流功率完全转换为交流功率输出的现象。这种现象通常发生在光伏组件的输出功率超过逆变器的额定容量或最大输入功率限制时。
+
+
+
+
+]]></content>
+      <tags>
+        <tag>逆变器</tag>
+        <tag>MPPT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单聊一聊中国的房地产</title>
+    <url>/2022/09/30/%E7%AE%80%E5%8D%95%E8%81%8A%E4%B8%80%E8%81%8A%E4%B8%AD%E5%9B%BD%E7%9A%84%E6%88%BF%E5%9C%B0%E4%BA%A7/</url>
+    <content><![CDATA[
+参考：（1）一个视频搞懂中国房地产整个内在逻辑，看完就能明白现在发生的一切，以及未来大趋势 （2）与日本和美国相比，中国的房地产走到哪一步了？
+
+
+房地产是一个老生常谈的话题，其实大多数人并不清楚房地产市场对中国经济的意义，作为普通人更关注的也只是房价的涨跌。本篇文章就从宏观层面 简单聊聊房地产市场对中国经济的意义以及房价未来的走势。
+
+
+1、房地产市场对中国经济的意义1.1 中国房地产市场的发展在1994年，中央说服地方实行分税制改革的时候，其中中央政府做出的一个让步就是土地租赁金归全部归入地方财政。而随着分税制改革的完成中央财收入越来越多，地方财政却相形见绌，但各种政策的实施、公共物品和公共服务的供给比如基建等都需要地方政府完成，而这都是要花钱的。1998年国务院通知，决定停止单位福利分房制度，逐步实现住房供给的商品化。从此开始，中国房地产市场就插上了飞翔的翅膀，经历一个20多年的牛市至此不衰。
+1.2 土地财政我们知道做生意是需要原始资本积累，比如近代资本主义的殖民掠夺，新中国剪刀差农业补给工业，都是这个道理。所以，要实现工业化、城市化就要建学校、修高铁、建医院、公园、商业中心等等，这都需要巨量的资金，这些钱都是从哪里来的呢？其中一部分就是通过土地财政。
+简单说就是，政府首先通过低价供应工业用地、提供基础设施等吸引企业到本地建厂，这样就会增加就业人口，人多了同时还是挣钱了，这就会要去满足住房需求、消费需求等；这时候政府在高价供应商业用地，地方财政有了钱就可以去搞建设。这样的循环起来经济就得到了发展。
+
+1.3 土地金融其实仅仅靠土地财政这些钱是远远不够的，所以银行就参与进来了，商业用地价格的推高，使得地方政府可以利用土地抵押向银行借款，同时房地产开发商拿到政府批的地以后也会以此抵押向银行借款，这样大量的资金就变成了一座座拔地而起的高楼大厦。从宏观层面讲，土地是国家的，银行的钱也是国家，用土地去做抵押贷款本质上就是以土地为信用基础发行货币，这样土地就成了人民币的锚，土地变成了融资的工具，凭空创造出了巨额的资本，这就是土地金融的本质。
+和发行股票类比，股票也是一种融资工具，房子其实就可以看作是一个城市的股票，这个城市可以看作是一个公司。当城市发展的好，大家也都看好你，房价自然走高。这也就解释了为什么房价的走势和近20年中国经济的走势基本（GDP增长）一致，近二十年中国经济总体上繁荣，所以各个城市房价也跟着一路高涨，所以讲楼市是中国经济的晴雨表。（中国楼市的规模和美国股市相当）
+土地金融打破了时间和空间的限制，将未来补贴到当下（借贷），使其价值暴增，创造出了巨量的资本，推动了中国经济的快速增长，使中国在短短30年就完成了城市化和工业化，这无疑是经济上的奇迹。
+1.4 土地金融带来的问题首先带来的问题就是高房价，直呼买不起，与之同时高房价也使得贫富差距加大。楼市还会对其他行业形成挤兑，将资金都吸引到楼市中，这样到制业中的钱自然就少了。
+此外当前来说还有一个至关重要的问题，那就是地方债务。政府借钱是去建设城市，而这部分收益即少又回得慢，就类似公司借钱投了一堆项目，都没挣钱，但是银行的债还要还，那政府哪来的钱去还债呢？
+这时候就要提到下面的经济闭环了，地方政府向银行抵押土地贷款进行城市建设，同时一方面地价供应工业用地增加企业和就业人口，另一方面高价供应商业用地，用这部分的溢出收益偿还贷款。反过来高价的商业用地推高房价，高房价在推高地价，地价高了就可以向银行借更多的钱。然而即便是这样，当前中国地方债的规模仍有近50万亿，还债压力巨大。上面提到的经济闭环关键就是房价，房价如果下跌，地价就得下跌，地价下跌政府就没钱还债。所以这就是为什么最近很多地方出现限跌令，中国居民8成的资产都在房子上，政府的债8成需要卖地还，所以房价不能跌。同时也是因为债务，在美元加息的时候，我们并没有跟着加息，虽然加剧了外资的逃离使得外汇市场中人民币卖盘增多而导致人民币贬值，因为银行贷款和购房按揭不一样，银行商业贷款是受浮动利率影响的，如果加息必然会增大债务压力，本来债务压力已经很大了，所以现在不行加息，只能降息放水，否则一旦刺破债务，后果不堪设想。
+1.5 房地产的未来随着中国经济转型的需求、城市化见顶、人口老龄化加剧，楼市将不在是中国经济的晴雨表，土地财政肯定也会慢慢的退出历史舞台。现在很多人在批判土地财政，但这其实只是不得已的选择但却也是最好的选择，在我们国家一穷二白的时候，除了土地财政还有其他高速发展道路吗？这是历史的选择罢了。
+2、房地产价一直涨的原因2.1 涨价的原因在基本了解了土地金融之后，对房地产价格一直以来的涨势其实就有了一个比较清晰的认识。一个是土地财政制度下经济发展的需要，因为经济的本质就是资源配置，钱流动起来，在市场的作用下经济就得到了发展。
+另外一个重要原因就是房子作为投资品的属性，投资品或者说资产是不符合价值规律的，当其价格上涨的时候不仅不会抑制需求，反而会刺激需求，例如股票，价格涨的时候都抢着买，价格下跌后抄底的不多，都是抛售及时止损。这就是资本市场的正反馈效应，和价值规律是相反的。所以随着中国经济的蓬勃发展，房地产的价格也是水涨船高，没有房子的要买房子，有房子的也要囤房子。
+同时房地产作为国家鼓励购买的资产（你可以贷款几十万买黄金吗？），也进一步推动了房产价格的上涨。所以在住房商品化，且允许按揭的国家，基本都会出现房地产泡沫。
+2.2 房价的未来趋势我们不禁要问，房价以后还会继续涨吗？首先我们看政策方面可以断定，宏观方面房价肯定不会大跌，因为政府需要卖地还钱，而地产商也需要卖房还钱。但会不会涨呢，从政策方面看也不会像上个十年那样涨了。
+但除了政策和政府方面，市场也是影响房价的一个很关键的因素。根据上边金融资产的价格理论，房价要上涨就需要不断有新的资金涌入。购买房子的是居民，居民还有钱钱吗？我们不妨看一下目前中国的居民债务杠杆率，也就是居民部门的债务占GDP的比重，目前中国的居民债务率是64%。作为对比，美日两国分别在2008年、1991年的房地产泡沫到顶时候的约为72%和98%，如此看来中国房价还有涨的空间。
+但是，如果我们继续看居民可支配收入占GDP的比重，进一步在看居民部门债务占居民可支配收入的比重，结果就大为不一样了。可支配收入少意味着借贷和偿债能力弱。因为居民买房主要靠银行贷款，贷款能力取决于还款能力。所以在如此之高的债务负担下，房价想继续推高是很难的。
+2.3 如果房价价格崩溃会发生什么呢？仍然参考美国和日本，这两个国家在房价崩溃后（房地产泡沫破裂），都进入了资本价格理论的下部分，房价持续下跌，纷纷抛售，导致一堆坏账。对经济发展产生了极大的破坏，日本在1991年之后的近30年GDP没有增长，就算到现在日本几个都市圈的房价都没有91年高。美国更是导致了08年全球金融危机。
+但中国是否会重复日美的道路呢，我本人是比较乐观的，中国政府对市场的管控力度更强，能够更有效的干预经济。目前政府要做的最重要的稳住房价，同时不要刺破泡沫。时间久了，在通胀慢慢的蚕食下，房价会到达一个可以令大多数居民接受的程度。同时加快经济转型，摆脱对土地财政的依赖。
+经济是有周期的，生活会好起来的，工作也会找到的！
+
+自己的理解，有不同的意见欢迎交流
+
+
+
+
+]]></content>
+      <categories>
+        <category>经济</category>
+      </categories>
+      <tags>
+        <tag>房地产</tag>
+        <tag>经济</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>金字塔原理</title>
+    <url>/2023/07/24/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/</url>
+    <content><![CDATA[结论先行，以上统下每段话有且只有一个中心思想，要表达的东西。其他的都是为中心思想的论据。
+论据可能会包含其他的论据，这时候一级论据就变成了论点。
+中心思想或者结论，先讲出来：
+
+ 例如：我不会减肥，有两个原因：
+（1）健身房都是焦虑营销
+（2）每个人都有自己的个性
+
+
+
+这样做的好处：
+
+引发疑问，提供回答，将对方拉入自己的语境
+
+不容易被误解，论据当结论。加入先说：健身房都是焦虑营销。这可能会让对方误解，需要对方去猜，猜的过程浪费了认知能力，这就是听有的人讲话特别累的原因。
+
+聚焦更需要解释的事情上面。上述两个原因，其中一个可能对方很清楚，就不需要解释了。
+
+
+人的认知习惯于先听一个大的思想，再去了解下面支持这个大的思想的小的思想。得出结论的过程是正向，有1、2、3得处结论4。
+但是表达的时候时逆向，先说结论4，在说明1、2、3。
+上一层总结归纳 下层解释，形成下面这样的金字塔。
+
+归纳分组大脑记忆特点，一次比较容易记住1-3个东西，超过3个就不容易记忆。
+所以不能仅仅罗列，要分组，注意的是一个分组之中的一定是相似的，至少的同一层级的。
+
+ 例：一个问题有8个点，不能将8个点一一罗列，要向上提炼，找出多个要素的关键点，尽量提炼成2-3类。
+
+这样做的好处是：
+（1）不会给人一种信息爆炸的感觉；
+（2）证明对问题进行了思考，体现了你思考和表达的更高一层；
+（3）老板可能不注重细节
+逻辑统一这一条是第二条的延伸，归纳分组要有逻辑性，一个分组之中的元素应该相似或者同一层级，逻辑性有两种：
+
+线性逻辑：递进
+
+平行逻辑：元素调换位置，没有影响
+
+
+这里的逻辑性可以是一个分组内部，也可以是多个分组之间。对于听众，平行比较容易理解，站在听众角度，平行的结构更好。
+
+ 例：开会定好了时间，突然客户说没时间，这时候就要重新约时间，打电话给老板秘书问一下老板的安排，看一下会议室安排，在根据客户时间确定最终的会议时间。
+上面3件事：
+
+确定客户时间
+
+确定老板安排
+
+会议室安排
+
+最终确定会议时间
+
+
+
+
+这是做事情或者说思考的顺序，其实就是递进的关系。根据1、2条我们知道，要先说结论，然后解释，解释的时候3个点，平行或者递进？平行更好！
+
+
+ 汇报：老板，我建议在这一天开会，有三个原因，第一王总有时间，第二会议室空闲，第三尽早不尽晚。
+
+表达和分析顺序是不一样的，往往是相反的
+进行更高一层的总结对于多条信息，提炼一层（金字塔），提炼的时候
+例如：
+
+ 大明采访玲玲的原因，首先大明和玲玲都是辩手，其次俩人是好朋友，最后俩人有相同的生活经历。
+
+这个表达看起没问题，先说结论，然后是三个平行的的论据。但这样还是不够好，可以继续提炼三个元素的共性
+
+大明去采访玲玲，【因为他们很相似，更加能相互理解】，第一两人都是辩手，第二两人有相似的生活经历，第三两人是好朋友。
+
+所以不能满足于表面的元素，要更深层的考虑其中的共性，或者其所表现出的深层的一些东西。这样得处深层的一些东西后，就可以在去用于推理其他的因素。
+
+例如：跟老板汇报，不用供应商A，第一个原因：发给我们的货少了，第二：承诺的赠品没有给。
+
+看起来表达清晰没什么问题，但是我们思考，少发货+承诺——诚信问题？
+
+ 不用供应商A，因为我认为有诚信问题，其一……，其二……。这样思维就有了深度。
+
+基于诚信问题：可以继续推理其他问题。这样也就加深了思维的宽度。推着自己不断的向上提炼和归纳，这就是我们思考的过程。
+所以针对已分组后的元素，寻找他们之间的共享，努力提炼更高一层的思想或者洞见，提炼总结的过程其实就是思维提升的过程
+结构化拆解复杂问题将一个事情或者问题，平行的分成几个互不相关的部分，这几个互不相关的东西却可以完整描述问题，这是一种思维习惯。
+
+头疼的原因
+
+
+产品利润低的原因
+
+拆分要注意系统化、结构化的拆分，这点和个人的认知能力、知识水平有关系，例如产品利润的问题需要对企业财务有一定的了解，所以提高个人认知水平是关键。
+
+
+
+
+]]></content>
+      <categories>
+        <category>认知提升</category>
+      </categories>
+      <tags>
+        <tag>知识</tag>
+        <tag>思维</tag>
+      </tags>
+  </entry>
+</search>
