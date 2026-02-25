@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="传统RAG">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG">
+<meta property="og:url" content="https://18253321614.github.io/2026/02/25/RAG/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="传统RAG">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602241044716.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602241127266.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602251421819.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602251458422.png">
+<meta property="article:published_time" content="2026-02-25T07:49:03.000Z">
+<meta property="article:modified_time" content="2026-02-25T07:51:58.456Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="RAG">
+<meta property="article:tag" content="Agentic RAG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602241044716.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/02/25/RAG/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/02/25/RAG/","path":"2026/02/25/RAG/","title":"RAG"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RAG | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"theme":{"light":"default","dark":"dark"},"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.1/mermaid.min.js","integrity":"sha256-BmQmdWDS8X2OTbrwELWK366LV6escyWhHHe0XCTU/Hk="}}</script>
+  <script src="/js/third-party/tags/mermaid.js" defer></script>
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9FRAG"><span class="nav-number">1.</span> <span class="nav-text">传统RAG</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Ingestion"><span class="nav-number">1.1.1.</span> <span class="nav-text">Ingestion</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Answering"><span class="nav-number">1.1.2.</span> <span class="nav-text">Answering</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E5%88%86%E5%9D%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">文本分块</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E8%A1%8C%E9%87%8F%E5%8C%96"><span class="nav-number">1.2.2.</span> <span class="nav-text">文本行量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Retrieval%E6%A3%80%E7%B4%A2"><span class="nav-number">1.2.3.</span> <span class="nav-text">Retrieval检索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">1.2.4.</span> <span class="nav-text">重排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AC%E5%9B%9E%E7%8E%AF%E8%8A%82%E4%BC%98%E5%8C%96"><span class="nav-number">1.2.5.</span> <span class="nav-text">召回环节优化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Agentic-RAG"><span class="nav-number">2.</span> <span class="nav-text">Agentic RAG</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B%E8%A7%A3%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">过程解析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%B5%81%E6%96%B9%E6%A1%88"><span class="nav-number">2.2.</span> <span class="nav-text">主流方案</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/02/25/RAG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RAG | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RAG
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-25 15:49:03" itemprop="dateCreated datePublished" datetime="2026-02-25T15:49:03+08:00">2026-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="传统RAG"><a href="#传统RAG" class="headerlink" title="传统RAG"></a>传统RAG</h2><p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602241044716.png" alt="image-20260223214237683"></p>
+<span id="more"></span>
+
+<blockquote>
+<p>背景：企业RAG比赛：<a target="_blank" rel="noopener" href="https://github.com/trustbit/enterprise-rag-challenge/tree/main">https://github.com/trustbit/enterprise-rag-challenge/tree/main</a></p>
+</blockquote>
+<blockquote>
+<p>基于公司年度报告构建一个问答系统，简单来说，比赛当天的流程如下：</p>
+<ul>
+<li><p>我们会收到来自随机挑选公司的100份年度报告，并需要在2.5小时内解析这些报告并构建一个数据这些报告是PDF格式，每份最长可达1000页。</p>
+</li>
+<li><p>然后，系统会生成100个随机问题（基于预设模板），我们的RAG系统必须尽快回答这些问题。</p>
+</li>
+</ul>
+<p>所有问题都有确定的答案，例如：是&#x2F;否；公司名称（某些情况下是多个公司名称）；领导职位头衔、推出的产品名称；数值指标：营收、商店数量等。</p>
+<p>·每个答案都必须注明引用的页码，确保系统是从原文中得出答案，而不是输出虚假信息(hallucinate)。</p>
+</blockquote>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><blockquote>
+<p>以下是冠军团队的方案</p>
+</blockquote>
+<img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602241127266.png" alt="image-20260224094108621" style="zoom: 67%;" />
+
+<h4 id="Ingestion"><a href="#Ingestion" class="headerlink" title="Ingestion"></a>Ingestion</h4><p>PDF解析成文本，如果有图片也是同样解析为文本信息</p>
+<p>文本清洗、分块，降低信息密度，如果直接将一篇文档<strong>向量化</strong>之后存储，因为向量维度是固定的，那么对于这个向量来说信息密度就太高了。那么如何切片是一个问题，这需要根据文档的情况和问题的情况进行切分，例如300-500tokens、或者800tokens、1000tokens。宏观的问题就需要大一些，细节问题更多则需要小一些。因为tokens的大小代表的是信息密度不同。</p>
+<p>将分块、清洗后的文本向量化后存入向量数据库，不同的是，此处使用了多个向量数据库来存储不同公司的财报数据，每个数据库使用公司名称作为Tag，这样在Retreive的时候效率会更高。100家公司用100个向量数据库。</p>
+<h4 id="Answering"><a href="#Answering" class="headerlink" title="Answering"></a>Answering</h4><p>所以用户提出一个Question后，通过路由选择，在全量数据库找到相关的数据库（表的概念）。然后将Question同样进行<strong>向量化</strong>，使用<strong>文本向量检索算法</strong>对该库进行<strong>Retrieval检索</strong>，检索到目标后，取出目标所在的父页面的所有内容，也就是ParentPage，然后进行reranking排序。</p>
+<ul>
+<li><p>Retrieval检索（召回）：快速筛选潜在的chunk，速度快，例如从1000万个中选出1000个</p>
+</li>
+<li><p>Reranking排序（排序）：精确的排序，从1000个中选出10个。Rerank模型分为基于普通神经网络和基于LLM的</p>
+</li>
+</ul>
+<p>通过这两步获取到相关的上下文，RelevantContext。与此同时，获取到Question后，通过路由选择到适合该问题的提示词模板。</p>
+<p>最终将RelevantContext和Question组装到PromptTemplate中，发给LLM，LLM给出结果。</p>
+<h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><h4 id="文本分块"><a href="#文本分块" class="headerlink" title="文本分块"></a>文本分块</h4><p>在上述的Ingestion过程中简单介绍了文本切块，但是在实际应用中并没有这么简单。适当的切块方法可以对文本按照语义进行准确的划分，保证向量化的片段是一个意群，更有利于文本正确的召回，文本切换过长和过短都存在相应的问题：</p>
+<ul>
+<li>文本切块过长：<ul>
+<li>优点：更好保留文档层面或段落层面的上下文信息</li>
+<li>缺点：文本片段向量化一般采用平均token或cls位置的token作为整个片段的向量化表示，提过片段太长会导致向量的语义太过稠密，进而损失更多细节的语义信息，从而导致召回准确率降低。同时过长的片段在交给LLM推理的时候也需要更多的推理成本，更大的模型上下文要求。</li>
+</ul>
+</li>
+<li>文本切块过短：<ul>
+<li>优点：更有利于保留文本中细粒度的语义信息</li>
+<li>缺点：容易丢失段落和文章层面的主题信息和跨段落的上下文信息，同时过于琐碎的文本块也不利于大模型总结。</li>
+</ul>
+</li>
+</ul>
+<p>整体来说文本切块没有一个最佳的实践，而是需要根据任务类型和资料的情况确定，例如像说明书这样的文本就可以切的小一些，而论文这种逻辑紧凑的资料也需要切块的大一些。</p>
+<p>常用的一些文本切块方法有固定大小文本切块、特殊格式文本切块、NLTK、基于深度学些的文本切块，文本切块的一个核心是找到一个切点，即文本切块的边界，特殊格式文本切块、NLTK、基于深度学些的文本切块都是确定一个边界，基于深度学习的文本切块方法基本思想是：将两个连续的句子交给BERT，让其预测第二个句子是第一句子下一句的概率，以此拉确定切分的边界。</p>
+<h4 id="文本行量化"><a href="#文本行量化" class="headerlink" title="文本行量化"></a>文本行量化</h4><p>将一段文本使用一个多维向量表示。例如使用一个768维的向量表示一句话，例如“我喜欢你”这句话使用某个模型将其一个向量[11,23,12,34,534……]表示。这个模型叫做嵌入模型EmbeddingModel。我们生活的空间是三维空间，使用一个三维向量就可以表示空间中的任何一个点。而这个768维的向量表示的是一个高维空间。不同的语句、片段等经过嵌入模型都会转化为这个高维空间的一个点，衡量嵌入模型EmbeddingModel优劣的一个标准是：均匀性和对齐性。即首先语义相似的文本片段在高维空间中的距离应该比较近，同时在整个空间中各文本片段应该是均匀分布，不能过度集中。</p>
+<p>EmbeddingModel是一个RAG系统是否表现优良的关键，因为在Ingestion和Answering两个阶段需要用到。</p>
+<ul>
+<li>将包含知识的文本片段行量化并存储到向量数据库中</li>
+<li>将用户查询文本实时向量化，以便从数据库中检索响应的文本</li>
+</ul>
+<p>只有EmbeddingModel足够懂你的资料和提的问题，才能够召回和问题足够相关的资料，让LLM根据资料进行回答，降低产生幻觉的风险。</p>
+<p>Embedding模型有很多，在<a target="_blank" rel="noopener" href="https://huggingface.co/spaces/mteb/leaderboard%E4%B8%AD%E5%8F%AF%E4%BB%A5%E7%9C%8B%E5%88%B0%E7%9B%B8%E5%85%B3%E8%AF%84%E6%B5%8B%E7%BB%93%E6%9E%9C%EF%BC%8C%E4%BD%86%E6%98%AF%E5%9C%A8%E5%BE%88%E5%A4%9A%E6%97%B6%E5%80%99%EF%BC%8C%E5%B0%A4%E5%85%B6%E5%9C%A8%E5%9E%82%E7%9B%B4%E9%A2%86%E5%9F%9F%E6%88%96%E8%80%85%E5%AF%B9%E6%A3%80%E7%B4%A2%E7%B2%BE%E5%BA%A6%E9%9D%9E%E5%B8%B8%E9%AB%98%E7%9A%84%E5%9C%BA%E6%99%AF%E4%B8%8B%EF%BC%8C%E9%80%9A%E7%94%A8%E7%9A%84Embedding%E6%A8%A1%E5%9E%8B%E5%BE%80%E5%BE%80%E8%A1%A8%E7%8E%B0%E4%B8%8D%E5%A4%9F%E7%90%86%E6%83%B3%EF%BC%8C%E4%BE%8B%E5%A6%82%E4%B8%80%E4%BA%9B%E5%9E%82%E7%9B%B4%E9%A2%86%E5%9F%9F%EF%BC%8C%E9%80%9A%E7%94%A8%E6%A8%A1%E5%9E%8B%E6%97%A0%E6%B3%95%E5%87%86%E7%A1%AE%E6%8A%8A%E6%8F%A1%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD%E4%B9%8B%E9%97%B4%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%EF%BC%8C%E4%BB%A5%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D%E4%B8%BA%E4%BE%8B%EF%BC%8C%E4%BC%81%E4%B8%9A%E5%86%85%E9%83%A8%E4%BC%9A%E6%9C%89%E4%B8%80%E4%BA%9B%E7%89%B9%E6%9C%89%E7%9A%84%E8%A1%A8%E8%BE%BE%E6%96%B9%E5%BC%8F%E5%92%8C%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91%EF%BC%8C%E9%80%9A%E7%94%A8%E7%9A%84Embedding">https://huggingface.co/spaces/mteb/leaderboard中可以看到相关评测结果，但是在很多时候，尤其在垂直领域或者对检索精度非常高的场景下，通用的Embedding模型往往表现不够理想，例如一些垂直领域，通用模型无法准确把握专业术语之间的相关性，以智能客服为例，企业内部会有一些特有的表达方式和业务逻辑，通用的Embedding</a> Model难以理解，此时就需要对Embedding Model进行微调。如何判断是否需要微调？至于如何微调后面的文章在讲</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    %% 定义样式：边框设置为透明或白色，实现无边框效果</span><br><span class="line">    classDef questionStyle fill:#E3F2FD,stroke:#E3F2FD,stroke-width:0px,color:#1565C0,font-weight:bold</span><br><span class="line">    classDef conditionStyle fill:#F3E5F5,stroke:#F3E5F5,stroke-width:0px,color:#7B1FA2,font-weight:bold</span><br><span class="line">    classDef considerStyle fill:#E8F5E9,stroke:#E8F5E9,stroke-width:0px,color:#2E7D32,font-weight:bold</span><br><span class="line">    classDef decisionStyle fill:#FFF3E0,stroke:#FFF3E0,stroke-width:0px,color:#EF6C00,font-weight:bold</span><br><span class="line">    classDef resultStyle fill:#FCE4EC,stroke:#FCE4EC,stroke-width:0px,color:#C2185B,font-weight:bold</span><br><span class="line"></span><br><span class="line">    %% 节点定义</span><br><span class="line">    A[&quot;🎯 你的RAG应用场景？&quot;]:::questionStyle</span><br><span class="line"></span><br><span class="line">    B[&quot;📁 垂直领域？&quot;]:::conditionStyle</span><br><span class="line">    C[&quot;🎯 精度要求？&quot;]:::conditionStyle</span><br><span class="line">    D[&quot;💰 资源充足？&quot;]:::conditionStyle</span><br><span class="line"></span><br><span class="line">    E[&quot;✓ 考虑微调&quot;]:::considerStyle</span><br><span class="line">    F[&quot;✓ 考虑微调&quot;]:::considerStyle</span><br><span class="line">    G[&quot;✓ 考虑微调&quot;]:::considerStyle</span><br><span class="line"></span><br><span class="line">    H[&quot;⚠️ 2个以上条件满足&lt;br/&gt;→ 建议微调&quot;]:::decisionStyle</span><br><span class="line"></span><br><span class="line">    I[&quot;✅ 否则用通用模型&quot;]:::resultStyle</span><br><span class="line"></span><br><span class="line">    %% 连接关系</span><br><span class="line">    A --&gt; B</span><br><span class="line">    A --&gt; C</span><br><span class="line">    A --&gt; D</span><br><span class="line"></span><br><span class="line">    B --&gt;|是| E</span><br><span class="line">    B --&gt;|否| E</span><br><span class="line">    C --&gt;|高| F</span><br><span class="line">    C --&gt;|低| F</span><br><span class="line">    D --&gt;|是| G</span><br><span class="line">    D --&gt;|否| G</span><br><span class="line"></span><br><span class="line">    E --&gt; H</span><br><span class="line">    F --&gt; H</span><br><span class="line">    G --&gt; H</span><br><span class="line"></span><br><span class="line">    H --&gt; I</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="Retrieval检索"><a href="#Retrieval检索" class="headerlink" title="Retrieval检索"></a>Retrieval检索</h4><p>在Retrieval或者说召回阶段使用的文本向量检索模型有两种：</p>
+<ul>
+<li>基于BERT、GPT等深度学习模型的稠密向量检索算法。该算法是根据语义相似度进行检索，例如BGE、M3E、GTE等</li>
+<li>以TF-IDF、BM25为代表的稀疏向量检索模型。该算法是基于文本相似度进行检索</li>
+</ul>
+<p>因此在召回阶段可以使用混合检索的方式来召回更精准的相似片段。此外针对用户的提问，可以使用LLM进行改写，例如一些中英文互译、专业术语优化等，帮助更加全面的召回相关片段，基本步骤如下：</p>
+<ol>
+<li>获取用户检索的问题，并改写用户问题</li>
+<li>进行第一次数据库检索：使用关键词检索算法在向量数据库中进行检索，例如bm25进行关键词检索，获取相关片段doc1</li>
+<li>进行第二次数据库检索：对改写后的用户问题进行向量化，基于向量相似度检索算法获取相关片段doc2</li>
+<li>对两次检索结果进行合并，合并之后进行重排序，重排序的结果放到提示词中发送给LLM</li>
+</ol>
+<p>此外在检索有两种类型：</p>
+<ul>
+<li>对称检索：搜索与检索问题文本相似的片段</li>
+<li>非对称检索：搜索与检索问题答案文本相似的片片段</li>
+</ul>
+<p>明显在RAG场景下，应该采用非对称检索，所幸当下的检索算法中，不管是稠密检索还是稀疏检索算法都支持非对称检索</p>
+<h4 id="重排序"><a href="#重排序" class="headerlink" title="重排序"></a>重排序</h4><p>重排序是把召回的文本片段和用户问题在做一次相似度检验，只保留相似度高的片段，以此来降低模型推理成本和幻觉产生的概率。主流的排序模型包括：</p>
+<ul>
+<li>基于交叉编码器 (Cross-Encoder) 的模型：这是目前效果最好、精度最高的重排序模型</li>
+<li>基于多向量&#x2F;后期交互的模型：在效果和成本之间取得了很好的平衡，速度也不错</li>
+<li>基于大语言模型 (LLM) 的排序：利用大模型强大的语义理解和推理能力进行排序，泛化能力好但成本较高、速度慢</li>
+<li>轻量级&#x2F;高效模型：模型体积小，推理速度快，适合实时性要求高的应用，但精度相对有所牺牲。</li>
+</ul>
+<h4 id="召回环节优化"><a href="#召回环节优化" class="headerlink" title="召回环节优化"></a>召回环节优化</h4><p>针对用户问题，从向量数据库中检索与之相似或者与之答案相似的文本一同发给LLM得出回答，召回内容的质量直接影响模型回复的质量，因此在召回环节如何让RAG系统获得相关文本非常重要，因此也产生了很多优化方法。上述冠军方案中所使用的分库存储不同公司的财报、重排序、Parent Page就是其中之三，重排序已经上面已经写过</p>
+<p>分库存储是使用的元数据优化方法，即在数据库上打上标签，例如使用数据库名字，在文本召回时首先路由到对应的向量数据库，在进行进一步检索，就可以提升文本召回的效率和准确度。ParentPage是将在文本切块为较小的片段，保证向量化之后拥有更细粒度的语义信息，在根据用户问题检索到相关片段，不使用检索到的片段作为模型回复的上下文信息，而是使用检索到的片段的父文本。</p>
+<p>此外还有</p>
+<ul>
+<li>短文本信息增强：为分块后的短文本增加全局信息，例如段落的前三句（总分结构）、长文本标题、长文本主旨句（可以有LLM总结），一起加到短文本上，再进行向量化</li>
+<li>召回内容的上下文扩充：ParentPage就是这种方法，此外也可以选择检索到的短文本片段前后的n个片段共同作为LLM回复的上下文</li>
+<li>多向量表示：与短本增强相似，但是区别是全局信息、假设性问题等单独向量化，作为补充向量，然后将补充向量与短文本向量建立映射关系，检索到相关补充向量后在提取短文本向量发给LLM</li>
+</ul>
+<p>上面提到的召回优化都是针对数据库中的内容，另一个优化方向是用户查询，用户输入的问题往往不是一个很好的提示词，所以在进行数据库检索时，可以对用户的查询内容进行优化，例如进行扩充，或者由大模型直接回复生成“假答案”，然后将假答案和原问题放在一起作为融合查询条件进行查询。</p>
+<h2 id="Agentic-RAG"><a href="#Agentic-RAG" class="headerlink" title="Agentic RAG"></a>Agentic RAG</h2><p>Agentic RAG 描述了一种基于 AI Agent 的 RAG 实现。具体来说，它将 AI Agent 整合到 RAG 流程中，让Agent在整个信息检索和生成过程中主动思考和决策，而不是仅仅是简单的接受用户查询—检索文档数据库—基于文档生成答案，以克服传统 RAG 的局限性。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602251421819.png" alt="image-20260225142136696"></p>
+<h3 id="过程解析"><a href="#过程解析" class="headerlink" title="过程解析"></a>过程解析</h3><p>接受用户查询</p>
+<p>获取用户查询后，首先对原始的用户查询进行重写，转化为更精准可检索的形式，然后分析是否需要获取额外的信息，例如“最近天气对公司销售有什么影响”，此时LLM判断就要获取公司销售数据（已持久化存储到向量数据库）和天气信息（调用MCP工具），因此进入第二条线，到数据库中查询销售数据并获取最近的天气数据，进而由LLM生成答案。</p>
+<p>多元数据检索</p>
+<p>在DataSource中，整合多源数据，包括内部知识如内部资料和业务系统的数据库，和外部数据如互联网中的数据，例如在客户支持的场景中，系统可以查看用户历史工单（数据库查询）、检索产品使用手册（向量数据库）、最新的技术更新信息，进而整合多源数据生成回复。</p>
+<p>答案分析</p>
+<p>在生成结果后，并不直接回复给用户，而是评估用户查询和生成回复的相关性和准确性，如果回复不满足要求则调整检索策略进行重试或进一步对答案进行修改</p>
+<p>自我修正</p>
+<p>传统系统遇到无法回答的问题往往会直接告诉用户”无法解决”，Agentic RAG则会识别信息鸿沟，主动寻找补充信息源。</p>
+<h3 id="主流方案"><a href="#主流方案" class="headerlink" title="主流方案"></a>主流方案</h3><blockquote>
+<p>Nvidia Agentic RAG：<a target="_blank" rel="noopener" href="https://github.com/NVIDIA/workbench-example-agentic-rag/blob/main/code/langgraph_rag_agent_llama3_nvidia_nim.ipynb">https://github.com/NVIDIA/workbench-example-agentic-rag/blob/main/code/langgraph_rag_agent_llama3_nvidia_nim.ipynb</a></p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602251458422.png" alt="image-20260225145839292"></p>
+<p>这里以Nvidia Agentic RAG为例介绍，整理思路是获取用户提问后，进入Routing（例如上述传统RAG中利用Tag进行路由）</p>
+<ul>
+<li>如果知识库中有相关的资料（related index）则Retieve检索文档，然后对检索到的文档片段进行重排序（grade），进一步判断文档片段是否与用户问题相关<ul>
+<li>如果相关则交给LLM生成回复，生成回复后判断是否存在幻觉<ul>
+<li>如果存在幻觉，则重新生成</li>
+<li>没有幻觉则判断是否符合用户问题<ul>
+<li>如果与用户问题相符则返回最终answer</li>
+<li>不相符则直接进行网络搜索</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果不相关则进行网络查询</li>
+</ul>
+</li>
+<li>若知识库中没有相关资料则直接进行网络查询，将网络检索到的信息交给大模型生成回复</li>
+</ul>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/RAG/" rel="tag"># RAG</a>
+              <a href="/tags/Agentic-RAG/" rel="tag"># Agentic RAG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/02/12/NewPower/%E8%AE%A4%E7%9F%A5%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E5%85%89%E4%BC%8F%E5%8A%9F%E7%8E%87%E9%A2%84%E6%B5%8B%E7%B3%BB%E7%BB%9F/" rel="prev" title="认知型分布式光伏功率预测系统">
+                  <i class="fa fa-angle-left"></i> 认知型分布式光伏功率预测系统
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">205k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:06</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
