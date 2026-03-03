@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="RAG系统模型微调RAG系统的模型在一个RAG系统中，所用可能到的模型类型如下图所示，每个模型都代表了RAG系统可优化的点，当然并不是所有的RAG系统都采用如此多的模型来约束和优化系统行为，本身还是一个成本和效果以及用户需求的平衡。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG系统模型微调">
+<meta property="og:url" content="https://18253321614.github.io/2026/01/20/AI/RAG%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="RAG系统模型微调RAG系统的模型在一个RAG系统中，所用可能到的模型类型如下图所示，每个模型都代表了RAG系统可优化的点，当然并不是所有的RAG系统都采用如此多的模型来约束和优化系统行为，本身还是一个成本和效果以及用户需求的平衡。 12345678910111213141516171819202122232425262728293031323334353637383940414243444546">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-01-20T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-03T09:59:15.322Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="AI">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/01/20/AI/RAG%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/01/20/AI/RAG%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/","path":"2026/01/20/AI/RAG系统模型微调/","title":"RAG系统模型微调"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RAG系统模型微调 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RAG%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="nav-number">1.</span> <span class="nav-text">RAG系统模型微调</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RAG%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">RAG系统的模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%A6%BB%E7%BA%BF%E5%87%86%E5%A4%87%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">在离线准备阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%BA%BF%E9%97%AE%E7%AD%94%E9%98%B6%E6%AE%B5%EF%BC%9A"><span class="nav-number">1.1.2.</span> <span class="nav-text">在线问答阶段：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="nav-number">1.2.</span> <span class="nav-text">模型微调</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%85%E9%A1%BB%E5%BE%AE%E8%B0%83"><span class="nav-number">1.2.1.</span> <span class="nav-text">必须微调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%BE%AE%E8%B0%83"><span class="nav-number">1.2.2.</span> <span class="nav-text">建议微调</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%86%E6%83%85%E5%86%B5%E8%80%8C%E5%AE%9A"><span class="nav-number">1.2.3.</span> <span class="nav-text">视情况而定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AE%E8%B0%83%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">微调方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%85%A5%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="nav-number">1.3.1.</span> <span class="nav-text">嵌入模型微调</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E5%BB%BA"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">数据集构建</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">数据采集</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E5%BB%BA-1"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">数据集构建</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E4%BE%9D%E8%B5%96%E5%AE%89%E8%A3%85"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">环境依赖安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AE%E8%B0%83%E4%BB%A3%E7%A0%81"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">微调代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E6%8E%92%E5%BA%8F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">重排序模型微调</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E6%9E%84%E5%BB%BA-2"><span class="nav-number">1.3.1.5.1.</span> <span class="nav-text">数据集构建</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%AE%E8%B0%83-Reranker"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">微调 Reranker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Rerank%E7%89%B9%E6%AE%8A%E7%AD%96%E7%95%A5"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">Rerank特殊策略</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/01/20/AI/RAG%E7%B3%BB%E7%BB%9F%E6%A8%A1%E5%9E%8B%E5%BE%AE%E8%B0%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RAG系统模型微调 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RAG系统模型微调
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-20 10:00:00" itemprop="dateCreated datePublished" datetime="2026-01-20T10:00:00+08:00">2026-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="RAG系统模型微调"><a href="#RAG系统模型微调" class="headerlink" title="RAG系统模型微调"></a>RAG系统模型微调</h1><h2 id="RAG系统的模型"><a href="#RAG系统的模型" class="headerlink" title="RAG系统的模型"></a>RAG系统的模型</h2><p>在一个RAG系统中，所用可能到的模型类型如下图所示，每个模型都代表了RAG系统可优化的点，当然并不是所有的RAG系统都采用如此多的模型来约束和优化系统行为，本身还是一个成本和效果以及用户需求的平衡。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line">graph TD</span><br><span class="line">    %% ==================== 样式定义 ====================</span><br><span class="line">    classDef start fill:#3B82F6,stroke:#3B82F6,color:#FFFFFF,font-weight:bold</span><br><span class="line">    classDef process fill:#6366F1,stroke:#6366F1,color:#FFFFFF,font-weight:bold</span><br><span class="line">    classDef security fill:#EF4444,stroke:#EF4444,color:#FFFFFF,font-weight:bold</span><br><span class="line">    classDef engine fill:#10B981,stroke:#10B981,color:#FFFFFF,font-weight:bold</span><br><span class="line">    classDef offline fill:#94A3B8,stroke:#94A3B8,color:#FFFFFF,font-weight:bold</span><br><span class="line">    classDef result fill:#F59E0B,stroke:#F59E0B,color:#FFFFFF,font-weight:bold</span><br><span class="line"></span><br><span class="line">    %% 子图背景样式</span><br><span class="line">    classDef subTransparent fill:#F8FAFC,stroke:#E2E8F0,stroke-width:1px,color:#334155</span><br><span class="line"></span><br><span class="line">    %% ==================== 流程绘制 ====================</span><br><span class="line"></span><br><span class="line">    %% --- 入口 ---</span><br><span class="line">    User(&quot;👤 用户提问&quot;):::start</span><br><span class="line"></span><br><span class="line">    %% --- 离线阶段 (左侧) ---</span><br><span class="line">    subgraph Offline [&quot;📦 数据准备阶段 (离线)&quot;]</span><br><span class="line">        direction TB</span><br><span class="line">        Docs(&quot;📄 原始文档&lt;br/&gt;PDF/Word&quot;):::offline</span><br><span class="line">        Parser(&quot;🔍 版面分析/OCR&lt;br/&gt;LayoutLM&quot;):::process</span><br><span class="line">        Chunking(&quot;✂️ 智能分块&quot;):::process</span><br><span class="line">        Index(&quot;🗄️ 向量数据库&quot;):::engine</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% --- 预处理阶段 ---</span><br><span class="line">    subgraph PreProcess [&quot;🛠️ 预处理阶段&quot;]</span><br><span class="line">        Intent(&quot;🧠 意图识别&lt;br/&gt;Router&quot;):::process</span><br><span class="line">        </span><br><span class="line">        DirectLLM(&quot;💬 直接 LLM 回答&quot;):::result</span><br><span class="line">        SafetyIn(&quot;🛡️ 输入安全拦截&lt;br/&gt;Guardrails&quot;):::security</span><br><span class="line">        Rewrite(&quot;✍️ 查询改写&lt;br/&gt;Rewriter&quot;):::process</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% --- 检索核心 ---</span><br><span class="line">    Retrieval(&quot;🔎 混合检索引擎&lt;br/&gt;BM25 + Embedding&quot;):::engine</span><br><span class="line"></span><br><span class="line">    %% --- 后处理阶段 ---</span><br><span class="line">    subgraph PostProcess [&quot;⚙️ 后处理阶段&quot;]</span><br><span class="line">        Rerank(&quot;📊 重排序模型&lt;br/&gt;Reranker&quot;):::process</span><br><span class="line">        Compress(&quot;📝 上下文压缩&lt;br/&gt;Summarizer&quot;):::process</span><br><span class="line">        Verify(&quot;✅ 事实核查&lt;br/&gt;NLI Check&quot;):::process</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    %% --- 生成与输出 ---</span><br><span class="line">    Generator(&quot;🤖 主 LLM 生成&lt;br/&gt;ChatGPT/Qwen&quot;):::process</span><br><span class="line">    SafetyOut(&quot;🛡️ 输出安全检测&quot;):::security</span><br><span class="line">    Final(&quot;🏁 最终回答&quot;):::result</span><br><span class="line"></span><br><span class="line">    %% ==================== 连接关系 ====================</span><br><span class="line">    </span><br><span class="line">    %% 离线流程</span><br><span class="line">    Docs --&gt; Parser --&gt; Chunking --&gt; Index</span><br><span class="line"></span><br><span class="line">    %% 主流程</span><br><span class="line">    User --&gt; Intent</span><br><span class="line">    </span><br><span class="line">    %% 分支判断</span><br><span class="line">    Intent -- &quot;闲聊/通用&quot; --&gt; DirectLLM</span><br><span class="line">    Intent -- &quot;危险/攻击&quot; --&gt; SafetyIn</span><br><span class="line">    Intent -- &quot;需要检索&quot; --&gt; Rewrite</span><br><span class="line">    </span><br><span class="line">    %% 检索流程</span><br><span class="line">    Rewrite --&gt; Retrieval</span><br><span class="line">    Index -.-&gt;|提供索引| Retrieval</span><br><span class="line"></span><br><span class="line">    %% 后处理流程</span><br><span class="line">    Retrieval --&gt; Rerank --&gt; Compress --&gt; Verify</span><br><span class="line"></span><br><span class="line">    %% 生成流程</span><br><span class="line">    Verify --&gt; Generator --&gt; SafetyOut --&gt; Final</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h3 id="在离线准备阶段"><a href="#在离线准备阶段" class="headerlink" title="在离线准备阶段"></a>在离线准备阶段</h3><p>文档解析与版面分析模型：需要将将非结构化文档（PDF, PPT, 扫描件）高质量转化为文本&#x2F;Markdown。使用到文档解析与版面分析模型，例如LayoutLMv3 &#x2F; Donut，根据文档类型选择不同的模型。</p>
+<p>嵌入模型（Embedding）：得到文本&#x2F;Markdown后，需要使用嵌入模型讲文本转化为向量存储到向量数据库</p>
+<h3 id="在线问答阶段："><a href="#在线问答阶段：" class="headerlink" title="在线问答阶段："></a>在线问答阶段：</h3><p>查询改写&#x2F;扩展模型：获取用户查询后对用户查询内容进行改写&#x2F;扩展。例如用户问“它所少钱？”“它”就要改写。可以使用一些轻量的LLM例如Qwen-1.5B这样的小参数量的LLM。</p>
+<p>意图识别模型：获取用户查询后，分析用户意图，例如用户只是闲聊就没有必要查询知识库、敏感问题直接拦截、数学计算&#x2F;代码执行等调用工具，事实查询时才查询知识库。有一些轻量级的分类模型可以胜任。</p>
+<p>问题拆解模型：将复杂的问题拆解为多个子问题，通常使用LLM通过Prompt拆解</p>
+<p>重排序模型（Rerank）：根据用户问题检索知识片段后，使用重排序模型对知识片段与用户问题的相关性进行评价，舍弃相关性低的文本片段，降低推理成本和风险概率。</p>
+<p>主LLM：根据资料回答用户问题，可以使用deepseek r1、google Gemini等</p>
+<p>幻觉检测：在输出给用户前，二次检查生成的答案是否忠实于检索到的上下文。</p>
+<p>安全护栏模型： 过滤输入中的攻击提示（Prompt Injection）和输出中的有害内容。例如navdia的NeMo Guardrails。</p>
+<p>| 模型类型 | 必要性 | 适用场景 | 替代方案 |<br>| :— | :— | :— | :|<br>| LLM + Embedding + Rerank | ⭐⭐⭐ 必须 | 所有 RAG 系统 | 无 |<br>| 文档解析 (Layout&#x2F;OCR) | ⭐⭐⭐ 必须 (若有PDF&#x2F;图片) | 含扫描件、复杂排版的知识库 | 简单的文本提取器 (效果差) |<br>| 查询改写 (Rewriter) | ⭐⭐ 推荐 | 多轮对话、指代消解场景 | 用主 LLM 兼任 (增加延迟) |<br>| 意图识别 (Router) | ⭐⭐ 推荐 | 需节省成本、区分任务类型 | 用主 LLM 兼任 |<br>| 幻觉检测 (Verifier) | ⭐ 可选 (高价值场景必选) | 医疗、法律、金融报告 | 人工审核、Prompt 约束 |<br>| 安全护栏 (Guardrails) | ⭐⭐ 推荐 (公网服务必选) | 面向公众开放的服务 | 简单的关键词过滤 |</p>
+<h2 id="模型微调"><a href="#模型微调" class="headerlink" title="模型微调"></a>模型微调</h2><p>在垂直领域（如医疗、法律、金融、工业制造等）构建 RAG 系统时，“通用模型直接可用”往往是一个误区。垂直领域的术语、逻辑和表达习惯与通用语料差异巨大。</p>
+<h3 id="必须微调"><a href="#必须微调" class="headerlink" title="必须微调"></a>必须微调</h3><blockquote>
+<p>嵌入模型和重排序模型是必须微调的</p>
+</blockquote>
+<p>嵌入模型微调可以极大提高召回率，因为对于通用的嵌入模型对专业领域的语义理解不够准确和丰富，例如苹果在科技新闻中是公司，在农业新闻中是水果；心梗和心肌梗塞在向量空间应该离得非常近，除了这种<strong>术语漂移</strong>的问题，还存在<strong>同义词缺失</strong>的问题，例如法律中的甲方和发包方、编程中的debug和defect；最后是一些<strong>硬负例</strong>，即字面相似但是含义相反的情况，例如”逆变器报绝缘阻抗低怎么处理？”和”《逆变器故障代码手册》第 5 章：绝缘阻抗<strong>高</strong>的原因分析…”。这一些都需要在微调时告诉模型，在文本向量化时才能更好的理解语义。</p>
+<p>重排序模型的作用是进一步筛选检索到的文本片段，垂直领域的一些细微差别需要模型具备较强的识别能力，因为重排序模型本来做的就是精细活。例如通用模型可能觉得包含更多关键字的是好片段，而垂直领域可能认为包含特定否定词的更好</p>
+<h3 id="建议微调"><a href="#建议微调" class="headerlink" title="建议微调"></a>建议微调</h3><blockquote>
+<p>查询扩展&#x2F;扩写模型和意图识别模型，微调后能显著提升用户体现和系统效率，特别是处理复杂查询时。</p>
+</blockquote>
+<p>查询改写&#x2F;扩展模型可以将用户口语化的提问转写为符合知识库文档风格的专业查询语句，此外还可以帮助LLM是被一些行业黑话与缩写，例如输入心梗，改写为急性心肌梗死诊疗指南。在多轮对话中需要结合上下文进行改写，例如上文用户询问了关于openclaw的问题，下一个问题用户用“它”指代，这时候也需要模型去进行指代消解。</p>
+<p>意图识别模型可以完成业务的精准路由，对完意识识别也可以使用通用轻量的LLM，但使用经过微调后的模型反应更快、更准确</p>
+<h3 id="视情况而定"><a href="#视情况而定" class="headerlink" title="视情况而定"></a>视情况而定</h3><blockquote>
+<p>文档解析模型、幻觉生成检测模型、LLM</p>
+</blockquote>
+<p>这单独立聊一聊为什么LLM微调的优先级比较低？因为RAG系统的核心就是外挂知识，理论上不需要微调LLM来记忆知识。但是在一些特殊场景下：</p>
+<ol>
+<li>风格统一：例如要求输出严格的公文格式、法律文书、特殊口吻等</li>
+<li>指令遵循：让模型更好的遵循复杂领域约束，例如必须引用法律条文</li>
+<li>领域思维链：让模型学会领域特有的推理步骤</li>
+</ol>
+<p>注意：在 RAG 架构中，对 LLM 进行指令微调（SFT, Supervised Fine-Tuning）<strong>不再是用来“注入知识”的，而是用来“规范行为”的。</strong></p>
+<h2 id="微调方案"><a href="#微调方案" class="headerlink" title="微调方案"></a>微调方案</h2><p>对于模型微调来说，调整的其实只有两个方面一个是模型的参数，另一个是模型的架构，而模型的架构一般情况不需要我们改。所以调整的是参数，也就是权重矩阵，因此训练数据集的构建是核心。</p>
+<h3 id="嵌入模型微调"><a href="#嵌入模型微调" class="headerlink" title="嵌入模型微调"></a>嵌入模型微调</h3><blockquote>
+<p>使用BGE-M3作为基座模型，针对光伏行业知识进行微调</p>
+</blockquote>
+<h4 id="数据集构建"><a href="#数据集构建" class="headerlink" title="数据集构建"></a>数据集构建</h4><h5 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h5><p>对于光伏场景，数据主要来源于两部分：</p>
+<ol>
+<li><strong>运维侧</strong>：设备说明书、历史故障工单、巡检日志。</li>
+<li><strong>预测微调侧</strong>：气象特征描述、历史相似日预测偏差复盘报告、人工修正规则库。</li>
+</ol>
+<h5 id="数据集构建-1"><a href="#数据集构建-1" class="headerlink" title="数据集构建"></a>数据集构建</h5><p>构建光伏领域的 <code>(Query, Positive, Hard Negative)</code> 三元组数据。例如：</p>
+<blockquote>
+<p>这里解释一下正例 (Positive)、负例（Negative）和硬负例（Hard Negative）</p>
+<p>正例：与用户查询（Query）<strong>语义高度相关</strong>，能够直接回答用户问题或提供关键信息的文档片段。</p>
+<p>负例&#x2F;软负例：与查询<strong>完全无关</strong>，既没有语义关联，也没有关键词重叠的文档。</p>
+<p>硬负例：<strong>字面上非常相似</strong>（包含大量相同关键词），但<strong>语义上不相关</strong>，或者<strong>答案错误&#x2F;不匹配</strong>的文档。</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;春季多云转晴，西北风3级，时序模型预测中午功率偏高，该如何修正？&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;pos&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;【预测修正规则库】当春季出现多云转晴且伴随微风（3级及以下）时，实际辐照度往往受云层边缘折射出现短时峰值，但全天总发电量通常被时序模型（如LSTM/Transformer）高估。建议在10:00-14:00时段，将模型基础预测值下调5%-8%。&quot;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;neg&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;【运维日志】昨日春季多云转晴，西北风3级，监测到2号逆变器出现过温告警，设备已自动执行降额运行逻辑，导致中午时段实际功率下降。&quot;</span><span class="punctuation">,</span> </span><br><span class="line">    <span class="string">&quot;【预测修正规则库】冬季多云转晴天气，受积雪反射影响，光伏板接收的实际辐照度偏高，建议将11:00-13:00的预测功率上调10%。&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>数据集的构建方法：</p>
+<ol>
+<li>数据对齐与正样本生成：例如可以利用通用大模型如Deepseek等，输入一段光伏预测规则或者运维手册的chunk，让大模型生成响应的query，这样就可以得到一堆query和pos</li>
+<li>硬负例挖掘：训练数据集是一个三元组，除了query、pos还有neg，neg中分为负例和硬负例，尤其是硬负例的学习，这是提升模型效果的核心，简单的随机负例样本无法让模型学到细微差别，需要利用字面相似但是语义不同的文本作为硬负例样本。如上示例中：第一个负样本字面高度相似（天气描述完全一致），但讲的是运维故障而非预测修正；第二个负样本是预测修正，但季节和逻辑完全相反。</li>
+</ol>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><blockquote>
+<p> 针对BGE-M3有两种微调方法：</p>
+<ol>
+<li>使用 BGE 官方推荐的 <code>FlagEmbedding</code> 库，它完美支持 BGE-M3 的微调</li>
+<li>原生 PyTorch&#x2F;HuggingFace，需要开发者手写 Loss、DataLoader 和训练 Loop</li>
+</ol>
+<p>在分布式光伏这种既有<strong>专业术语</strong>（如 <code>PID效应</code>）、又有<strong>数值规律</strong>（如 <code>11:00-13:00 功率波谷</code>）的复杂场景下需要结合稠密检索、稀疏检索，因此更适合使用官方推荐的 <code>FlagEmbedding</code> 库。</p>
+</blockquote>
+<h4 id="环境依赖安装"><a href="#环境依赖安装" class="headerlink" title="环境依赖安装"></a>环境依赖安装</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">git clone https://github.com/FlagOpen/FlagEmbedding.git</span><br><span class="line">cd FlagEmbedding</span><br><span class="line">pip install -e .</span><br></pre></td></tr></table></figure>
+
+<h4 id="微调代码"><a href="#微调代码" class="headerlink" title="微调代码"></a>微调代码</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># train_bge_m3.sh</span></span><br><span class="line"><span class="comment"># 伪代码：使用 torchrun 启动分布式微调</span></span><br><span class="line"></span><br><span class="line">torchrun --nproc_per_node=<span class="number">4</span> \</span><br><span class="line">    -m FlagEmbedding.BGE_M3.run \</span><br><span class="line">    --output_dir ./pv_bge_m3_finetuned \</span><br><span class="line">    --model_name_or_path BAAI/bge-m3 \</span><br><span class="line">    --train_data ./data/pv_train_data.jsonl \</span><br><span class="line">    --learning_rate <span class="number">1e-5</span> \</span><br><span class="line">    --fp16 \</span><br><span class="line">    --num_train_epochs <span class="number">3</span> \</span><br><span class="line">    --per_device_train_batch_size <span class="number">4</span> \</span><br><span class="line">    --gradient_accumulation_steps <span class="number">4</span> \</span><br><span class="line">    --dataloader_drop_last <span class="literal">True</span> \</span><br><span class="line">    --normlized <span class="literal">True</span> \</span><br><span class="line">    --temperature <span class="number">0.02</span> \</span><br><span class="line">    --query_max_len <span class="number">64</span> \</span><br><span class="line">    --passage_max_len <span class="number">512</span> \</span><br><span class="line">    --train_group_size <span class="number">8</span> \</span><br><span class="line">    --negatives_cross_device \</span><br><span class="line">    --logging_steps <span class="number">10</span></span><br><span class="line"><span class="comment"># --train_group_size  如果设为 8，表示 1 个 Query 对应 1 个正样本和 7 个负样本。在光伏场景下，建议设置在 8-16 之间。数值越大，模型在一次比较中见过的“干扰项”越多，分辨能力越强。</span></span><br></pre></td></tr></table></figure>
+
+<p>相关参数说明：</p>
+<table>
+<thead>
+<tr>
+<th><strong>参数名</strong></th>
+<th><strong>推荐值</strong></th>
+<th><strong>针对光伏场景的逻辑</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>train_group_size</code></td>
+<td>12 - 16</td>
+<td>增加难负样本（Hard Negatives）比例，区分相似气象条件</td>
+</tr>
+<tr>
+<td><code>query_max_len</code></td>
+<td>128</td>
+<td>容纳包含时间、经纬度、天气描述的长 Query</td>
+</tr>
+<tr>
+<td><code>passage_max_len</code></td>
+<td>512</td>
+<td>确保完整的修正算法逻辑不被截断</td>
+</tr>
+<tr>
+<td><code>negatives_cross_device</code></td>
+<td>True</td>
+<td>利用多卡集群大幅提升负样本池规模</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td>0.02</td>
+<td>保持默认，若模型无法区分相似故障则调小</td>
+</tr>
+</tbody></table>
+<h4 id="重排序模型微调"><a href="#重排序模型微调" class="headerlink" title="重排序模型微调"></a>重排序模型微调</h4><blockquote>
+<p><strong>BGE-Reranker-v2</strong>（目前中文效果最好的开源重排序模型之一）的微调</p>
+</blockquote>
+<p>重排序模型微调和嵌入模型微调的区别</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Embedding 微调</th>
+<th>Reranker 微调</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入格式</td>
+<td>单独编码 Query 和 Doc，再算相似度</td>
+<td>拼接输入 <code>[CLS] Query [SEP] Doc [SEP]</code></td>
+</tr>
+<tr>
+<td>输出目标</td>
+<td>向量空间距离 (Contrastive Loss)</td>
+<td>二分类概率 (Cross-Entropy Loss)   (判断该 Doc 是否与 Query 相关)</td>
+</tr>
+<tr>
+<td>计算方式</td>
+<td>双塔结构 (Dual Encoder)，速度快</td>
+<td>交叉编码器 (Cross Encoder)，速度慢但精度高</td>
+</tr>
+<tr>
+<td>数据需求</td>
+<td>需要大量负例构建对比</td>
+<td>需要明确的 (Query, Positive, Hard Negative) 三元组</td>
+</tr>
+<tr>
+<td>光伏场景价值</td>
+<td>提升召回率 (Recall)</td>
+<td>提升准确率 (Precision) 和 NDCG</td>
+</tr>
+</tbody></table>
+<h5 id="数据集构建-2"><a href="#数据集构建-2" class="headerlink" title="数据集构建"></a>数据集构建</h5><p>与 Embedding 的三元组不同，Rerank 模型微调需要的是 **(Query, Passage, Label)**，其中 Label 通常是 0 或 1（或者相关度得分）。</p>
+<ul>
+<li>**正样本 (Score 1)**：Query 与对应的正确修正规则&#x2F;运维手册。</li>
+<li><strong>负样本 (Score 0)<strong>：</strong>极其关键</strong>。不能用随机文档，必须使用 <strong>Embedding 模型召回的 Top 2-10 的非目标文档</strong>。<ul>
+<li><em>业务逻辑</em>：既然 Embedding 已经把这些文档排在前面了，说明它们非常有迷惑性。Rerank 的任务就是学习如何把这些“高仿”文档踢出去。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;10kV分布式光伏并网点电压超限如何调节？&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;passage&quot;</span><span class="punctuation">:</span> <span class="string">&quot;并网点电压超过1.1Un时，应通过逆变器主动调节无功输出，或通过有载调压变压器分接头调节。&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;10kV分布式光伏并网点电压超限如何调节？&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;passage&quot;</span><span class="punctuation">:</span> <span class="string">&quot;户用光伏并网点电流超过额定值时，应检查过流保护跳闸设定值。&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="微调-Reranker"><a href="#微调-Reranker" class="headerlink" title="微调 Reranker"></a>微调 Reranker</h4><blockquote>
+<p>和BGE-M3模型微调一样，BGE-Reranker的微调也有两种，使用官方工具和自定义微调，本例中采用自定微调的方式，以下为伪代码。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModelForSequenceClassification, AutoTokenizer</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 加载模型（二分类任务）</span></span><br><span class="line">model_name = <span class="string">&quot;BAAI/bge-reranker-v2-m3&quot;</span></span><br><span class="line">tokenizer = AutoTokenizer.from_pretrained(model_name)</span><br><span class="line">model = AutoModelForSequenceClassification.from_pretrained(model_name)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 模拟输入 (Query + Passage 拼接)</span></span><br><span class="line">pairs = [</span><br><span class="line">    [<span class="string">&quot;10kV光伏并网点电压超限&quot;</span>, <span class="string">&quot;应通过逆变器调节无功输出&quot;</span>], </span><br><span class="line">    [<span class="string">&quot;10kV光伏并网点电压超限&quot;</span>, <span class="string">&quot;检查组件表面遮挡情况&quot;</span>] <span class="comment"># 难负样本</span></span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 编码：注意 BGE-Reranker 要求 query 和 passage 放在一个 inputs 里</span></span><br><span class="line">features = tokenizer(pairs, padding=<span class="literal">True</span>, truncation=<span class="literal">True</span>, return_tensors=<span class="string">&quot;pt&quot;</span>, max_length=<span class="number">512</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 前向传播</span></span><br><span class="line">outputs = model(**features)</span><br><span class="line"><span class="comment"># logits 形状为 [batch_size, 1]，数值越大表示越相关</span></span><br><span class="line">scores = outputs.logits.view(-<span class="number">1</span>) </span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 损失计算 (使用 BCEWithLogitsLoss)</span></span><br><span class="line">labels = torch.tensor([<span class="number">1.0</span>, <span class="number">0.0</span>]) <span class="comment"># 正样本为 1，负样本为 0</span></span><br><span class="line">loss_fct = torch.nn.BCEWithLogitsLoss()</span><br><span class="line">loss = loss_fct(scores, labels)</span><br></pre></td></tr></table></figure>
+
+<p>代码中首先加载了预训练模型，然后将训练数据中query和passage进行了拼接，拼接完成后成使用编码器进行向量化，放到如模型进行一次计算，提取计算结果和数据集中的label计算损失值，这样完成一个训练轮次。</p>
+<h4 id="Rerank特殊策略"><a href="#Rerank特殊策略" class="headerlink" title="Rerank特殊策略"></a>Rerank特殊策略</h4><p>在分布式光伏这种对数值精度和物理逻辑要求极高的工业场景中，单纯依靠深度学习模型（BGE-Reranker）进行语义重排往往是不够的。它通过人工定义的业务逻辑，对模型初步召回（Retrieval）和重排（Rerank）后的结果进行二次干预，确保最终修正预测值的信息不仅语义相关，而且物理可行、业务合规。规则重排伪代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">rule_based_rerank</span>(<span class="params">initial_results, site_metadata</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    initial_results: 语义重排后的 Top-N 列表 (包含文档内容和原始分数)</span></span><br><span class="line"><span class="string">    site_metadata: 当前预测电站的元数据 (电压、厂商、坐标等)</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    reranked_list = []</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> doc <span class="keyword">in</span> initial_results:</span><br><span class="line">        bonus_score = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 1. 厂商强匹配 (加分项)，例如当前文档恰好是当前电厂设备厂家的文档，增加权重分数</span></span><br><span class="line">        <span class="keyword">if</span> doc.metadata[<span class="string">&#x27;brand&#x27;</span>] == site_metadata[<span class="string">&#x27;brand&#x27;</span>]:</span><br><span class="line">            bonus_score += <span class="number">0.5</span></span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 2. 电压等级冲突 (降权或剔除)，例如检测的文档是针对380v用户并网，而电站是10kw工商业并网，则剔除掉</span></span><br><span class="line">        <span class="keyword">if</span> doc.metadata[<span class="string">&#x27;voltage&#x27;</span>] != site_metadata[<span class="string">&#x27;voltage&#x27;</span>]:</span><br><span class="line">            <span class="comment"># 如果电压等级完全不匹配，直接将分数清零</span></span><br><span class="line">            doc.score = -<span class="number">1.0</span></span><br><span class="line">            <span class="keyword">continue</span></span><br><span class="line">            </span><br><span class="line">        <span class="comment"># 3. 相似日逻辑校验 (基于气象相似度)</span></span><br><span class="line">        weather_sim = calculate_weather_similarity(doc.weather, site_metadata.forecast)</span><br><span class="line">        bonus_score += weather_sim * <span class="number">0.3</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 更新最终得分</span></span><br><span class="line">        doc.final_score = doc.score + bonus_score</span><br><span class="line">        reranked_list.append(doc)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 重新按 final_score 排序</span></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sorted</span>(reranked_list, key=<span class="keyword">lambda</span> x: x.final_score, reverse=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure><link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/01/20/AI/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" rel="prev" title="大模型部署">
+                  <i class="fa fa-angle-left"></i> 大模型部署
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/01/25/AI/LORA%E5%BE%AE%E8%B0%83/" rel="next" title="LORA微调">
+                  LORA微调 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">249k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">3:46</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
