@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="基本介绍大语言模型LLM本身是无状态的，就像一条鱼只有七秒钟的记忆，每次对话结束就会忘掉一切。如果我想让LLM帮我写小说或者作为个人助理记住我的兴趣爱好，LLM无法做到，因为它记不住上下文。 Agent记忆就是给与大模型长期存储、检索和利用历史信息的能力，使其具备连续性和个性化。当前的Agent记忆实现的整体思路是将历史对话信息提出关键信息保存并进行管理，在与大模型对话时，根据用户的问题检索与问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Agent 记忆">
+<meta property="og:url" content="https://18253321614.github.io/2026/03/26/Agent-%E8%AE%B0%E5%BF%86/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="基本介绍大语言模型LLM本身是无状态的，就像一条鱼只有七秒钟的记忆，每次对话结束就会忘掉一切。如果我想让LLM帮我写小说或者作为个人助理记住我的兴趣爱好，LLM无法做到，因为它记不住上下文。 Agent记忆就是给与大模型长期存储、检索和利用历史信息的能力，使其具备连续性和个性化。当前的Agent记忆实现的整体思路是将历史对话信息提出关键信息保存并进行管理，在与大模型对话时，根据用户的问题检索与问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603261135739.png">
+<meta property="article:published_time" content="2026-03-26T15:54:45.000Z">
+<meta property="article:modified_time" content="2026-03-26T15:57:06.532Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="Agent">
+<meta property="article:tag" content="记忆">
+<meta property="article:tag" content="LLM">
+<meta property="article:tag" content="产品经理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603261135739.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/03/26/Agent-%E8%AE%B0%E5%BF%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/03/26/Agent-%E8%AE%B0%E5%BF%86/","path":"2026/03/26/Agent-记忆/","title":"Agent 记忆"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Agent 记忆 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">基本介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%9C%BA%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">核心机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E5%AD%98%E5%82%A8"><span class="nav-number">2.1.</span> <span class="nav-text">记忆存储</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E6%8F%90%E5%8F%96"><span class="nav-number">2.1.1.</span> <span class="nav-text">记忆提取</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E5%88%92%E5%88%86"><span class="nav-number">2.1.2.</span> <span class="nav-text">隐式划分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%8C%96"><span class="nav-number">2.1.3.</span> <span class="nav-text">原子化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E6%9B%B4%E6%96%B0"><span class="nav-number">2.2.</span> <span class="nav-text">记忆更新</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B"><span class="nav-number">2.2.1.</span> <span class="nav-text">更新流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%B3%E7%AD%96%E6%9C%BA%E5%88%B6"><span class="nav-number">2.2.2.</span> <span class="nav-text">决策机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%98%B2%E6%B7%B7%E4%B9%B1"><span class="nav-number">2.2.3.</span> <span class="nav-text">防混乱</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BF%86%E6%A3%80%E7%B4%A2"><span class="nav-number">2.3.</span> <span class="nav-text">记忆检索</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%90%91%E9%87%8F%E5%8C%96"><span class="nav-number">2.3.1.</span> <span class="nav-text">查询向量化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%A3%80%E7%B4%A2%E4%B8%8E%E9%87%8D%E6%8E%92"><span class="nav-number">2.3.2.</span> <span class="nav-text">混合检索与重排</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E8%A3%85%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">2.3.3.</span> <span class="nav-text">组装上下文</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.4.</span> <span class="nav-text">图数据库</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">2.4.1.</span> <span class="nav-text">写入流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%B5%81%E7%A8%8B-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">更新流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E6%B5%81%E7%A8%8B"><span class="nav-number">2.4.3.</span> <span class="nav-text">检索流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.5.</span> <span class="nav-text">代码示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E9%A1%B9%E7%9B%AE%E8%AE%B0%E5%BF%86%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">3.</span> <span class="nav-text">开源项目记忆架构设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Openclaw"><span class="nav-number">3.1.</span> <span class="nav-text">Openclaw</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OpenViking"><span class="nav-number">3.2.</span> <span class="nav-text">OpenViking</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/03/26/Agent-%E8%AE%B0%E5%BF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Agent 记忆 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Agent 记忆
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-03-26 23:54:45" itemprop="dateCreated datePublished" datetime="2026-03-26T23:54:45+08:00">2026-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h2><p>大语言模型LLM本身是无状态的，就像一条鱼只有七秒钟的记忆，每次对话结束就会忘掉一切。如果我想让LLM帮我写小说或者作为个人助理记住我的兴趣爱好，LLM无法做到，因为它记不住上下文。</p>
+<p>Agent记忆就是给与大模型长期存储、检索和利用历史信息的能力，使其具备连续性和个性化。当前的Agent记忆实现的整体思路是将历史对话信息提出关键信息保存并进行管理，在与大模型对话时，根据用户的问题检索与问题有关的历史对话放到上下文中。</p>
+<span id="more"></span>
+
+<p>记忆分类记忆分为长期记忆和短期记忆。短期记忆又叫会话记忆，即在一次聊天中，大模型可以记住前面聊过的内容；长期记忆是指大模型能够记得用户通过不同上下文窗口与大模型从第一次到最后一次聊过的所有内容。</p>
+<p>长期记忆是Agent记忆研究的重点，在认知心理学中，记忆时长在”1分钟—终生“这个时间段内的记忆叫做长期记忆，长期记忆又可以分为陈述性记忆和非陈述性记忆。</p>
+<ul>
+<li>陈述性：有意识的事实、事件和知识<ul>
+<li>情景记忆：个人经历，例如去年去旅游</li>
+<li>语义记忆：客观事实，例如地球是圆的</li>
+</ul>
+</li>
+<li>非陈述性：无意识、自动化的技能与习惯<ul>
+<li>程序性记忆：工作技能，例如骑自行车</li>
+<li>关系记忆：人和人相处相成的信任和默契感等，具有弥散性</li>
+<li>其他</li>
+</ul>
+</li>
+</ul>
+<p>想要LLM更像人，就需要让大模型掌握人的长期记忆能力。</p>
+<h2 id="核心机制"><a href="#核心机制" class="headerlink" title="核心机制"></a>核心机制</h2><blockquote>
+<p>以Mem0为例说明记忆存储、更新和检索</p>
+</blockquote>
+<p>2025年4月，Mem0团队在arXiv上发布了论文《Mem0: Building Production-Ready AI Agents with Scalable Long-Term Memory》，提出了一种全新的以内存为中心的可扩展架构。</p>
+<p>它并不只是简单地存储对话日志，而是通过 LLM 将非结构化对话转化为结构化的<strong>原子记忆（Atomic Memories）</strong>，并通过智能冲突解决机制确保记忆的准确性和时效性。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603261135739.png" alt="image-20260326113503558"></p>
+<ul>
+<li><strong>编排层 (Orchestration)</strong>: Python SDK，负责流程控制。</li>
+<li><strong>大语言模型 (LLM)</strong>: 用于记忆提取、冲突判断、记忆重写（支持 OpenAI, Ollama, Anthropic 等）。</li>
+<li><strong>嵌入模型 (Embedding Model)</strong>: 将文本转化为向量（支持 <code>text-embedding-3-small</code>, <code>nomic-embed-text</code> 等）。</li>
+<li><strong>向量数据库 (Vector Store)</strong>: 存储记忆的向量表示，支持语义搜索（支持 <strong>Qdrant</strong>, <strong>Chroma</strong>, <strong>Milvus</strong>, <strong>PGVector</strong>, <strong>Redis</strong>）。</li>
+<li><strong>图数据库 (可选，Mem0^G)</strong>: 用于存储实体关系（支持 <strong>Neo4j</strong> 或内存图结构）。</li>
+<li><strong>元数据存储</strong>: 通常与向量库共存，存储 <code>user_id</code>, <code>timestamp</code>, <code>memory_id</code>, <code>score</code> 等。</li>
+</ul>
+<h3 id="记忆存储"><a href="#记忆存储" class="headerlink" title="记忆存储"></a>记忆存储</h3><blockquote>
+<p>不是所有对话都存，需要过滤（Filtering）和摘要（Summarization）。</p>
+</blockquote>
+<h4 id="记忆提取"><a href="#记忆提取" class="headerlink" title="记忆提取"></a>记忆提取</h4><p>增量处理与上下文感知：Mem0不会等到对话结束才提取记忆，而是在每次交互后，都会触发记忆提取流程：</p>
+<ul>
+<li>首先获取当前对话片段，同时结合最近的记忆（user_id下的最近k条记忆）和历史消息序列，构建prompt，让大模型进行记忆提取，这样可以保证大模型提取记忆不会断章取义。</li>
+</ul>
+<h4 id="隐式划分"><a href="#隐式划分" class="headerlink" title="隐式划分"></a>隐式划分</h4><p>LLM进行记忆提取时，会被提示对不同信息进行标记，这对应了心理学中记忆分类的划分。例如事实、事件、技能、模式等。对于陈述性记忆，LLM会将这些信息转化为独立的、自由包含的字句，并去除代词，使其脱离语境也能被理解；而程序性记忆，则会提取规则性描述或元数据标签。</p>
+<h4 id="原子化"><a href="#原子化" class="headerlink" title="原子化"></a>原子化</h4><p>Mem0不存储长短落，而是存储小的记忆单元，例如用户说：“我平时喜欢吃辣，不过最近胃不太好，所以暂时吃清淡点，等好了再继续吃辣。”LLM会分析对话，输出json结构化记忆内容。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">Mem0 提取结果：</span><br><span class="line"><span class="number">1.</span> 用户通常喜欢吃辣。 (长期偏好)</span><br><span class="line"><span class="number">2.</span> 用户最近胃不太好。 (临时状态)</span><br><span class="line"><span class="number">3.</span> 用户目前饮食偏向清淡。 (当前行为)</span><br><span class="line"><span class="number">4.</span> 用户计划胃病好转后恢复吃辣。 (未来意图)</span><br><span class="line">这种拆分使得后续更新可以精确针对某一条，而不是覆盖整段文本。</span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;4f6c20c2-c63c-4545-bce7-61f1c0f5b529&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;memory&quot;</span><span class="punctuation">:</span> <span class="string">&quot;等胃好了之后再继续吃辣&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;24ccd28fefee73eb75f5ab6bbca6b3cd&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;metadata&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;score&quot;</span><span class="punctuation">:</span> <span class="number">0.24366340041160583</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-03-26T05:13:13.547795+00:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;updated_at&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wwq_007&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;c73cc9d6-4067-4a0c-ad44-e52c21cd66b1&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;memory&quot;</span><span class="punctuation">:</span> <span class="string">&quot;平时喜欢吃辣&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;f2e95b65460c830636e5289a7894fff4&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;metadata&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;score&quot;</span><span class="punctuation">:</span> <span class="number">0.45115745067596436</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-03-26T05:13:13.467987+00:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;updated_at&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wwq_007&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;d937e0b6-d94e-44b3-ad6d-f43d1ebf6cb0&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;memory&quot;</span><span class="punctuation">:</span> <span class="string">&quot;暂时吃清淡点&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bb975ed361786bebcf299aca5d6d4363&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;metadata&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;score&quot;</span><span class="punctuation">:</span> <span class="number">0.5670890808105469</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-03-26T05:13:13.544356+00:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;updated_at&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wwq_007&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0cea78d8-5f79-42e1-b15a-c96a8eb3c17f&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;memory&quot;</span><span class="punctuation">:</span> <span class="string">&quot;最近胃不太好&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;hash&quot;</span><span class="punctuation">:</span> <span class="string">&quot;85202c5a4ec6ea37a788eef0548de5d8&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;metadata&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;score&quot;</span><span class="punctuation">:</span> <span class="number">0.7245134115219116</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;created_at&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2026-03-26T05:13:13.538504+00:00&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;updated_at&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">null</span></span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;wwq_007&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="记忆更新"><a href="#记忆更新" class="headerlink" title="记忆更新"></a>记忆更新</h3><blockquote>
+<p>向量数据库（Vector DB，用于语义搜索）+ 关系型数据库（用于事实数据）。</p>
+</blockquote>
+<p>当记忆信息进入系统，另一个挑战就是应该新增、更新还是舍弃。如果处理不当则会导致记忆混乱和矛盾。mem0采取可以种基于检索的决策机制来解决这个问题。</p>
+<h4 id="更新流程"><a href="#更新流程" class="headerlink" title="更新流程"></a>更新流程</h4><p>从新对话中提取候选记忆合集，在<strong>向量数据库</strong>中进行相似度检索，找到已存在、语义相似的旧记忆</p>
+<h4 id="决策机制"><a href="#决策机制" class="headerlink" title="决策机制"></a>决策机制</h4><p>LLM拿到新旧记忆后，会按照下列准则判断如何处理新记忆，输出动作（ADD、UPDATE、DELETE、NONE）：</p>
+<ul>
+<li>如果是新记忆，则直接新增</li>
+<li>如果新旧记忆主题相同但内容不同：融合生成一条新记忆，包含新状态和时间戳，并标记旧记忆为过时</li>
+<li>如果新记忆否定了旧记忆，则删除旧记忆</li>
+<li>如果是重复记忆则不做操作</li>
+</ul>
+<h4 id="防混乱"><a href="#防混乱" class="headerlink" title="防混乱"></a>防混乱</h4><p>为了保证记忆清晰和逻辑一致，mem0采用以下策略：</p>
+<ul>
+<li>语义去重：语义高度相似只存储一条</li>
+<li>时间敏感处理：mem0的prompt强调时间状语的重要性。对于冲突信息会保留最新状态或者在记忆中明确时间范围</li>
+<li>原子更新而非直接覆盖：原子化存储记忆，更新居住地不会影响喜欢的食物</li>
+<li>置信度过滤：因为在记忆提取时会同时获取历史对话和记忆，所以可以判断用户是在开玩笑还是真的要记住</li>
+</ul>
+<h3 id="记忆检索"><a href="#记忆检索" class="headerlink" title="记忆检索"></a>记忆检索</h3><blockquote>
+<p>基于相似度的检索（RAG）、基于时间的检索、基于重要性的检索。</p>
+</blockquote>
+<h4 id="查询向量化"><a href="#查询向量化" class="headerlink" title="查询向量化"></a>查询向量化</h4><p>向量数据库的相似度查询</p>
+<h4 id="混合检索与重排"><a href="#混合检索与重排" class="headerlink" title="混合检索与重排"></a>混合检索与重排</h4><p>使用语义搜索+关键词搜索的方式获取相关记忆的原子片段，然后将两者搜索结果放一起进行重排序</p>
+<h4 id="组装上下文"><a href="#组装上下文" class="headerlink" title="组装上下文"></a>组装上下文</h4><p>首先对检索到的记忆进行加权分数计算，去其次去掉语义重复的信息，最后进行格式化输出，例如：”已知用户偏好：1. 喜欢冰美式 (更新于 2天前); 2. 对花生过敏 (更新于 1个月前)。”</p>
+<h3 id="图数据库"><a href="#图数据库" class="headerlink" title="图数据库"></a>图数据库</h3><p>除了向量数据库之外，mem0还支持使用图数据库保存。图数据与关系数据库使用二维表格存储数据不一样，而是采用节点、关系和属性来描述存储数据，节点通过关系连接，例如小明是一个节点，美女是一个节点，通过一个关系进行连接，节点和关系都可以有属性来描述，每个节点都有一个id。在计算机中，就是一张有向图，通过有向边连接不同的节点来描述关系。图数据库适用于高度关联的数据，能够以极快的速度查询复杂的关系网络。Neo4j，是目前最流程的图数据库，同时也支持事务和查询。</p>
+<p>图数据库的这种特性非常适合存储关系记忆，在mem0中也引入的图数据库，与向量数据库相互补充，更好的挖掘和保存记忆。基本工作模式是：</p>
+<ul>
+<li>向量数据库：负责模糊语义检索和快速筛查</li>
+<li>图数据库：负责精确关系推理、实体链接和结构化更新</li>
+</ul>
+<h4 id="写入流程"><a href="#写入流程" class="headerlink" title="写入流程"></a>写入流程</h4><p>要求LLM不仅提取原子事实，还要识别<strong>实体 (Entities)</strong> 和 **关系 (Relations)**。在向量数据库中保存记忆信息时，两个数据库中的数据会双向关联，向量数据库中记忆片段增加图数据库中的节点id。</p>
+<h4 id="更新流程-1"><a href="#更新流程-1" class="headerlink" title="更新流程"></a>更新流程</h4><p>根据用户输入，在向量数据库中查找到结构化的记忆片段，根据其中的节点id在图数据库中查找到相关节点，有大模型进行决策对两个数据库的相关数据进行增删改查</p>
+<h4 id="检索流程"><a href="#检索流程" class="headerlink" title="检索流程"></a>检索流程</h4><p>首先在向量数据库中检索，然后在图数据库中检索，最后将向量检索到的“用户偏好上下文”和图检索到的“推理事实”合并。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">sequenceDiagram</span><br><span class="line">    participant User</span><br><span class="line">    participant Orchestrator as Mem0 Core</span><br><span class="line">    participant VectorDB as Vector Store&lt;br/&gt;(语义索引)</span><br><span class="line">    participant GraphDB as Graph Store&lt;br/&gt;(关系推理)</span><br><span class="line">    participant LLM</span><br><span class="line"></span><br><span class="line">    User-&gt;&gt;Orchestrator: &quot;我喜欢的那个咖啡品牌总部在哪？&quot;</span><br><span class="line">    </span><br><span class="line">    rect rgb(240, 248, 255)</span><br><span class="line">        note right of Orchestrator: 阶段 1: 向量初筛</span><br><span class="line">        Orchestrator-&gt;&gt;VectorDB: 语义搜索 (Embedding)</span><br><span class="line">        VectorDB--&gt;&gt;Orchestrator: 返回记忆：&quot;用户喜欢星巴克&quot; + [node_id: 101]</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    rect rgb(255, 250, 240)</span><br><span class="line">        note right of Orchestrator: 阶段 2: 图推理扩展</span><br><span class="line">        Orchestrator-&gt;&gt;GraphDB: 遍历查询 (Match Node 101 -[:HQ]-&gt; ?)</span><br><span class="line">        GraphDB--&gt;&gt;Orchestrator: 返回事实：&quot;西雅图&quot;</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    Orchestrator-&gt;&gt;LLM: 组装上下文 (偏好 + 推理事实)</span><br><span class="line">    LLM--&gt;&gt;Orchestrator: 生成回答：&quot;您喜欢的星巴克总部位于西雅图。&quot;</span><br><span class="line">    Orchestrator--&gt;&gt;User: 返回回答</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="代码示例"><a href="#代码示例" class="headerlink" title="代码示例"></a>代码示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> mem0 <span class="keyword">import</span> Memory</span><br><span class="line"><span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> HumanMessage, SystemMessage</span><br><span class="line"></span><br><span class="line">config = &#123;</span><br><span class="line">    <span class="comment"># 可以配置图数据库、向量数据库存储记忆，这里以 ChromaDB 为例</span></span><br><span class="line">    <span class="string">&quot;vector_store&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;provider&quot;</span>: <span class="string">&quot;chroma&quot;</span>,  <span class="comment"># 支持的 provider: chroma, qdrant, milvus, pgvector</span></span><br><span class="line">        <span class="string">&quot;config&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;collection_name&quot;</span>: <span class="string">&quot;memory_collection&quot;</span>,  <span class="comment"># 向量库集合名称</span></span><br><span class="line">            <span class="string">&quot;path&quot;</span>: <span class="string">&quot;./chroma_db&quot;</span>  <span class="comment"># 本地存储路径</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;llm&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;provider&quot;</span>: <span class="string">&quot;openai&quot;</span>,    <span class="comment"># 支持的 provider: openai, ollama, anthropic</span></span><br><span class="line">        <span class="string">&quot;config&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;model&quot;</span>: VOLCENGINE_MODEL_NAME,</span><br><span class="line">            <span class="string">&quot;temperature&quot;</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="string">&quot;api_key&quot;</span>: VOLCENGINE_API_KEY,  <span class="comment"># 你的 LLM API Key</span></span><br><span class="line">            <span class="string">&quot;openai_base_url&quot;</span>: VOLCENGINE_API_BASE  <span class="comment"># 火山引擎兼容接口地址</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;embedder&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;provider&quot;</span>: <span class="string">&quot;openai&quot;</span>,    <span class="comment"># 嵌入模型提供者</span></span><br><span class="line">        <span class="string">&quot;config&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;model&quot;</span>: <span class="string">&quot;text-embedding-v4&quot;</span>,</span><br><span class="line">            <span class="string">&quot;api_key&quot;</span>: <span class="string">&quot;sk-.....&quot;</span>,</span><br><span class="line">            <span class="string">&quot;openai_base_url&quot;</span>: <span class="string">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1&quot;</span>  <span class="comment"># 阿里云兼容接口地址</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化</span></span><br><span class="line">llm = ChatOpenAI(</span><br><span class="line">    api_key=VOLCENGINE_API_KEY,</span><br><span class="line">    base_url=VOLCENGINE_API_BASE,</span><br><span class="line">    model_name=VOLCENGINE_MODEL_NAME</span><br><span class="line">)</span><br><span class="line">memory = Memory.from_config(config) <span class="comment"># 使用上面的 config</span></span><br><span class="line">user_id = <span class="string">&quot;wwq_007&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_with_memory</span>(<span class="params">user_input</span>):</span><br><span class="line">    <span class="comment"># 1. 检索相关记忆</span></span><br><span class="line">    relevant_memories = memory.search(user_input, user_id=user_id, limit=<span class="number">5</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 2. 构建 Prompt</span></span><br><span class="line">    memory_context = <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> relevant_memories:</span><br><span class="line">        memory_context = <span class="string">&quot;已知关于用户的以下信息:\n&quot;</span> + <span class="string">&quot;\n&quot;</span>.join([m[<span class="string">&#x27;memory&#x27;</span>] <span class="keyword">for</span> m <span class="keyword">in</span> relevant_memories[<span class="string">&#x27;results&#x27;</span>]])</span><br><span class="line">    </span><br><span class="line">    system_prompt = <span class="string">f&quot;你是一个友好的助手。\n<span class="subst">&#123;memory_context&#125;</span>\n请根据已知信息回答用户问题。&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 3. 调用 LLM</span></span><br><span class="line">    messages = [</span><br><span class="line">        SystemMessage(content=system_prompt),</span><br><span class="line">        HumanMessage(content=user_input)</span><br><span class="line">    ]</span><br><span class="line">    response = llm.invoke(messages)</span><br><span class="line">    ai_response = response.content</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 4. 将新对话存入记忆 (异步或同步)</span></span><br><span class="line">    <span class="comment"># 传入完整的对话片段让 Mem0 提取新事实</span></span><br><span class="line">    memory.add(</span><br><span class="line">        [&#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: user_input&#125;, &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;assistant&quot;</span>, <span class="string">&quot;content&quot;</span>: ai_response&#125;], </span><br><span class="line">        user_id=user_id</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> ai_response</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试</span></span><br><span class="line"><span class="built_in">print</span>(chat_with_memory(<span class="string">&quot;嗨，你还记得我吗&quot;</span>)) </span><br><span class="line"><span class="comment"># 如果之前存过，它会回答；如果没有，它会正常回答并记住你这次说的内容。每次询问大模型都会记得之前的内容</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="开源项目记忆架构设计"><a href="#开源项目记忆架构设计" class="headerlink" title="开源项目记忆架构设计"></a>开源项目记忆架构设计</h2><h3 id="Openclaw"><a href="#Openclaw" class="headerlink" title="Openclaw"></a>Openclaw</h3><p>OpenClaw 的记忆系统分为三层：当前对话、长期记忆、每日记忆，每层有不同用途。</p>
+<p>文件结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">你的设备</span><br><span class="line">├── ~/.openclaw/workspace/</span><br><span class="line">│   ├── SOUL.md          ← AI 的人格设定</span><br><span class="line">│   ├── USER.md          ← 你的信息</span><br><span class="line">│   ├── MEMORY.md        ← 长期记忆（精选）</span><br><span class="line">│   └── memory/          ← 每日记忆（原始记录）</span><br><span class="line">│       ├── 2026-03-01.md</span><br><span class="line">│       ├── 2026-03-02.md</span><br><span class="line">│       └── ...</span><br></pre></td></tr></table></figure>
+
+<p>会话记忆记录当前对话的上下文，AI 能”记住”你们刚才聊了什么。保存到对话结束，可配置数天，储在<code>~/.openclaw/sessions/</code></p>
+<p>长期记忆是人工精选的长期记忆，相当于 AI 的”核心知识库”。永久保存，除非手动删除，存储在 <code>~/.openclaw/workspace/MEMORY.md</code></p>
+<p>每日记忆是 AI 的”日记”，记录每天的原始信息。保留7-30天，存储在 <code>~/.openclaw/workspace/memory/</code></p>
+<p>对于记忆文件，Openclaw在检索时支持使用向量检索与关键词检索的混合检索方式，如果要启动向量检索则需要配置嵌入模型。否则Openclaw知识定点读取或者词面匹配检索记忆文件。</p>
+<h3 id="OpenViking"><a href="#OpenViking" class="headerlink" title="OpenViking"></a>OpenViking</h3><p><strong>OpenViking 是一个专为 AI Agent 设计的上下文数据库</strong>，用”文件系统范式”统一管理记忆、资源、技能，让 Agent 越用越聪明。类似Linux中思路，一切皆文件。所有的记忆、资源、技能被统一组织在一个虚拟文件系统中，每个条目通过 <code>viking://</code> 协议拥有唯一的 URI。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">viking://</span><br><span class="line">├── resources/              # 资源：项目文档、代码库、网页等（外部资源）</span><br><span class="line">│   ├── my_project/</span><br><span class="line">│   │   ├── docs/</span><br><span class="line">│   │   │   ├── api/</span><br><span class="line">│   │   │   └── tutorials/</span><br><span class="line">│   │   └── src/</span><br><span class="line">│   └── ...</span><br><span class="line">├── user/                   # 用户：个人偏好、习惯等（用户记忆）</span><br><span class="line">│   └── memories/</span><br><span class="line">│       ├── preferences/</span><br><span class="line">│       │   ├── 写作风格</span><br><span class="line">│       │   └── 编程习惯</span><br><span class="line">│       └── ...</span><br><span class="line">└── agent/                  # Agent：技能、指令、任务记忆等（Agent 自身的技能和经验）</span><br><span class="line">    ├── skills/</span><br><span class="line">    │   ├── search_code</span><br><span class="line">    │   ├── analyze_data</span><br><span class="line">    │   └── ...</span><br><span class="line">    ├── memories/</span><br><span class="line">    └── instructions/</span><br></pre></td></tr></table></figure>
+
+<p>OpenViking 借鉴了计算机图形学中 LOD（Level of Detail）的思想和 CPU 缓存层次的设计，在资源写入时就自动处理为三个层级：</p>
+<ul>
+<li><strong>L0（摘要 &#x2F; Abstract）</strong>：约 100 个 Token。一句话概括内容，用于快速筛选相关性。相当于书名加一句话简介。</li>
+<li><strong>L1（概述 &#x2F; Overview）</strong>：约 2000 个 Token。包含核心信息、结构要点和使用场景，供 Agent 在规划阶段决策。相当于书的目录和内容提要。</li>
+<li><strong>L2（详情 &#x2F; Details）</strong>：完整原始数据，只在 Agent 确认需要深入阅读时才加载。就是完整正文。</li>
+</ul>
+<p>在虚拟文件系统中，每个目录都有自己的 <code>.abstract</code> 和 <code>.overview</code> 文件：即目录的摘要和概述</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">viking://resources/my_project/</span><br><span class="line">├── .abstract               # L0 层（~100 tokens）</span><br><span class="line">├── .overview               # L1 层（~2k tokens）</span><br><span class="line">├── docs/</span><br><span class="line">│   ├── .abstract</span><br><span class="line">│   ├── .overview</span><br><span class="line">│   ├── api/</span><br><span class="line">│   │   ├── .abstract</span><br><span class="line">│   │   ├── .overview</span><br><span class="line">│   │   ├── auth.md        # L2 层：完整内容</span><br><span class="line">│   │   └── endpoints.md</span><br><span class="line">│   └── ...</span><br><span class="line">└── src/</span><br><span class="line">    └── ...</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p> 举个例子。用户问”API 的认证方式有哪些？”</p>
+</blockquote>
+<p>传统方案：把整个项目文档加载进来（几万甚至十几万 Token），让模型从中找答案。</p>
+<p>OpenViking 方案：</p>
+<ol>
+<li>读取项目根目录的 L0 摘要（~100 Token），确认包含 API 文档</li>
+<li>读取 <code>docs/</code> 目录的 L1 概述（~2000 Token），发现有 <code>api/</code> 子目录</li>
+<li>读取 <code>api/</code> 目录的 L1 概述，发现 <code>auth.md</code> 与认证相关</li>
+<li>只加载 <code>auth.md</code> 的 L2 全文</li>
+</ol>
+<p>此外由于 OpenViking 的所有上下文都以统一格式存储、每个条目对应唯一 URI，整个检索过程天然可追溯。你可以清楚看到：</p>
+<ul>
+<li>Agent 从哪个目录开始搜索</li>
+<li>递归进入了哪些子路径</li>
+<li>每个路径的相关性得分是多少</li>
+<li>为什么最终选择加载了特定资源</li>
+<li>整个检索链路如何一步步展开</li>
+</ul>
+<p>每次会话结束时，开发者可以调用 <code>session.commit()</code> 触发记忆提取。系统异步分析任务执行结果和用户反馈，自动更新到 <code>user/</code> 和 <code>agent/</code> 的记忆目录。</p>
+<p>这个过程覆盖两个维度：</p>
+<ul>
+<li><strong>用户偏好记忆</strong>：用户多次表现出偏好简洁回答的风格，系统自动将偏好沉淀为记忆。后续回答自动贴合用户习惯。</li>
+<li><strong>任务经验记忆</strong>：Agent 执行任务中积累的操作技巧、工具经验、解决策略，自动提取存储。下次遇到类似场景，直接调取”实战经验”辅助决策。</li>
+</ul>
+<blockquote>
+<p>Openclaw可以使用open Viking或者mem0作为记忆插件</p>
+</blockquote>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/Agent/" rel="tag"># Agent</a>
+              <a href="/tags/%E8%AE%B0%E5%BF%86/" rel="tag"># 记忆</a>
+              <a href="/tags/LLM/" rel="tag"># LLM</a>
+              <a href="/tags/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" rel="tag"># 产品经理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/03/06/AI/ReAct-Agent/" rel="prev" title="ReAct Agent">
+                  <i class="fa fa-angle-left"></i> ReAct Agent
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">269k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:04</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
