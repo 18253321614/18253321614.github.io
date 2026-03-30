@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="OpenClaw原理浅析在个人AI助手领域，OpenClaw以其独特的“网关+智能体”架构脱颖而出。它不仅是一个聊天机器人，更是一个能够连接多平台、执行复杂任务的“个人AI操作系统”。 本文将深入解析OpenClaw的整体架构，重点介绍其两大核心——Gateway网关与AgentRuntime智能体运行时，以及支撑其强大功能的六大能力体系。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenClaw原理浅析">
+<meta property="og:url" content="https://18253321614.github.io/2026/03/30/AI/OpenClaw%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="OpenClaw原理浅析在个人AI助手领域，OpenClaw以其独特的“网关+智能体”架构脱颖而出。它不仅是一个聊天机器人，更是一个能够连接多平台、执行复杂任务的“个人AI操作系统”。 本文将深入解析OpenClaw的整体架构，重点介绍其两大核心——Gateway网关与AgentRuntime智能体运行时，以及支撑其强大功能的六大能力体系。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-03-30T15:29:44.000Z">
+<meta property="article:modified_time" content="2026-03-30T15:29:44.849Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="智能体">
+<meta property="article:tag" content="OpenClaw">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/03/30/AI/OpenClaw%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/03/30/AI/OpenClaw%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/","path":"2026/03/30/AI/OpenClaw原理浅析/","title":"OpenClaw原理浅析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>OpenClaw原理浅析 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OpenClaw%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">OpenClaw原理浅析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83%EF%BC%9A%E7%A5%9E%E7%BB%8F%E4%B8%AD%E6%9E%A2%E4%B8%8E%E5%86%B3%E7%AD%96%E5%A4%A7%E8%84%91"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">一、两大核心：神经中枢与决策大脑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%85%AD%E5%A4%A7%E8%83%BD%E5%8A%9B%EF%BC%9A%E6%9E%84%E5%BB%BA%E5%AE%8C%E6%95%B4AI%E8%83%BD%E5%8A%9B%E4%BD%93%E7%B3%BB"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">二、六大能力：构建完整AI能力体系</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">三、安全问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E9%80%82%E5%90%88%E7%9A%84%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">四、适合的任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%94%E3%80%81Openclaw%E4%BC%98%E5%8A%BF"><span class="nav-number">1.0.0.5.</span> <span class="nav-text">五、Openclaw优势</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">1.0.0.6.</span> <span class="nav-text">补充</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/03/30/AI/OpenClaw%E5%8E%9F%E7%90%86%E6%B5%85%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="OpenClaw原理浅析 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          OpenClaw原理浅析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-03-30 23:29:44" itemprop="dateCreated datePublished" datetime="2026-03-30T23:29:44+08:00">2026-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="OpenClaw原理浅析"><a href="#OpenClaw原理浅析" class="headerlink" title="OpenClaw原理浅析"></a>OpenClaw原理浅析</h1><p>在个人AI助手领域，OpenClaw以其独特的“网关+智能体”架构脱颖而出。它不仅是一个聊天机器人，更是一个能够连接多平台、执行复杂任务的“个人AI操作系统”。</p>
+<p>本文将深入解析OpenClaw的整体架构，重点介绍其两大核心——<strong>Gateway网关</strong>与<strong>AgentRuntime智能体运行时</strong>，以及支撑其强大功能的六大能力体系。</p>
+<span id="more"></span>
+
+<hr>
+<h4 id="一、两大核心：神经中枢与决策大脑"><a href="#一、两大核心：神经中枢与决策大脑" class="headerlink" title="一、两大核心：神经中枢与决策大脑"></a>一、两大核心：神经中枢与决策大脑</h4><p>OpenClaw的整体架构可以高度概括为“两个核心”：<strong>Gateway（网关）</strong>负责连接与调度，<strong>AgentRuntime（智能体运行时）</strong>负责思考与执行。</p>
+<ol>
+<li><p>Gateway网关：系统的“神经中枢”<br> Gateway是OpenClaw的入口与出口，扮演着“神经中枢”的角色。它负责：</p>
+<ul>
+<li>多平台接入：通过Adapter适配器，统一接入QQ、飞书、钉钉、企业微信、Telegram、WhatsApp等主流消息平台，以及CLI命令行接口。</li>
+<li>消息路由：根据用户ID、群组、关键词等规则，将消息分发至对应的智能体实例。</li>
+<li>会话管理：维护每个对话的上下文状态，确保多轮对话的连贯性。</li>
+<li>安全与认证：处理API密钥、访问权限、速率限制等安全策略，保障系统稳定运行。</li>
+</ul>
+<p> 简单来说，Gateway是OpenClaw的“外脑”，负责感知外部世界、接收指令、并协调内部资源。</p>
+</li>
+<li><p>AgentRuntime智能体运行时：系统的“决策大脑”<br> AgentRuntime是OpenClaw的“内脑”，是真正进行推理、决策与执行的核心引擎。它基于<strong>Pi智能体框架</strong>构建，实现了经典的ReAct循环（思考-行动-观察-反馈）。Pi智能体是一个非常轻量级的智能框架，原生只有4个工具：文件读、写、修改、shell命令执行，非常轻量化并方便扩展。支持四种交互方式：交互模式（TUI）、打印模式（单次回答）、JSON模式（回答为json）、RPC模式</p>
+<p> 其核心能力包括：</p>
+<ul>
+<li>模型无关的LLM接口：支持OpenAI、Anthropic、Google等十多家大模型供应商，灵活切换模型。</li>
+<li>智能体循环（Agent Loop）：接收用户指令后，进行意图理解、任务拆解、工具调用规划、执行结果分析，形成闭环决策。</li>
+<li>工具与技能调度：通过“工具系统”和“技能系统”，调用本地或远程API，实现文件操作、Shell命令、浏览器控制等复杂任务。</li>
+</ul>
+<p> AgentRuntime是OpenClaw的“思考者”，它让AI不仅仅是“聊天”，而是“做事”。</p>
+</li>
+</ol>
+<hr>
+<h4 id="二、六大能力：构建完整AI能力体系"><a href="#二、六大能力：构建完整AI能力体系" class="headerlink" title="二、六大能力：构建完整AI能力体系"></a>二、六大能力：构建完整AI能力体系</h4><p>在两大核心之上，OpenClaw通过六大能力模块，构建了一个功能完备、可扩展的AI能力体系：</p>
+<ol>
+<li><p>Skills（技能）：AI的“工具箱”<br> Skills是OpenClaw的可扩展功能模块，本质是一些工作标准流程，其中可以自定义流程、脚本和工具。它允许开发者或用户自定义工具，使用第三方能力等。例如Agent Browser这个skills，可以让Openclaw具有操作浏览器的能力。</p>
+<p> 在Openclaw的官方技能社区<a target="_blank" rel="noopener" href="https://clawhub.ai/skills?sort=downloads%E4%B8%AD%E5%8F%AF%E4%BB%A5%E6%90%9C%E7%B4%A2%E9%9C%80%E8%A6%81%E7%9A%84skills%E3%80%82">https://clawhub.ai/skills?sort=downloads中可以搜索需要的skills。</a></p>
+</li>
+<li><p>Channels（消息通道）：AI的“感官”<br> Channels是OpenClaw与外界通信的“神经通路”。它不仅包括IM平台（QQ、飞书等），也包括CLI、Webhook、REST API等。通过Channels，AI可以：</p>
+<ul>
+<li>接收来自不同平台的指令</li>
+<li>主动推送消息（如定时提醒、任务完成通知）</li>
+<li>实现跨平台消息同步与转发</li>
+</ul>
+<p> 其中hooks是基于事件的内部任务执行机制，例如让智能体在收到<code>/new</code>命令时，进行会话总结。而webhooks，则支持外部调用api触发内部任务执行。例如<code>POST /hooks/agents</code>启动一次隔离运行并将摘要写回<code>mainsession</code>。所以hook不属于channels而webhooks则属于。CLI是是命令行工具，即支持在命令行中直接与Openclaw交互。</p>
+</li>
+<li><p>Nodes（节点）：AI的“分布式神经元”<br> Nodes是OpenClaw的分布式执行单元。它允许将智能体部署在不同的设备上（如Mac、Windows、Linux、Android），形成一个“个人AI网络”。</p>
+<p> 具体来说，节点是一个配套设备（macOS&#x2F;iOS&#x2F;Android&#x2F;headless），它以“节点”的角色连接到网关WebSocket（与操作员相同的端口），<strong>并通过node invoke公开命令表面</strong>（例如canvas.*、camera.*、device.*、通知.*、system.*）。协议详细信息：网关协议。网关可以调用配套设备公开的命令，进而驱动设备执行任务，例如可以将安卓手机作为一个节点，连接到网关，之后就可以调用安卓设备的camera命令打开相机。</p>
+</li>
+<li><p>Memory（记忆）：AI的“大脑皮层”<br> Memory系统是OpenClaw的长期与短期记忆存储。它包括：</p>
+<ul>
+<li>短期记忆：当前会话的上下文（如最近几轮对话）</li>
+<li>长期记忆：用户偏好、历史任务、知识库（如<code>USER.md</code>、<code>SOUL.md</code>）</li>
+<li>向量数据库：用于语义检索与上下文关联</li>
+</ul>
+<p> 记忆系统让AI能够“记住”用户，实现个性化、上下文感知的交互。OpenClaw 的记忆系统分为三层：当前对话、长期记忆、每日记忆，每层有不同用途。文件结构如下：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">你的设备</span><br><span class="line">├── ~/.openclaw/workspace/</span><br><span class="line">│   ├── SOUL.md          ← AI 的人格设定</span><br><span class="line">│   ├── USER.md          ← 你的信息</span><br><span class="line">│   ├── MEMORY.md        ← 长期记忆（精选）</span><br><span class="line">│   └── memory/          ← 每日记忆（原始记录）</span><br><span class="line">│       ├── 2026-03-01.md</span><br><span class="line">│       ├── 2026-03-02.md</span><br><span class="line">│       └── ...</span><br></pre></td></tr></table></figure>
+
+<p> 会话记忆记录当前对话的上下文，AI 能”记住”你们刚才聊了什么。保存到对话结束，可配置数天，储在<code>~/.openclaw/sessions/</code></p>
+<p> 长期记忆是人工精选的长期记忆，相当于 AI 的”核心知识库”。永久保存，除非手动删除，存储在 <code>~/.openclaw/workspace/MEMORY.md</code></p>
+<p> 每日记忆是 AI 的”日记”，记录每天的原始信息。保留7-30天，存储在 <code>~/.openclaw/workspace/memory/</code></p>
+<p> 对于记忆文件，Openclaw在检索时支持使用向量检索与关键词检索的混合检索方式，如果要启动向量检索则需要配置嵌入模型。否则Openclaw知识定点读取或者词面匹配检索记忆文件。</p>
+</li>
+<li><p>Heartbeats（心跳机制）：AI的“生命体征监测”<br> Heartbeats是OpenClaw的健康检查与状态同步机制，其中依靠HEARTBEAT.md心跳检测文件，智能体会读取HEARTBEAT.md中的任务清单，并逐项检查，以确保：</p>
+<ul>
+<li>节点在线状态实时更新</li>
+<li>任务执行状态可追踪</li>
+<li>系统异常自动恢复（如节点宕机后自动重启）</li>
+</ul>
+<p> 心跳机制是系统稳定运行的“生命线”。</p>
+</li>
+<li><p>Cron（定时任务）：AI的“生物钟”<br> Cron是OpenClaw的定时调度系统，支持：</p>
+<ul>
+<li>每日&#x2F;每周定时提醒（如“早上8点提醒我开会”）</li>
+<li>周期性任务执行（如“每小时检查邮箱”）</li>
+<li>延迟任务（如“2小时后帮我生成报告”）</li>
+</ul>
+<p> Heartbeats和Cron让AI具备了“主动服务”的能力，而不仅仅是被动响应。</p>
+</li>
+</ol>
+<hr>
+<h4 id="三、安全问题"><a href="#三、安全问题" class="headerlink" title="三、安全问题"></a>三、安全问题</h4><blockquote>
+<p> 安全隐私、提示词注入、恶意skills</p>
+</blockquote>
+<h4 id="四、适合的任务"><a href="#四、适合的任务" class="headerlink" title="四、适合的任务"></a>四、适合的任务</h4><table>
+<thead>
+<tr>
+<th>场景类型</th>
+<th>适合使用 OpenClaw</th>
+<th>不适合使用 OpenClaw</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>任务性质</td>
+<td>重复性、流程化、脚本化</td>
+<td>创造性、决策性、探索性</td>
+</tr>
+<tr>
+<td>风险等级</td>
+<td>低风险，出错后果可承受</td>
+<td>高风险，出错可能导致重大损失</td>
+</tr>
+<tr>
+<td>数据敏感度</td>
+<td>公开数据或非核心内部数据</td>
+<td>个人隐私、商业机密、核心财务数据</td>
+</tr>
+<tr>
+<td>执行模式</td>
+<td>人工辅助、需二次确认</td>
+<td>无人值守、全自动执行</td>
+</tr>
+<tr>
+<td>典型示例</td>
+<td>文件整理、日志监控、发送日报</td>
+<td>银行转账、审批合同、删除生产数据</td>
+</tr>
+</tbody></table>
+<h4 id="五、Openclaw优势"><a href="#五、Openclaw优势" class="headerlink" title="五、Openclaw优势"></a>五、Openclaw优势</h4><ol>
+<li>模块化与可扩展性<br> OpenClaw的“网关+智能体+六大能力”架构，使得每个模块都可以独立开发、部署与升级。开发者可以轻松添加新的Adapter、Skill或Node，而不会影响整体系统。</li>
+<li>模型无关性<br> 通过Pi框架的LLM接口抽象，OpenClaw不绑定任何特定模型。用户可以根据需求随时切换模型，甚至在同一系统中混合使用多个模型。</li>
+<li>本地化与隐私保护<br> 所有数据与执行都可以在本地完成，无需将敏感信息上传至第三方服务器。这对于企业用户和个人隐私保护至关重要。</li>
+<li>多平台与跨设备协同<br> 通过Nodes与Channels，OpenClaw可以将AI能力延伸到手机、电脑、服务器等不同设备，形成一个真正的“个人AI网络”。</li>
+</ol>
+<h4 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h4><p><strong>Openclaw的核心文件</strong></p>
+<ul>
+<li>AGENTS.md：定义Agent行为规则和工具使用指南</li>
+<li>SOUL.md：定义AI的个性和人格</li>
+<li>INDENTITY.md：身份表示信息。AI的出生证明，定义基础的身份标识确定角色定位</li>
+<li>USER.md：用户画像定义</li>
+<li>TOOLS.md：本地工具笔记，记录环境特定的工具配置和使用笔记，例如摄像头名称和位置、SSH主机和别名、设备昵称等</li>
+<li>HEARTBEAT.md：心跳检测提示。读取HEARTBEAT.md中的任务清单，并逐项检查，需要通知就发消息</li>
+</ul>
+<p>通过SOUL确立人设，赋予AI灵魂，然后通过AGENTS.md规范行为，保障落地执行。</p>
+<p><strong>为什么说openclaw比较重？</strong></p>
+<p>openclaw的重是多方面的，但不是说安装包体积大，而是指系统资源占用高、使用成本中、安全责任重。</p>
+<p>系统资源占用高：Openclaw在运行时对计算机内存和处理器有较高的要求，首先是内存占用在1.5G左右，其中社区的一些轻量级简化版本，例如ZeroClaw可以做到7.8m的内存占用；其次是启动速度慢，近50万的代码量启动过程非常耗时</p>
+<p>使用成本重：OpenClaw 的设计机制会将完整的对话历史、工具调用的返回结果等所有信息发给大模型，有测试表明仅生成一份2000字左右的报告消耗了700万token。</p>
+<p>安全责任重：Openclaw想要执行任务则需要极高的系统权限，带来了沉重的安全配置和管理负担。</p>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+              <a href="/tags/%E6%99%BA%E8%83%BD%E4%BD%93/" rel="tag"># 智能体</a>
+              <a href="/tags/OpenClaw/" rel="tag"># OpenClaw</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/03/26/Agent-%E8%AE%B0%E5%BF%86/" rel="prev" title="Agent 记忆">
+                  <i class="fa fa-angle-left"></i> Agent 记忆
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">273k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:08</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
