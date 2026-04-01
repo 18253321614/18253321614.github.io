@@ -170,7 +170,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -181,7 +181,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -215,7 +215,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2025/03/11/ScienceAndLife/%E9%98%B4%E5%8E%86%E3%80%81%E9%98%B3%E5%8E%86%E5%92%8C%E9%98%B4%E9%98%B3%E5%8E%86/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/07/15/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F07-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -233,7 +233,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/03/11/ScienceAndLife/%E9%98%B4%E5%8E%86%E3%80%81%E9%98%B3%E5%8E%86%E5%92%8C%E9%98%B4%E9%98%B3%E5%8E%86/" class="post-title-link" itemprop="url">阴历、阳历和阴阳历</a>
+          <a href="/2023/07/15/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F07-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/" class="post-title-link" itemprop="url">实用的设计模式07-责任链模式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -244,7 +244,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-03-11 10:00:00" itemprop="dateCreated datePublished" datetime="2025-03-11T10:00:00+08:00">2025-03-11</time>
+      <time title="创建时间：2023-07-15 18:14:21" itemprop="dateCreated datePublished" datetime="2023-07-15T18:14:21+08:00">2023-07-15</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -252,7 +252,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B1%82%E7%9F%A5/" itemprop="url" rel="index"><span itemprop="name">求知</span></a>
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
         </span>
     </span>
 
@@ -263,14 +263,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>700</span>
+      <span>6.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -282,11 +282,13 @@
     
     <div class="post-body" itemprop="articleBody">
           <blockquote>
-<p>参考：《这个历史很靠谱》—袁腾飞<br>世界各国的历法分为三种：<br>● 阴历：阿拉伯历法，又称回历或伊斯兰历（伊历），以公元622年穆罕默德率麦加穆斯林迁徙麦地那为元年<br>● 阳历：也就是公历，起源于古罗马<br>● 阴阳历：中国传统历法</p>
+<p>责任链模式属于行为设计模式，常见的过滤器链就是使用责任链模式设计的。</p>
 </blockquote>
+<p>@[TOC]</p>
+<h1 id="1、真实开发场景的问题引入"><a href="#1、真实开发场景的问题引入" class="headerlink" title="1、真实开发场景的问题引入"></a>1、真实开发场景的问题引入</h1><p>Q：假设有一个闯关游戏，共三关，每一关达到通过条件后才能进入下一关，使用java实现。<br>A：针对这个问题，按照朴素的想法，我们可以定义三个类，分别是第一关、第二关、第三关，客户端启动游戏首先进入第一关，然后第一关通过后进入第二关，依次类推。我们可以得到这样的代码如下：</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/03/11/ScienceAndLife/%E9%98%B4%E5%8E%86%E3%80%81%E9%98%B3%E5%8E%86%E5%92%8C%E9%98%B4%E9%98%B3%E5%8E%86/#more" rel="contents">
+              <a class="btn" href="/2023/07/15/DesignPatterns/%E5%AE%9E%E7%94%A8%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F07-%E8%B4%A3%E4%BB%BB%E9%93%BE%E6%A8%A1%E5%BC%8F/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -317,7 +319,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2024/02/08/ScienceAndLife/%E7%94%B5%E5%8A%A8%E8%BD%A6%E9%80%89%E8%B4%AD/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/03/01/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -335,7 +337,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2024/02/08/ScienceAndLife/%E7%94%B5%E5%8A%A8%E8%BD%A6%E9%80%89%E8%B4%AD/" class="post-title-link" itemprop="url">电动车选购</a>
+          <a href="/2026/03/01/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1/" class="post-title-link" itemprop="url">产品设计</a>
         </h2>
 
         <div class="post-meta-container">
@@ -346,7 +348,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2024-02-08 20:28:35" itemprop="dateCreated datePublished" datetime="2024-02-08T20:28:35+08:00">2024-02-08</time>
+      <time title="创建时间：2026-03-01 10:00:00" itemprop="dateCreated datePublished" datetime="2026-03-01T10:00:00+08:00">2026-03-01</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -354,7 +356,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B6%88%E8%B4%B9%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">消费指南</span></a>
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
         </span>
     </span>
 
@@ -365,7 +367,112 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
+      <span>3.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="产品设计"><a href="#产品设计" class="headerlink" title="产品设计"></a>产品设计</h1><blockquote>
+<p>当我们构建了产品需求池之后，接下来就是产品设计，产品设计首先要有设计理念，其次是遵循一定的结构。</p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602272039370.png" alt="image-20260227203903264"></p>
+<h2 id="产品设计理念"><a href="#产品设计理念" class="headerlink" title="产品设计理念"></a>产品设计理念</h2><h4 id="产品和产品设计"><a href="#产品和产品设计" class="headerlink" title="产品和产品设计"></a>产品和产品设计</h4><p>什么是产品：产品是用来解决某个问题东西，可以是有形的也可以是无形的</p>
+<p>什么是产品设计：互联网产品设计是指基于战略需要和用户需要，形成方案，直至方案完成为止的一系列工作的准备和管理。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/03/01/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%AE%BE%E8%AE%A1/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/07/19/DesignPatterns/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%88%86%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/07/19/DesignPatterns/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%88%86%E7%B1%BB/" class="post-title-link" itemprop="url">设计模式的分类</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-07-19 14:08:30" itemprop="dateCreated datePublished" datetime="2023-07-19T14:08:30+08:00">2023-07-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">设计模式</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>717</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -383,21 +490,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="1-电池"><a href="#1-电池" class="headerlink" title="1 电池"></a>1 电池</h2><h3 id="1-1-电池类型"><a href="#1-1-电池类型" class="headerlink" title="1.1 电池类型"></a>1.1 电池类型</h3><p><strong>1、铅酸电池</strong></p>
-<p>优点：价格便宜、电压稳定、稳定性高</p>
-<p>缺点：</p>
-<ul>
-<li>寿命短，以锂电池为标准，铅酸电池的循环充电次数约为锂电池的1&#x2F;3，后期要频繁更换电池（一年后衰减严重）。</li>
-<li>重量体积大，同等容量重量约为锂电池的1&#x2F;5。</li>
+          <h2 id="1、创建型模式（Creational-Patterns）"><a href="#1、创建型模式（Creational-Patterns）" class="headerlink" title="1、创建型模式（Creational Patterns）"></a>1、创建型模式（Creational Patterns）</h2><ul>
+<li>工厂模式（Factory Pattern）</li>
+<li>抽象工厂模式（Abstract Factory Pattern）</li>
+<li>单例模式（Singleton Pattern）</li>
+<li>原型模式（Prototype Pattern）</li>
+<li>建造者模式（Builder Pattern）</li>
 </ul>
-<p><strong>2、锂电池</strong></p>
-<p>各指标介于铅酸电池和石墨烯电池之间。</p>
-<p><strong>3、石墨烯电池</strong></p>
-<p>优点：锂电池中使用石墨烯，电池寿命高（2倍于锂电池）和同等体积下的储电量都优于锂电池（3倍于锂电池）</p>
-<p>缺点：贵</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2024/02/08/ScienceAndLife/%E7%94%B5%E5%8A%A8%E8%BD%A6%E9%80%89%E8%B4%AD/#more" rel="contents">
+              <a class="btn" href="/2023/07/19/DesignPatterns/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%88%86%E7%B1%BB/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -428,7 +530,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2025/05/10/ScienceAndLife/%E7%A9%BA%E8%B0%83/">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/01/15/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E8%A7%A3%E6%9E%84%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -446,7 +548,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/05/10/ScienceAndLife/%E7%A9%BA%E8%B0%83/" class="post-title-link" itemprop="url">空调</a>
+          <a href="/2026/01/15/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E8%A7%A3%E6%9E%84%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" class="post-title-link" itemprop="url">解构产品经理</a>
         </h2>
 
         <div class="post-meta-container">
@@ -457,7 +559,433 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2025-05-10 09:34:00" itemprop="dateCreated datePublished" datetime="2025-05-10T09:34:00+08:00">2025-05-10</time>
+      <time title="创建时间：2026-01-15 10:00:00" itemprop="dateCreated datePublished" datetime="2026-01-15T10:00:00+08:00">2026-01-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="解构产品经理"><a href="#解构产品经理" class="headerlink" title="解构产品经理"></a>解构产品经理</h1><h2 id="什么是产品经理"><a href="#什么是产品经理" class="headerlink" title="什么是产品经理"></a>什么是产品经理</h2><p>画原型？写文档？项目经理的另一称谓？打杂的？跟运营开发吵架？维基百科中将产品经理称为产品CEO</p>
+<p>PM：product manager</p>
+<p>PD：product designer</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/01/15/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E8%A7%A3%E6%9E%84%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/03/05/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%BF%90%E8%90%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/03/05/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%BF%90%E8%90%A5/" class="post-title-link" itemprop="url">产品运营</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-03-05 10:00:00" itemprop="dateCreated datePublished" datetime="2026-03-05T10:00:00+08:00">2026-03-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="产品运营"><a href="#产品运营" class="headerlink" title="产品运营"></a>产品运营</h1><blockquote>
+<p>运营的本质：定目标和找路径</p>
+</blockquote>
+<p>为什么运营很重要！</p>
+<blockquote>
+<ol>
+<li><p>产品运营本是一体，未来对产品和运营人要求会越来越趋同</p>
+</li>
+<li><p>产品越来越需要有社会营销的原生属性</p>
+</li>
+</ol>
+</blockquote>
+<h2 id="运营那些事"><a href="#运营那些事" class="headerlink" title="运营那些事"></a>运营那些事</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/03/05/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E4%BA%A7%E5%93%81%E8%BF%90%E8%90%A5/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/02/20/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E5%B8%82%E5%9C%BA%E4%B8%8E%E7%AB%9E%E5%93%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/02/20/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E5%B8%82%E5%9C%BA%E4%B8%8E%E7%AB%9E%E5%93%81%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">市场与竞品分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-20 10:00:00" itemprop="dateCreated datePublished" datetime="2026-02-20T10:00:00+08:00">2026-02-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="市场与竞品分析"><a href="#市场与竞品分析" class="headerlink" title="市场与竞品分析"></a>市场与竞品分析</h1><h2 id="竞品分析"><a href="#竞品分析" class="headerlink" title="竞品分析"></a>竞品分析</h2><blockquote>
+<p> 什么是竞品分析</p>
+<p>竞品分析的一般方法</p>
+<p>竞品分析的行业分析</p>
+</blockquote>
+<p>通过获悉外部情况、对手的情况、客户的情况 ，来制定计划。通过对竞争对手进行全面的分析从而得到有利于自身的竞争策略。</p>
+<p>分析竞争格局、剖析竞争优势——基于自身优势、拟定解决方案。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/02/20/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E5%B8%82%E5%9C%BA%E4%B8%8E%E7%AB%9E%E5%93%81%E5%88%86%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/02/25/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2026/02/25/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">需求分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-02-25 10:00:00" itemprop="dateCreated datePublished" datetime="2026-02-25T10:00:00+08:00">2026-02-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h1><p>竞品分析回顾：明确目的-行业分析-确定竞品-确定维度-数据搜集-对比分析-输出结论，这是帮助我们了解市场，了解市场之后就是确定需求了</p>
+<h2 id="需求分类"><a href="#需求分类" class="headerlink" title="需求分类"></a>需求分类</h2><ul>
+<li><p>用户需求：用户在某些场景下产生的某种欲望或解决某些问题的需要。</p>
+</li>
+<li><p>业务需求：公司相关人员为了实现企业利益或提高工作效率所产生的需求。业务需求不一定是变现</p>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2026/02/25/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2022/11/07/ScienceAndLife/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/11/07/ScienceAndLife/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/" class="post-title-link" itemprop="url">大工业用电计费及其相关知识</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-07 16:09:26" itemprop="dateCreated datePublished" datetime="2022-11-07T16:09:26+08:00">2022-11-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -476,14 +1004,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2k</span>
+      <span>3.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -495,632 +1023,12 @@
     
     <div class="post-body" itemprop="articleBody">
           <blockquote>
-<p>以热泵式空调为例</p>
+<p> 电费计算方法主要分为<strong>大工业用电</strong>和一般工商业用电、农业生产用电用电、居民生活用电。</p>
 </blockquote>
-<h1 id="工作原理简介"><a href="#工作原理简介" class="headerlink" title="工作原理简介"></a>工作原理简介</h1><p>下图中空调中最重要的四个部件，购买时需要进行重点对比。</p>
-<img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602121919327.png" alt="空调的四大关键部件" style="zoom:67%;" />
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202602081551847.png" alt="image-20221107151123912"></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2025/05/10/ScienceAndLife/%E7%A9%BA%E8%B0%83/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/07/24/ScienceAndLife/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/07/24/ScienceAndLife/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">金字塔原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-07-24 17:10:35" itemprop="dateCreated datePublished" datetime="2023-07-24T17:10:35+08:00">2023-07-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A4%E7%9F%A5%E6%8F%90%E5%8D%87/" itemprop="url" rel="index"><span itemprop="name">认知提升</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.6k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="结论先行，以上统下"><a href="#结论先行，以上统下" class="headerlink" title="结论先行，以上统下"></a>结论先行，以上统下</h2><p>每段话有且只有一个中心思想，要表达的东西。其他的都是为中心思想的论据。</p>
-<p>论据可能会包含其他的论据，这时候一级论据就变成了论点。</p>
-<p>中心思想或者结论，先讲出来：</p>
-<blockquote>
-<p> 例如：我不会减肥，有两个原因：</p>
-<p>（1）健身房都是焦虑营销</p>
-<p>（2）每个人都有自己的个性</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/07/24/ScienceAndLife/%E9%87%91%E5%AD%97%E5%A1%94%E5%8E%9F%E7%90%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/10/21/Tools/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/10/21/Tools/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/" class="post-title-link" itemprop="url">mybatis动态sql一对多查询</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-10-21 18:52:15" itemprop="dateCreated datePublished" datetime="2023-10-21T18:52:15+08:00">2023-10-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>在数据库设计中，一对多关系是非常多的，例如消息通知和附件，一个消息通知中往往会包含多个附件，这种情况下使用mybatis动态sql可以很方便的查询出来。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/10/21/Tools/mybatis%E5%8A%A8%E6%80%81sql%E4%B8%80%E5%AF%B9%E5%A4%9A%E6%9F%A5%E8%AF%A2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/11/20/Tools/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/11/20/Tools/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">JRebel安装使用教程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-11-20 09:54:46" itemprop="dateCreated datePublished" datetime="2023-11-20T09:54:46+08:00">2023-11-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="1、下载插件"><a href="#1、下载插件" class="headerlink" title="1、下载插件"></a>1、下载插件</h1><blockquote>
-<p>版本列表：<a target="_blank" rel="noopener" href="https://plugins.jetbrains.com/plugin/4441-jrebel-and-xrebel/versions">https://plugins.jetbrains.com/plugin/4441-jrebel-and-xrebel/versions</a><br>下载：<a target="_blank" href="https://plugins.jetbrains.com/plugin/download?rel=true&updateId=245481">JRebel and XRebel 2022.4.1</a></p>
-</blockquote>
-<p>这里下载<code>2022.4.1</code>版本，因为后续新版本获取凭证会比较麻烦。下载完成会是一个压缩包。<br><img src="https://i-blog.csdnimg.cn/blog_migrate/8d76417117cc5ff2e57065b38f1716ee.png" alt="在这里插入图片描述"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/11/20/Tools/JRebel%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2021/07/25/Tools/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/07/25/Tools/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/" class="post-title-link" itemprop="url">SpringCloudAlibaba微服务环境搭建版本冲突避坑指南</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-25 11:41:16" itemprop="dateCreated datePublished" datetime="2021-07-25T11:41:16+08:00">2021-07-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>8.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>使用SpringCloudAlibaba方案进行微服务开发时，虽说SpringCloudAlibaba在SpringCloud的基础上更进了一步，但核心还是SpringCloud，只是采用了几个阿里自己的中间件，也就是说SpringCloudAlibaba也是基于SpringBoot的，并且例如网关等中间件阿里仍然采用的是SpringCloud方案中的Gateway网关，在项目中就又会引入SpringCloud的的组件，所以就涉及到三者版本兼容性的问题。</p>
-</blockquote>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/07/25/Tools/SpringCloudAlibaba%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA%E7%89%88%E6%9C%AC%E5%86%B2%E7%AA%81%E9%81%BF%E5%9D%91%E6%8C%87%E5%8D%97/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/01/15/NewPower/%E5%85%89%E4%BC%8F%E5%8F%91%E7%94%B5%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2026/01/15/NewPower/%E5%85%89%E4%BC%8F%E5%8F%91%E7%94%B5%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">光伏发电原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2026-01-15 14:13:28" itemprop="dateCreated datePublished" datetime="2026-01-15T14:13:28+08:00">2026-01-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%96%B0%E8%83%BD%E6%BA%90/" itemprop="url" rel="index"><span itemprop="name">新能源</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>882</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>光伏发电是利用的半导体界面的光生伏特效应，有光直接产生电能。</p>
-<h3 id="1-硅晶体"><a href="#1-硅晶体" class="headerlink" title="1 硅晶体"></a>1 硅晶体</h3><p>首先是半导体，一般采用硅，因为地球储量丰富。但是需要提取单晶硅。硅的结构特点是原子外围有3层工14个电子，只有第三层也就是最外围的4个电子参与导电，在单晶硅中，每个硅原子和周围的四个硅原子通过电子结合，两个电子形成一个共价键，非常稳定，所以在绝对零度下，硅晶体是绝缘的，但是在常温下，会形成一些离散的电子，具有一定的导电性，且温度越高，导电性越强。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2026/01/15/NewPower/%E5%85%89%E4%BC%8F%E5%8F%91%E7%94%B5%E5%8E%9F%E7%90%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2023/05/05/Tools/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="wangweiqiang">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="风和树里">
-      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | 风和树里">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/05/05/Tools/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">vue项目前端解决跨域问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-05-05 11:41:21" itemprop="dateCreated datePublished" datetime="2023-05-05T11:41:21+08:00">2023-05-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">编程</span></a>
-        </span>
-    </span>
-
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>2.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <blockquote>
-<p>在前后端分离项目中，跨域是一定会出现的问题，本文主要介绍跨域问题的解决思路，以及在vue项目中如何使用代理的方式在前端解决跨域问题，同时提供一个后段解决的方案。</p>
-</blockquote>
-<h1 id="1、产生原因"><a href="#1、产生原因" class="headerlink" title="1、产生原因"></a>1、产生原因</h1><p>跨域问题产生的原因是浏览器的同源策略。浏览器同源策略是浏览器中的一种安全机制，用于防止一个域下的文档或脚本访问另一个域下的文档或脚本。同源指的是两个URL的协议、主机名和端口号都相同，只有这些都相同的情况下，两个文档之间才满足同源条件。</p>
-<p>也就是指，当&#x3D;&#x3D;浏览器地址栏的地址（页面访问地址）&#x3D;&#x3D;和&#x3D;&#x3D;接口访问地址&#x3D;&#x3D;不一样时就会出现跨域问题，浏览器会拦截服务器返回的数据，并报CROS错误。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/05/05/Tools/vue%E9%A1%B9%E7%9B%AE%E5%89%8D%E7%AB%AF%E8%A7%A3%E5%86%B3%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/#more" rel="contents">
+              <a class="btn" href="/2022/11/07/ScienceAndLife/%E5%A4%A7%E5%B7%A5%E4%B8%9A%E7%94%A8%E7%94%B5%E8%AE%A1%E8%B4%B9%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E7%9F%A5%E8%AF%86/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1245,6 +1153,131 @@
 
 
 
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2025/03/11/ScienceAndLife/%E5%81%A5%E8%BA%AB%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2025/03/11/ScienceAndLife/%E5%81%A5%E8%BA%AB%E6%8C%87%E5%8D%97/" class="post-title-link" itemprop="url">健身指南</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-03-11 09:52:11" itemprop="dateCreated datePublished" datetime="2025-03-11T09:52:11+08:00">2025-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%81%A5%E8%BA%AB/" itemprop="url" rel="index"><span itemprop="name">健身</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="分化训练"><a href="#分化训练" class="headerlink" title="分化训练"></a>分化训练</h1><p>分部位训练，分别是背、肩、胸、手、腿，每次练一个部位就是五分化训练</p>
+<h2 id="三分化训练"><a href="#三分化训练" class="headerlink" title="三分化训练"></a>三分化训练</h2><p>两天练一次的话，每个部位一周可以练两次</p>
+<table>
+<thead>
+<tr>
+<th>时间</th>
+<th>练习部位</th>
+<th>动作</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>day1</td>
+<td>背+肩后束+肱二头</td>
+<td></td>
+</tr>
+<tr>
+<td>day2</td>
+<td>胸+肩前中束+肱三头</td>
+<td></td>
+</tr>
+<tr>
+<td>day2</td>
+<td>腿+腹</td>
+<td></td>
+</tr>
+</tbody></table>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2025/03/11/ScienceAndLife/%E5%81%A5%E8%BA%AB%E6%8C%87%E5%8D%97/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
   <nav class="pagination">
     <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
@@ -1269,14 +1302,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">273k</span>
+    <span title="站点总字数">275k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:08</span>
+    <span title="站点阅读时长">4:10</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
