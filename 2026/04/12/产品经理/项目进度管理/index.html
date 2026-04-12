@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="进度：让项目按时完成  进度管理最常见的问题是进度延迟，那么进度延迟的原因是什么？原因是多种多样的，例如：  资源无法到位 猪队友不配合 客户需求变化 出现质量问题  虽然原因多样，但是结果是一样的，进度延迟！项目管理中存在一个铁三角：三边分别是时间、成本、范围。而中间还有一个质量。  范围：项目要做什么、交付什么成果、功能边界有多大。是惹祸精，因为范围的变化，例如需求变化，会产生一系列问题 时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目进度管理">
+<meta property="og:url" content="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="进度：让项目按时完成  进度管理最常见的问题是进度延迟，那么进度延迟的原因是什么？原因是多种多样的，例如：  资源无法到位 猪队友不配合 客户需求变化 出现质量问题  虽然原因多样，但是结果是一样的，进度延迟！项目管理中存在一个铁三角：三边分别是时间、成本、范围。而中间还有一个质量。  范围：项目要做什么、交付什么成果、功能边界有多大。是惹祸精，因为范围的变化，例如需求变化，会产生一系列问题 时">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603312045590.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604011520810.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021029724.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021140010.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021151559.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021215828.png">
+<meta property="og:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021240031.png">
+<meta property="article:published_time" content="2026-04-12T02:52:15.000Z">
+<meta property="article:modified_time" content="2026-04-12T02:52:15.141Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="项目管理">
+<meta property="article:tag" content="进度管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603312045590.png">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/","path":"2026/04/12/产品经理/项目进度管理/","title":"项目进度管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>项目进度管理 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86%E8%BF%87%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">项目管理过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B6%E5%AE%9A%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E8%AE%A1%E5%88%92"><span class="nav-number">2.</span> <span class="nav-text">制定项目进度计划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">项目类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%99%91%E5%9B%A0%E7%B4%A0"><span class="nav-number">2.2.</span> <span class="nav-text">考虑因素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E5%88%92%E5%88%86%E8%A7%A3"><span class="nav-number">2.3.</span> <span class="nav-text">计划分解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E5%BA%A6%E8%AE%A1%E5%88%92%E7%94%9F%E6%88%90"><span class="nav-number">2.4.</span> <span class="nav-text">进度计划生成</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9B%E5%BA%A6%E5%BB%B6%E8%BF%9F"><span class="nav-number">3.</span> <span class="nav-text">进度延迟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E6%9B%B4"><span class="nav-number">3.1.</span> <span class="nav-text">变更</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9"><span class="nav-number">3.2.</span> <span class="nav-text">风险</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.3.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3%E6%96%B9%E5%BC%8F"><span class="nav-number">3.3.1.</span> <span class="nav-text">问题解决方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%94%B9%E8%BF%9B%E4%B8%8E%E5%A4%8D%E7%9B%98"><span class="nav-number">3.3.2.</span> <span class="nav-text">问题改进与复盘</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="项目进度管理 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          项目进度管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-12 10:52:15" itemprop="dateCreated datePublished" datetime="2026-04-12T10:52:15+08:00">2026-04-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>进度：让项目按时完成</p>
+</blockquote>
+<p>进度管理最常见的问题是进度延迟，那么进度延迟的原因是什么？原因是多种多样的，例如：</p>
+<ol>
+<li>资源无法到位</li>
+<li>猪队友不配合</li>
+<li>客户需求变化</li>
+<li>出现质量问题</li>
+</ol>
+<p>虽然原因多样，但是结果是一样的，进度延迟！项目管理中存在一个铁三角：三边分别是时间、成本、范围。而中间还有一个质量。</p>
+<ul>
+<li>范围：项目要做什么、交付什么成果、功能边界有多大。是惹祸精，因为范围的变化，例如需求变化，会产生一系列问题</li>
+<li>时间：项目的工期、截止日期、进度计划。是背锅侠，其他地方除了问题都会影响进度</li>
+<li>成本：项目所需的预算、人力、资源、费用。是冤大头</li>
+<li>质量：是照妖镜，项目经理最容易牺牲就是质量，因为质量在交付后短期中难以发现，但是用户长期使用产品的过程中质量问题会慢慢凸显。</li>
+</ul>
+<p>其实进度计划做不好的人很少，关键在于有没有考虑到其他影响进度的因素，也就是当出现进度延迟时，问题往往不是进度做的不好。</p>
+<span id="more"></span>
+<h2 id="项目管理过程"><a href="#项目管理过程" class="headerlink" title="项目管理过程"></a>项目管理过程</h2><blockquote>
+<p>一个项目的宏观过程都是一样的，从想法、论证、启动、对话、执行、监控，最后收尾，所需要做的工作也基本一样，区别在于项目内容不同。</p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202603312045590.png" alt="image-20260331204538407"></p>
+<h2 id="制定项目进度计划"><a href="#制定项目进度计划" class="headerlink" title="制定项目进度计划"></a>制定项目进度计划</h2><blockquote>
+<p>谋定而后动，通过Stacey矩阵从需求的确定性和技术的确定性两个维度划分，不同类型的项目采用不同计划方式</p>
+</blockquote>
+<h3 id="项目类型"><a href="#项目类型" class="headerlink" title="项目类型"></a>项目类型</h3><p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604011520810.png" alt="image-20260401152047621"></p>
+<p>我们需要时刻注意的客户的需求是收集不全的，只有在做的过程中逐渐完善，所以很多时候需要边走边做，边跑边做。</p>
+<h3 id="考虑因素"><a href="#考虑因素" class="headerlink" title="考虑因素"></a>考虑因素</h3><ul>
+<li>项目：包括目标、里程碑，也就是项目的总体目标，在固定节点要完成什么工作。</li>
+<li>工作包：将项目分解为大的工作包，不同的工作包有不同的验收标准、质量要求。</li>
+<li>活动：工作包进一步分解为活动，活动之间有依赖关系，后者依赖前者，因此会形成路径，有了路径就会存在关键路径（所有路径中最长的）。</li>
+<li>资源：活动进一步分解为资源，包括资源需求、资源日历，即对资源的需求，以及资源什么时候到位就是资源日历。</li>
+<li>风险：风险无处不在，要考虑风险，例如6个月的项目，往下排只会给5个月的时间，就是倒排、压榨时间。</li>
+</ul>
+<h3 id="计划分解"><a href="#计划分解" class="headerlink" title="计划分解"></a>计划分解</h3><blockquote>
+<p>一个原则和两种方法：MECE原则：Mutually Exclusive，Collective Exhaustive，关键路径和关键链法</p>
+</blockquote>
+<p>穷尽并全部包含，例如企业规模划分，根据营收规模划分为巨大、大、中、小、微，这样可以将所有的企业都包含在内，而且不会出现重叠。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021029724.png" alt="image-20260402102921517"></p>
+<ul>
+<li>关键路径：在项目的所有路径中，路径最长的那一条就是关键路径</li>
+<li>关键链：资源受限的关键路径，例如将任务F(2)工期压缩至原来的75%</li>
+</ul>
+<blockquote>
+<p>75%原则：在现实生活中，100% 的确定性是不存在的。如果你非要等到所有条件都成熟、所有风险都排除才开始，往往会错过最佳时机，甚至陷入无限期的等待。当你对任务有 75% 的胜算或准备度时，实际上已经意味着一切就绪。</p>
+</blockquote>
+<h3 id="进度计划生成"><a href="#进度计划生成" class="headerlink" title="进度计划生成"></a>进度计划生成</h3><p>第一步是建立需求池，这些需求可能是零散的，此时需要通过用户旅程映射的方式，即还原用户完成某个目标的全过程，从产生需求到解决问题。这样可以将所有的产品需求点串联起来，分析每一步用户的痛点、关键任务和用户情绪曲线。</p>
+<p>接着确定关键路径，明确依赖关系，对应里程碑，明确责任人（可以使用甘特图描述）。然后是需求具体任务划分，划分尽量遵循MECE原则</p>
+<h2 id="进度延迟"><a href="#进度延迟" class="headerlink" title="进度延迟"></a>进度延迟</h2><blockquote>
+<p>总结一下进度延迟的原因无非三种：变更、风险、问题</p>
+</blockquote>
+<h3 id="变更"><a href="#变更" class="headerlink" title="变更"></a>变更</h3><ul>
+<li>预测型项目：需求和技术都比较确定的项目，适合该方式，分为固定的8个步骤。</li>
+<li>适应性项目：新的需求直接添加到PBL里合适的优先级的位置，在敏捷项目中非常常用。</li>
+</ul>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021140010.png" alt="image-20260402113959875"></p>
+<p>注意：第0步是PM对可能引起变更的因素施加影响，例如客户提到一个需求，PM需要和客户交流，尽量不要变更。这就需要PM了解客户。最重要的是关注客户价值，多和客户交流，帮助客户处理问题，而不是提出了一个需求做与不做</p>
+<h3 id="风险"><a href="#风险" class="headerlink" title="风险"></a>风险</h3><p>风险控制需要制度来明确，例会制度！不同层级的人以不同频率开会，了解项目的宏观或微观的状态：</p>
+<ul>
+<li><p>月度高层决策会议：简要汇报项目情况、明确战略方向、解决问题</p>
+</li>
+<li><p>PMO项目群双周例会：汇总各中心级战略落地项目进度、风险控制、解决问题</p>
+</li>
+<li><p>项目团队周会：项目进度、问题讨论、风险识别等</p>
+</li>
+</ul>
+<p><strong>例会干什么？</strong></p>
+<p>例如一个软件项目的过程一般是需求澄清–设计–编码–研发自测–集成测试–系统测试–版本发布，例会就是在某个阶段设置检查点，在对的时间，对的人去做正确的检查。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021151559.png" alt="image-20260402115120441"></p>
+<p>对的时间最好是让团队形成惯性；对的人是说相关人员都到清楚；正确的检查内容，是否完成[注意完成的定义]、完成了要检查确保无误，即保证正常的运转。</p>
+<p>此外为了降低风险和明确检查内筒，可以使用团队任务清单列出所有任务以及进度，团队清单由监督人负责打勾；清单要写的清晰、精确的描述。</p>
+<p>注意：警惕某个人有没有做成一件事（关注结果），而不是做了一件事。</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><blockquote>
+<p>问题会有很多，同时解决方式会有很多种方式：首先要找到主要矛盾，其次要考虑问题解决方式的性价比问题。可以使用根因分析工具，例如从人机料法环5个维度分析。</p>
+</blockquote>
+<p>“人机料法环”（或5M1E）通常作为一种根本原因分析工具，常与<strong>鱼骨图</strong>（也称石川图）结合使用。当出现质量问题时，可以将这五个（或六个）方面作为鱼骨图的主干，逐一排查，深入挖掘导致问题的具体原因，从而制定有效的改进措施。</p>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021215828.png" alt="image-20260402121533708"></p>
+<p>注意：项目经理需不需要了解业务？答案是需要了解，可能不会特别细致。例如把项目分为一个个的黑盒，黑盒之内可以不清楚但是黑盒之外例如如何交互等需要了解。</p>
+<h4 id="问题解决方式"><a href="#问题解决方式" class="headerlink" title="问题解决方式"></a>问题解决方式</h4><ul>
+<li>寻找资源：最简单高效的一种方式。</li>
+<li>建设团队：团队分工、管理，增加新成员等方式。</li>
+<li>技术进步：例如AI的发展会回使得很多问题变得不是问题。</li>
+<li>提高效率：例如小鹏汽车办公楼建设食堂，目的就是为了节省员工时间，即使节省的时间用来休息，那么对员工也是有价值的。</li>
+<li>消除浪费：例如无效的需求、软件的可维护性。</li>
+</ul>
+<h4 id="问题改进与复盘"><a href="#问题改进与复盘" class="headerlink" title="问题改进与复盘"></a>问题改进与复盘</h4><blockquote>
+<p>碰到问题，大家思考的解决方案的往往是考虑短期收益，但是作用非常有限！而应该考虑长期收益！</p>
+</blockquote>
+<p><img src="https://my-md-image.oss-cn-qingdao.aliyuncs.com/img/202604021240031.png" alt="image-20260402124041902"></p>
+<ul>
+<li>人才：能力的标准化，如责任人不清楚要干这个事，那么就考虑把这个事情如何做标准化。</li>
+<li>流程：流程思维，当我们有个事情做了一两次之后，就考虑流程化，然后培训、推广、普及。复盘就是找流程中的问题，重点是标准化的那部分是否真的标准化了，也就是标准化的流程是否真的能够说明情况。</li>
+<li>治理：管理的标准化，要求应该始终如一。</li>
+<li>组织：例如矩阵组织（项目团队+专业团队，分别是垂直和横向），组织是权力的标准化。</li>
+<li>文化：例如华为中客户文化、狼性文化、奋斗文化、团建文化，文化是规章制度之外的隐形非强制规范。</li>
+</ul>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1pVvPzXEFE?spm_id_from=333.788.videopod.episodes&vd_source=e1ec5e4886fca4c5f06887c81aefd01a">https://www.bilibili.com/video/BV1pVvPzXEFE?spm_id_from=333.788.videopod.episodes&amp;vd_source=e1ec5e4886fca4c5f06887c81aefd01a</a></p>
+</blockquote>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/%E9%A1%B9%E7%9B%AE%E7%AE%A1%E7%90%86/" rel="tag"># 项目管理</a>
+              <a href="/tags/%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/" rel="tag"># 进度管理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/04/01/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/PMP/" rel="prev" title="PMP">
+                  <i class="fa fa-angle-left"></i> PMP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/AI%20%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%9A%84%E8%BD%AF%E4%BB%B6%E4%BC%81%E4%B8%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%9E%8B%E3%80%81%E9%87%8D%E6%9E%84%E5%92%8C%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/" rel="next" title="AI 时代下的软件企业如何转型、重构和提升效率">
+                  AI 时代下的软件企业如何转型、重构和提升效率 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">282k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:16</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>

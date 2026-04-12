@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"18253321614.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"utterances","storage":true,"lazyload":false,"nav":null,"activeClass":"utterances"},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false,"trigger":"auto"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="组织效率的重要性什么是软件企业？以软件或软件服务为主要交付价值的企业。 组织效率决定当下盈利还是亏损、也决定企业未来是存在或者消失 在经济高速发展的时代，软件企业在做增量，本质是“跑马圈地”，并不是很注重效率，因为更多的是寻找需求然后快速占领，或许会浪费些人力、物力，但是只要能够命中一些核心的需求，企业就可以存续和发展。但现在时代不同了，客户对产品的要求越来越高、竞品也越来越多，产品需要快速迭代">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AI 时代下的软件企业如何转型、重构和提升效率">
+<meta property="og:url" content="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/AI%20%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%9A%84%E8%BD%AF%E4%BB%B6%E4%BC%81%E4%B8%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%9E%8B%E3%80%81%E9%87%8D%E6%9E%84%E5%92%8C%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/index.html">
+<meta property="og:site_name" content="风和树里">
+<meta property="og:description" content="组织效率的重要性什么是软件企业？以软件或软件服务为主要交付价值的企业。 组织效率决定当下盈利还是亏损、也决定企业未来是存在或者消失 在经济高速发展的时代，软件企业在做增量，本质是“跑马圈地”，并不是很注重效率，因为更多的是寻找需求然后快速占领，或许会浪费些人力、物力，但是只要能够命中一些核心的需求，企业就可以存续和发展。但现在时代不同了，客户对产品的要求越来越高、竞品也越来越多，产品需要快速迭代">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-12T02:52:15.000Z">
+<meta property="article:modified_time" content="2026-04-12T02:52:15.142Z">
+<meta property="article:author" content="wangweiqiang">
+<meta property="article:tag" content="AI">
+<meta property="article:tag" content="组织效率">
+<meta property="article:tag" content="软件工程">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/AI%20%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%9A%84%E8%BD%AF%E4%BB%B6%E4%BC%81%E4%B8%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%9E%8B%E3%80%81%E9%87%8D%E6%9E%84%E5%92%8C%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/AI%20%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%9A%84%E8%BD%AF%E4%BB%B6%E4%BC%81%E4%B8%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%9E%8B%E3%80%81%E9%87%8D%E6%9E%84%E5%92%8C%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/","path":"2026/04/12/产品经理/AI 时代下的软件企业如何转型、重构和提升效率/","title":"AI 时代下的软件企业如何转型、重构和提升效率"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>AI 时代下的软件企业如何转型、重构和提升效率 | 风和树里</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">风和树里</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">君子和而不同</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-首页"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-时间线"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>时间线</a></li><li class="menu-item menu-item-分类"><a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-标签"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-关于我"><a href="/about/me" rel="section"><i class="fa fa-user fa-fw"></i>关于我</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%84%E7%BB%87%E6%95%88%E7%8E%87%E7%9A%84%E9%87%8D%E8%A6%81%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">组织效率的重要性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AI%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%8F%98%E5%8C%96%E7%9A%84%E6%9C%AC%E8%B4%A8"><span class="nav-number">2.</span> <span class="nav-text">AI带来的变化的本质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E9%87%8D%E6%9E%84%E7%BB%84%E7%BB%87%E6%95%88%E7%8E%87"><span class="nav-number">3.</span> <span class="nav-text">如何重构组织效率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E7%9A%84%E6%95%88%E7%8E%87%E6%9D%A5%E6%BA%90"><span class="nav-number">3.1.</span> <span class="nav-text">需求的效率来源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E7%9A%84%E6%95%88%E7%8E%87%E6%9D%A5%E6%BA%90"><span class="nav-number">3.2.</span> <span class="nav-text">代码的效率来源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%9E%84%E4%BA%BA%E6%89%8D%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.3.</span> <span class="nav-text">重构人才模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%B8%93%E5%A4%9A%E8%83%BD"><span class="nav-number">3.3.1.</span> <span class="nav-text">一专多能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E8%BD%AC%E5%8F%98"><span class="nav-number">3.3.2.</span> <span class="nav-text">角色转变</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="wangweiqiang"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">wangweiqiang</p>
+  <div class="site-description" itemprop="description">夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">67</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://gitee.com/iwat" title="GitHub → https:&#x2F;&#x2F;gitee.com&#x2F;iwat" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1373512360@qq.com" title="E-Mail → mailto:1373512360@qq.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://18253321614.github.io/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/AI%20%E6%97%B6%E4%BB%A3%E4%B8%8B%E7%9A%84%E8%BD%AF%E4%BB%B6%E4%BC%81%E4%B8%9A%E5%A6%82%E4%BD%95%E8%BD%AC%E5%9E%8B%E3%80%81%E9%87%8D%E6%9E%84%E5%92%8C%E6%8F%90%E5%8D%87%E6%95%88%E7%8E%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="wangweiqiang">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="风和树里">
+      <meta itemprop="description" content="夫人之相与，俯仰一世，或取诸怀抱，悟言一室之内；或因寄所托，放浪形骸之外。">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="AI 时代下的软件企业如何转型、重构和提升效率 | 风和树里">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          AI 时代下的软件企业如何转型、重构和提升效率
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-04-12 10:52:15" itemprop="dateCreated datePublished" datetime="2026-04-12T10:52:15+08:00">2026-04-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">产品经理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+<h2 id="组织效率的重要性"><a href="#组织效率的重要性" class="headerlink" title="组织效率的重要性"></a>组织效率的重要性</h2><p>什么是软件企业？以软件或软件服务为主要交付价值的企业。</p>
+<p>组织效率决定当下盈利还是亏损、也决定企业未来是存在或者消失</p>
+<p>在经济高速发展的时代，软件企业在做增量，本质是“跑马圈地”，并不是很注重效率，因为更多的是寻找需求然后快速占领，或许会浪费些人力、物力，但是只要能够命中一些核心的需求，企业就可以存续和发展。但现在时代不同了，客户对产品的要求越来越高、竞品也越来越多，产品需要快速迭代，因此效率对软件企业来说越来越重要，而软件企业的效率的内核是需求和代码。</p>
+<h2 id="AI带来的变化的本质"><a href="#AI带来的变化的本质" class="headerlink" title="AI带来的变化的本质"></a>AI带来的变化的本质</h2><p>AI解决了公共信息和经验获取的效率问题，我不懂AI可以告诉我通常视角和经验下我该怎么做——公共信息和经验的获取。</p>
+<p>得益于软件开源世界和高质量问答社区，基于此我们得到了平均水平以上的编程Agent。但是当下做一个决策，这个决策是好是坏，Agent无法判断，仅仅提供参考，但无法帮你决策。AI出现之后人类的工作模式也发生了转变，当前AI可以作为一个助手，采用人机协作的方式进行工作。</p>
+<ul>
+<li><p>人的工作模式：收集信息——分析思考——做出决策——做出行动</p>
+</li>
+<li><p>人机协作：收集信息（AI辅助）——分析思考（AI参与和建议）——做出决策（人类）——做出行动（AI负责执行）</p>
+</li>
+</ul>
+<p>为什么AI无法决策，是因为AI的局限性：</p>
+<ol>
+<li>结果不稳定：幻觉问题</li>
+<li>不被信任：没办法承担责任（对决策负责），准确性问题</li>
+<li>有限上下文：逐渐被解决，思维发散在收敛回来很难，在一个对话窗口中，跟AI的时间越长这个现象会越明显。</li>
+</ol>
+<h2 id="如何重构组织效率"><a href="#如何重构组织效率" class="headerlink" title="如何重构组织效率"></a>如何重构组织效率</h2><blockquote>
+<p>需求和代码：在需求和代码两个维度提高效率。</p>
+</blockquote>
+<h3 id="需求的效率来源"><a href="#需求的效率来源" class="headerlink" title="需求的效率来源"></a>需求的效率来源</h3><p>需求本质就是在”收集信息—筛选信息—判断决策“中，循环往复，因此需求的效率可以被定义为：</p>
+<p><code>需求效率 =需求数量 * 准确性</code></p>
+<ul>
+<li><p>需求数量：线索数量，客户需求深度</p>
+</li>
+<li><p>准确性：需求是否有效，真需求还是伪需求</p>
+</li>
+</ul>
+<p>在互联网爆发的时候，需求的准确性不重要，什么需求都做，有足够的资本！现在则需要精细化的输出价值，精耕细作，因为一个错误可能会酿成严重的后果。</p>
+<p>需求的效率提升：</p>
+<ul>
+<li><p>需求数量：AI帮助信息获取能力增强，但如何找到能卖钱的真需求还是需要业务创造力。</p>
+</li>
+<li><p>准确性：AI提升了信息筛选能力，但是还需要人的判断力</p>
+</li>
+</ul>
+<p>无论是业务创造力还是判断力，这都是对人的需求，进一步说是对产品经理提出了新的需求。</p>
+<h3 id="代码的效率来源"><a href="#代码的效率来源" class="headerlink" title="代码的效率来源"></a>代码的效率来源</h3><p>写代码的工作路线是“分析需求——程序设计——编码实现”，循环往复，因此代码的效率可以被定义为：</p>
+<p><code>代码效率 =编码速度 * 可维护性</code></p>
+<p>编码速度非常好理解，可维护性是指代码根据业务迭代的能力，在第一个版本开发完成后，后面如何不失速的迭代。这对编码人员提出了新的要求。</p>
+<p>代码效率提升：</p>
+<ul>
+<li>编码速度：coding速度、基础设施丰富</li>
+<li>可维护性：代码与需求的一致性和代码模式化的程度<ul>
+<li>与需求的一致性：程序员写代码实现某个需求的的时候是不是像产品经理在描述需求的逻辑，中间经过了多少的翻译和信息的失真，这就意味着需求实现过程中增加了多少复杂度，这就是可维护性的损耗，也是后期软件维护的代价。</li>
+<li>代码模式化的程度：有没有一个套路将需求转化为代码，例如有一个新员工，需要多长时间能做到和组织一致。</li>
+</ul>
+</li>
+</ul>
+<h3 id="重构人才模型"><a href="#重构人才模型" class="headerlink" title="重构人才模型"></a>重构人才模型</h3><blockquote>
+<p> 随着AI的发展，对软件企业效率提升带来了什么，需要做哪些转变。AI的出现使得执行力不在是一个难点，而且当前AI多是针对某个领域能够展现出平均水平以上的能力，所以就需要一专多能的人才。</p>
+</blockquote>
+<h4 id="一专多能"><a href="#一专多能" class="headerlink" title="一专多能"></a>一专多能</h4><p>T型人才：培养一专多能的人才嘛，例如产品经理要懂技术，面对一个需求能够估算其成本，从而判断这个需求该不该做</p>
+<p>协作力：不仅仅是人与人的协作，更重要的是人与AI的协作。</p>
+<h4 id="角色转变"><a href="#角色转变" class="headerlink" title="角色转变"></a>角色转变</h4><p>对于软件企业来说，效率提升最重要的两个岗位的是产品经理和软件工程师：</p>
+<ul>
+<li><p>产品经理：从功能设计转向需求取舍，产设设计不在是一个难点，难得在于需求的评估和取舍，也就是业务创造力和判断力。</p>
+</li>
+<li><p>软件工程师：从代码编写转向定义如何生产和组织代码，因为有了AI，写代码不在是一件难事，难的是如何高效组织和生产代码。</p>
+</li>
+</ul>
+<p>尤其对于软件工程师来说，AI Code Agent就是优秀的代码临时工，可以依赖准确的需求和上下文快速进行代码编写，但是无法进行架构设计，因此以后的编码工作可能一个架构师和几个AI Code Agent。需要警惕的是AI是放大器，意味着不仅仅是好的越好，也会使得坏的越坏，因此对代码和可维护性、基础框架、坏味道代码的处理也会越来越严格。因此在AI时代需要重构代码生产过程，本质是通过重构代码生产过程，让AI写出高效、可维护强的代码。有两个思路：模块化适配和编码模式</p>
+<p>适配AI的模块化：</p>
+<ul>
+<li>以文件为单位的单职责代码组织</li>
+<li>尽量减少单个任务所有的上下文大小</li>
+<li>尽量减少单个任务所涉及的代码数量</li>
+</ul>
+<p>适配AI的编码模式：</p>
+<ul>
+<li>简单却明确的代码组织规范</li>
+<li>简单且明确的代码语义表达</li>
+</ul>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1h4Z9B2Eg9/?spm_id_from=333.1391.top_right_bar_window_history.content.click">https://www.bilibili.com/video/BV1h4Z9B2Eg9/?spm_id_from=333.1391.top_right_bar_window_history.content.click</a></p>
+</blockquote>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10/dist/style.css"><script src="https://fastly.jsdelivr.net/npm/d3@7"></script><script src="https://fastly.jsdelivr.net/npm/markmap-view@0.18.10"></script><script src="https://fastly.jsdelivr.net/npm/markmap-toolbar@0.18.10"></script>
+<link rel="stylesheet" href="/css/markmap.css">
+
+<script src="/js/markmap.js"></script>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+          <div class="post-tags">
+              <a href="/tags/AI/" rel="tag"># AI</a>
+              <a href="/tags/%E7%BB%84%E7%BB%87%E6%95%88%E7%8E%87/" rel="tag"># 组织效率</a>
+              <a href="/tags/%E8%BD%AF%E4%BB%B6%E5%B7%A5%E7%A8%8B/" rel="tag"># 软件工程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2026/04/12/%E4%BA%A7%E5%93%81%E7%BB%8F%E7%90%86/%E9%A1%B9%E7%9B%AE%E8%BF%9B%E5%BA%A6%E7%AE%A1%E7%90%86/" rel="prev" title="项目进度管理">
+                  <i class="fa fa-angle-left"></i> 项目进度管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2026/04/12/Tools/AI%20Agent%E4%B8%AD%E4%BD%BF%E7%94%A8%20MCP%20%E5%B7%A5%E5%85%B7%E5%AE%9E%E8%B7%B5/" rel="next" title="AI Agent中使用 MCP 工具实践">
+                  AI Agent中使用 MCP 工具实践 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments utterances-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">wangweiqiang</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">282k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">4:16</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+<script class="next-config" data-name="utterances" type="application/json">{"enable":true,"repo":"18253321614/18253321614.github.io","issue_term":"pathname","theme":"preferred-color-scheme","lang":"zh-CN"}</script>
+<script src="/js/third-party/comments/utterances.js" defer></script>
+
+</body>
+</html>
